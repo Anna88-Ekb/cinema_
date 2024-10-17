@@ -1,0 +1,76 @@
+.btn_main_style {
+  font-size: 2.4rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn_ordinary {
+  background-color: var(--red);
+  border-radius: 3rem;
+  color: var(--yellow);
+  padding: 1rem 2rem;
+}
+
+.btn_ordinary:hover {
+  background-color: var(--dark_violet);
+  border: 1px solid var(--dark_violet);
+}
+
+.btn_accent,
+.btn_accent:hover,
+.btn_ordinary {
+  border: 1px solid var(--black-blue);
+}
+
+.btn_accent {
+  background-color: var(--red);
+  padding: 1rem 2rem;
+}
+
+.btn_accent:hover {
+  box-shadow: inset -200px -4px 115px -84px #4895a7;
+}
+
+.btn_form {
+  font-size: 2rem;
+  border-radius: 40rem;
+  border: 1px solid var(--dark_violet);
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+}
+
+.btn_form:hover {
+  background-color: rgba(72, 64, 121, 0.8);
+}
+
+.entrance_form_btn {
+  border: 0;
+  background-color: var(--dark_violet);
+  align-self: center;
+  height: max-content;
+  font-size: 2.4rem;
+  color: var(--red);
+  padding: 1rem 0 1rem 3.4rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.entrance_form_btn:hover {
+  color: var(--light_violet);
+}
+
+.entrance_form_btn:hover .entrance_form_img path {
+  fill: var(--light_violet);
+}
+
+.entrance_form_img path {
+  fill: var(--red);
+}
+
+.entrance_form_img {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+}

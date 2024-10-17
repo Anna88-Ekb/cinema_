@@ -3,16 +3,15 @@ import { __dirname } from './__dirname.js'; // Импортируем перем
 import TerserPlugin from 'terser-webpack-plugin'; // Импортируем плагин для минификации JavaScript
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'; // Плагин для извлечения CSS в отдельные файлы
 import { WebpackManifestPlugin } from 'webpack-manifest-plugin';
-
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 export default {
   mode: 'production',
   context: path.resolve(__dirname, 'src'),
 
   entry: [
-    './modules_js/hello1.js', // Первый модуль
-    './modules_js/hello2.js', // Второй модуль
-    './index.js',             // Основной entry файл
+    './index.js',
+    /* './modules_js/menu.js', */
   ],
 
   // Настройки для выходного файла
@@ -20,23 +19,23 @@ export default {
     filename: 'main.[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '../',
-    clean: true, 
+    clean: true,
   },
 
   // Оптимизация сборки
   optimization: {
-    minimize: true, 
-    minimizer: [
+    minimize: false,
+/*     minimizer: [
       new TerserPlugin({
         terserOptions: {
           format: {
-            comments: false, 
+            comments: false,
           },
-          compress: true, 
+          compress: true,
         },
-        extractComments: false, 
+        extractComments: false,
       }),
-    ],
+    ], */
   },
 
 
@@ -48,6 +47,11 @@ export default {
     new WebpackManifestPlugin({
       fileName: path.resolve(__dirname, 'manifest.json'), // Указываем полный путь к файлу manifest.json
     }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, 'src/font'), to: 'font' }, 
+        { from: path.resolve(__dirname, 'src/images'), to: 'images' },
+      ]}),
   ],
 
   module: {
@@ -58,6 +62,20 @@ export default {
           MiniCssExtractPlugin.loader, // Извлекаем CSS в отдельные файлы
           'css-loader', // Загружаем CSS файлы и интерпретируем @import и url() как import/require()
         ],
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i, // Обработка шрифтов
+        type: 'asset/resource',
+        generator: {
+          filename: 'font/[name][ext]', // Путь для шрифтов в dist
+        },
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i, // Обработка изображений
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[name][ext]', // Путь для изображений в dist
+        },
       },
     ],
   },

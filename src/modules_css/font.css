@@ -1,0 +1,23 @@
+@font-face {
+  font-family: "Rubik";
+  font-style: normal;
+  src: url('../font/Rubik/Rubik.ttf') format("truetype");
+}
+
+@font-face {
+  font-family: "Сapitellum";
+  font-style: normal;
+  src: url('../font/capitellum/Capitellum_Tough.ttf') format("truetype");
+}
+
+@font-face {
+  font-family: "THRONE-SVG";
+  font-style: normal;
+  src: url('../font/THRONE-SVG/THRONE-SVG.ttf') format("truetype");
+}
+
+@font-face {
+  font-family: "Poppins-Medium";
+  font-style: normal;
+  src: url('../font/Poppins/Poppins-Medium.ttf') format("truetype");
+}

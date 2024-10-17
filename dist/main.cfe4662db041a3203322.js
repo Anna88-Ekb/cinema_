@@ -1,1 +1,0 @@
-(()=>{"use strict";document.write("Text3"),document.write("Text2")})();

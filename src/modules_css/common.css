@@ -1,0 +1,148 @@
+:root {
+  --dark_violet: #484079;
+  --violet: #646093;
+  --grey_violet: #9898bc;
+  --bright_violet: #82aaff;
+  --light_violet: #d2e2f9;
+  --light_blue: #b6fafb;
+  --yellow: #ffffca;
+  --brown: #9e7b3b;
+  --red: #e14234;
+  --grey_blue: #4895a7;
+  --black-blue: #1d1b1c;
+  --h2_size: 7.2rem;
+  --h3_size: 4.8rem;
+  --h4_size: 2.4rem;
+  --mini_important_text: 2.4rem;
+  --max_important_text: 4.8rem;
+  --h1_font: "Сapitellum", Impact, "Arial Narrow Bold", sans-serif;
+  --h2_font: "THRONE-SVG", "Rubik", Impact, "Arial Narrow Bold", sans-serif;
+  --other_font_title: "Poppins-Medium", Impact, "Arial Narrow Bold", sans-serif;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+li {
+  list-style-type: none;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+html {
+  font-size: 10px;
+}
+
+body {
+  font-size: 1.6rem;
+  font-family: "Rubik", Arial, Tahoma, sans-serif;
+}
+
+a,
+li,
+p,
+span,
+legend,
+fieldset,
+input {
+  letter-spacing: 0.1rem;
+}
+
+h2,
+h4 {
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: var(--h2_size);
+  font-family: var(--h2_font);
+  color: var(--dark_violet);
+}
+
+h3 {
+  font-size: var(--h3_size);
+}
+
+h4 {
+  font-size: var(--h4_size);
+}
+
+.invisibility {
+  visibility: hidden;
+}
+
+.visibility {
+  visibility: visible !important;
+}
+
+.gradient {
+  background: linear-gradient(81deg, rgba(72, 149, 167, 1) 25%, rgba(225, 66, 52, 1) 75%);
+}
+
+.block {
+  display: block!important;
+}
+
+.unblock {
+  display: none!important;
+}
+
+.centered {
+  flex-basis: 50%!important;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  user-select: none;
+}
+
+.container{
+  max-width: 192rem;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+section {
+  padding: 10rem 1rem 0;
+  height: 100vh;
+  max-height: 1080px;
+}
+
+.capitellum {
+  font-family: var(--h1_font);
+}
+
+.throne_svg {
+  font-family: var(--h2_font);
+  color: var(--red);
+  font-size: var(--h2_size);
+}
+
+.str_center {
+  vertical-align: middle;
+}
+
+.caps {
+  text-transform: uppercase;
+  letter-spacing: 1rem;
+}
+
+.text_accent {
+  font-size: var(--h3_size);
+  font-family: var(--h2_font);
+  color: var(--grey_blue);
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: var(--red);
+}

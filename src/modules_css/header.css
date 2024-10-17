@@ -1,0 +1,98 @@
+.logo img {
+  width: 3rem;
+  height: 3rem;
+  align-self: center;
+}
+.logo_name {
+  margin-left: 1.3rem;
+  font-size: 3rem;
+}
+
+.logo {
+  display: flex;
+}
+
+.age_restrictions {
+  color: var(--red);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.6rem;
+  margin-top: 1rem;
+}
+
+.age_restrictions span {
+  font-size: initial;
+  font-weight: 400;
+}
+
+.menu_main_list {
+  display: flex;
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+.menu_main_list>li {
+  position: relative;
+  width: 25rem;
+}
+
+.menu_main_list>li:last-child {
+  background-color: transparent;
+}
+
+.menu_main_list>li>ul {
+  width: inherit;
+  position: absolute;
+  background-color: inherit;
+  right: 0;
+  top: 100%;
+}
+
+.menu_main_list>li:not(li:last-child):hover {
+  background-color: var(--dark_violet);
+}
+
+.menu_main_list li {
+  padding: 1rem;
+}
+
+.menu_main_list li a {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.menu_main_list>li:last-child a {
+  width: initial;
+}
+
+.menu_main_list li a:hover, .ticket_back a:hover, .red_color{
+  color: var(--red);
+}
+
+.contacts a {
+  transition: 0.3s;
+}
+nav {
+  margin: 0 auto;
+  align-self: flex-end;
+}
+
+.menu {
+  position: fixed;
+  z-index: 10;
+  padding: 0 1rem;
+  max-width: 192rem;
+  width: 100%;
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+  display: flex;
+  align-items: center;
+  min-height: 95px;
+  height: auto;
+}
+
+.menu_container {
+  display: flex;
+  width: inherit;
+}
