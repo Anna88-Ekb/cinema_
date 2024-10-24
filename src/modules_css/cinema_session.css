@@ -1,0 +1,342 @@
+.cinema_sessions {
+  background-color: var(--light_violet);
+  display: flex;
+  flex-direction: column;
+}
+
+.cinema_sessions_container {
+  display: flex;
+  justify-content: space-between;
+}
+.cinema_sessions_calendar_prev,
+.cinema_sessions_calendar_next {
+  position: absolute;
+  display: block;
+  top: calc(50% - 25px);
+  width: 50px;
+  height: 50px;
+  background-image: url(../images/icons/right-arrow-5.svg);
+  cursor: pointer;
+}
+
+.cinema_sessions_calendar_prev {
+  left: .5rem;
+  transform: rotate(180deg);
+}
+.cinema_sessions_calendar_next {
+  right: .5rem;
+}
+
+.cinema_sessions_calendar_slider {
+  position: relative;
+}
+
+.cinema_sessions_hall table {
+  text-align: left;
+  width: 100%;
+  border-collapse: collapse;
+}
+.cinema_sessions_halls div h4 {
+  margin: 1rem 0;
+}
+
+.cinema_sessions_halls div:not(:first-child) {
+  margin-top: 1rem;
+}
+
+.cinema_sessions_hall table td,
+.cinema_sessions_hall table th {
+  padding: .5rem;
+}
+
+.cinema_sessions_hall table thead th:last-child {
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+}
+
+.cinema_sessions_calendar_slider {
+  width: 45%;
+  background-color: var(--violet);
+  background: linear-gradient(81deg, rgba(72, 149, 167, 1) 25%, rgba(225, 66, 52, 1) 75%);
+   border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5%;
+  border-bottom-right-radius: 5%;
+}
+
+.cinema_sessions_calendar_slider_container {
+  display: block;
+  width: 85%;
+  flex-basis: 85%;
+  margin: 0 auto;
+  height: 65rem;
+  overflow: hidden;
+}
+
+.cinema_sessions_calendar_slider_container table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  opacity: 0;
+}
+
+.cinema_sessions_calendar_slider_container table:first-child {
+  opacity: 1;
+}
+
+
+.cinema_sessions_calendar_slider_container table td,
+.cinema_sessions_calendar_slider_container table th {
+  border: 1px solid var(--dark_violet);
+  display: block;
+  width: 15%;
+  align-self: center;
+  align-content: center;
+}
+
+.cinema_sessions_calendar_slider_container table th {
+  height: 5rem;
+}
+
+.cinema_sessions_calendar_slider_container table caption {
+  height: 5rem;
+  padding: 1rem;
+  font-size: 2.4rem;
+  text-transform: uppercase;
+  font-family: var(--h2_font);
+  letter-spacing: 2rem;
+  color: var(--dark_violet);
+}
+
+.cinema_sessions_calendar_slider_container table th span {
+  justify-items: center;
+  font-size: 2.4rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--dark_violet);
+  font-family: var(--h2_font);
+}
+
+.cinema_sessions_calendar_slider_container table tbody td {
+  height: 8.5rem;
+  text-align: right;
+}
+
+.cinema_sessions_calendar_slider_container tr {
+  display: flex;
+  justify-content: center;
+}
+
+.cinema_sessions_calendar_slider_container table tbody td a {
+  padding: 1rem;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  background-color: var(--grey_blue);
+  transition: .3s;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  backdrop-filter: sepia(80%);
+}
+.cinema_sessions_calendar_slider_container table tbody td a:hover {
+  background-color: var(--red);
+}
+
+/* .cinema_sessions_calendar_slider_container table tbody td:not(a) {
+  background-color: rgba(72, 149, 167, 0.1);
+} */
+
+.cinema_sessions_calendar_slider_container table tbody td span {
+  font-size: 4.8rem;
+  font-family: var(--h1_font);
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: var(--dark_violet);
+}
+
+.cinema_sessions_filters {
+  width: 60%;
+  display: flex;
+}
+
+.cinema_sessions_filter,
+.cinema_sessions_halls {
+/*   width: 50%; */
+  padding: 0 1rem;
+}
+
+.cinema_sessions_halls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cinema_sessions_hall table tbody td:first-child {
+  width: 45%;
+}
+.cinema_sessions_hall table tbody td {
+  width: 10%;
+}
+
+.cinema_sessions_halls {
+  width: 60%;
+}
+.cinema_sessions_filter {
+  padding-top: 1rem;
+  max-height: 65rem;
+  width: 40%;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5%;
+  border-bottom-right-radius: 5%;
+}
+
+.cinema_sessions_filter_container {
+  background-color: var(--grey_blue);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 5rem;
+  /*   height: 5rem; */
+  /* margin-top: 1rem; */
+}
+
+.cinema_sessions_filter_error,
+.search_list_container {
+  height: 5rem;
+  display: flex;
+}
+
+.cinema_sessions_filter_container button {
+  cursor: pointer;
+  height: 5rem;
+  width: 10%;
+  border: 2px solid var(--grey_blue);
+  background-color: var(--red);
+  outline-color: var(--dark_violet);
+}
+
+.cinema_sessions_filter_container input {
+  width: 80%;
+  height: 5rem;
+  background-color: var(--grey_blue);
+  outline-color: var(--dark_violet);
+  color: var(--red);
+  border: 2px solid var(--red);
+  padding: 1rem;
+  font-size: 2rem;
+}
+
+.cinema_sessions_filter_error_btn>span,
+.movie_list_btn>span,
+.search_list_btn>span {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--grey_blue);
+  margin: 0 auto;
+}
+
+.cinema_sessions_filter_error_btn>span {
+  clip-path: polygon(20% 0%, 0% 20%, 30% 50%, 0% 80%, 20% 100%, 50% 70%, 80% 100%, 100% 80%, 70% 50%, 100% 20%, 80% 0%, 50% 30%);
+}
+.movie_list_btn>span {
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+}
+
+.search_list_btn>span {
+  clip-path: polygon(0% 0%, 0% 100%, 25% 100%, 25% 25%, 75% 25%, 75% 75%, 25% 75%, 25% 100%, 100% 100%, 100% 0);
+}
+
+.cinema_sessions_filter_error,
+.session_buy_btn:hover {
+  color: var(--red);
+}
+
+.session_buy_btn {
+  color: var(--dark_violet);
+  font-weight: bold;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.cinema_sessions_filter_error p {
+  display: inline-block;
+  text-align: center;
+  vertical-align: super;
+  width: 80%;
+}
+
+.marked {
+  background-color: var(--red);
+  color: var(--grey_blue);
+  font-size: 2rem;
+}
+
+.cinema_sessions_filter ul {
+  margin-top: 1rem;
+  max-height: 55rem;
+  overflow-y: scroll;
+  display: none;
+}
+
+.cinema_sessions_filter ul::-webkit-scrollbar {
+  width: 2rem;
+  background-color: var(--red);
+}
+
+.cinema_sessions_filter ul::-webkit-scrollbar-thumb {
+  background-color: var(--grey_blue);
+}
+
+.cinema_sessions_filter ul::-webkit-scrollbar-button {
+  width: 2rem;
+  background-color: #484079;
+  cursor: pointer;
+}
+
+.cinema_sessions_filter li {
+  padding: 1rem;
+  width: 100%;
+  background-color: var(--grey_blue);
+  border: 1px solid rgba(72, 64, 121, 0.1);
+}
+
+.cinema_sessions_filter li a {
+  width: 100%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.cinema_sessions_filter_error {
+  display: none;
+}
+.cinema_sessions_container {
+}
+.cinema_sessions_filters {
+}
+.cinema_sessions_filter {
+}
+.cinema_sessions_filter_container {
+}
+.cinema_sessions_filter_error {
+}
+.cinema_sessions_filter_error_btn {
+}
+.search_list_container {
+}
+.search_list_btn {
+}
+.movie_list_btn {
+}
+.cinema_sessions_halls {
+}
+.cinema_sessions_calendar_slider {
+}
+.cinema_sessions_calendar_slider_container {
+}
+.cinema_sessions_calendar_prev {
+}
+.cinema_sessions_calendar_next {
+}
