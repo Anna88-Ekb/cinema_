@@ -16,6 +16,8 @@ Array.from(menu_main_list.children).forEach(el => {
   }
 });
 
+
+
 contacts.addEventListener('click', (e) => {
   const footer = document.querySelector('#footer');
   e.preventDefault();

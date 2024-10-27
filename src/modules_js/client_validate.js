@@ -79,7 +79,6 @@ export function validatePhoneNums(input) {
   }
 
   input.value = value;
-  console.log(input.value);
 }
 
 export function validatePhoneLength(input) {

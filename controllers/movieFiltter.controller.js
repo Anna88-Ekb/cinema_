@@ -35,6 +35,32 @@ class movieSelection {
     `);
     res.json(result.rows);
   }
+
+  async getMoviesCalendar(req, res) {
+    const result = await db.query(`
+    select  extract (month from session_date) as month, to_char(session_date, 'TMmonth') as month_name, extract (year from session_date)  AS year from cinema_session 
+    where session_date >= current_date
+    group by 1, 2, 3
+    order by 3, 1;
+    `);
+    const calendar = result.rows;
+    const new_calendar = calendar.map((el, i) => {
+      el.ind = i + 1;
+      el.week = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+      return el;
+    });
+
+    res.json(new_calendar);
+  }
+
+  async getMoviesDate(req, res) {
+    const result = await db.query(`
+    select extract(month from session_date) as month, extract(day from session_date) as day, extract(year from session_date) as year from (select distinct 
+    session_date from cinema_session)
+    order by 3, 1, 2;
+    `);
+    res.json(result.rows);
+  }
 };
 
 export const movieFilterSelection = new movieSelection();

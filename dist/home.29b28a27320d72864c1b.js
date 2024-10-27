@@ -83,7 +83,6 @@ function validatePhoneNums(input) {
   }
 
   input.value = value;
-  console.log(input.value);
 }
 
 function validatePhoneLength(input) {
@@ -246,6 +245,8 @@ Array.from(menu_main_list.children).forEach(el => {
     })
   }
 });
+
+
 
 contacts.addEventListener('click', (e) => {
   const footer = document.querySelector('#footer');
@@ -573,121 +574,159 @@ function openEntranceForm() {
 }
 
 
-;// ./modules_js/afisha.js
-const filter_films_container = document.querySelector('.filter_films_container');
-const filtered_films_container = document.querySelector('.filtered_films_container');
+;// ./modules_js/premiere.js
 
-if (filter_films_container) {
-  filter_films_container.addEventListener('click', (e) => {
-    if (e.target.tagName === 'INPUT') {
-      const filter_films = e.currentTarget.querySelectorAll(`input[name="${e.target.name}"]`);
-      const all_filter_films = filter_films_container.querySelectorAll('input[type="checkbox"]:checked');
-      filter_films.forEach(element => {
-        if (element !== e.target && e.target.checked) {
-          element.disabled = true;
-          element.style.cursor = 'auto';
-          element.nextElementSibling.style.backgroundColor = '#e14234';
-          element.title = 'Можно применить только один фильтр';
-        }
-        if (!e.target.checked) {
-          element.disabled = false;
-          element.style.cursor = 'pointer';
-          element.nextElementSibling.style.backgroundColor = '';
-          element.title = 'Нажмите для применения фильтра';
-        }
-      });
+const premiere_slider = document.querySelector('.premiere_slider');
+if(premiere_slider) getSliderVisible(premiere_slider.children);
 
-      let type, country, age;
-      all_filter_films.forEach((el) => {
-        if (el.name === 'type') type = el.value;
-        if (el.name === 'country') country = el.value;
-        if (el.name === 'age') age = el.value;
-      });
+function getSliderVisible(obj) {
+const premiere_slider_prev = premiere_slider.nextElementSibling.querySelector('.premiere_slider_prev');
+const premiere_slider_next = premiere_slider.nextElementSibling.querySelector('.premiere_slider_next');
+  let i = 0;
+  let j = null;
+  let pauseSlider = false;
 
-      const params = {
-        type: type || false,
-        country: country || false,
-        age: age || false
-      }
+  function installPauseOnSlider() {
+    if (!pauseSlider) {
+      pauseSlider = true;
+      const elems = document.querySelectorAll('.centered');
+      elems.forEach((el) => el.classList.remove('centered'));
+      this.classList.add('centered');
+    }
+  }
 
-/*       Object.keys(params).forEach(key => {
-        if (params[key] === false) {
-          delete params[key];
-        }
-      }); */
+  function unInstallPauseOnSlider() {
+    if (pauseSlider) {
+      this.classList.remove('centered');
+      pauseSlider = false;
+      showSlides();
+    }
+  }
 
-      createdListofFilters(params);
+  function showSlides() {
+    if (j !== null) obj[j].classList.remove('centered');
+    let arr = Array.from(obj).slice(i, i + 3);
+    arr.forEach(el => {
+      el.classList.remove("unblock");
+      el.addEventListener('mouseenter', installPauseOnSlider);
+      el.addEventListener('mouseleave', unInstallPauseOnSlider);
+    });
+    let centerIndex = Math.floor(arr.length / 2);
+    arr[centerIndex].classList.add('centered');
+  }
+
+  function hideSlides(arr, next_el_visible = true) {
+    arr.forEach(el => {
+      el.classList.add("unblock");
+      el.removeEventListener('mouseenter', installPauseOnSlider);
+      el.removeEventListener('mouseleave', unInstallPauseOnSlider);
+    });
+    j = i + 1;
+    if (next_el_visible) {
+      ((i + 1) % (obj.length - 1) <= obj.length - 3) ? (i = (i + 1) % (obj.length - 1)) : (i = 0);
+    } else {
+      if (i > 0) { i-- }
+      else { i = obj.length - 3; }
+    }
+    showSlides();
+  }
+
+  setInterval(function () {
+    if (!pauseSlider) hideSlides(Array.from(obj).slice(i, i + 3));
+  }, 8000);
+  showSlides();
+
+  function getNextSlider() {
+    pauseSlider = true;
+    hideSlides(Array.from(obj).slice(i, i + 3));
+  }
+
+  function getPrevSlider() {
+    pauseSlider = true;
+    if (i > 0) {
+      i--;
+      let view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+      view.forEach((el) => el.classList.remove('centered'));
+      view[0].previousElementSibling.classList.remove('unblock');
+      view[2].classList.add('unblock');
+      view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+      view[1].classList.add('centered');
+    }
+    hideSlides(Array.from(obj).slice(i, i + 3), false);
+  }
+  premiere_slider_next.addEventListener('click', getNextSlider);
+  premiere_slider_prev.addEventListener('click', getPrevSlider);
+}
+;// ./modules_js/today.js
+const today_buy_btn = document.querySelector('.today_buy_btn');
+
+today_buy_btn.addEventListener('click', function() {
+  window.location.assign('/schedule-page');
+});
+
+const halls = document.querySelectorAll('.hall');
+
+if(halls) {
+  for (let i = 1; i < halls.length; i++) {
+    let childs = Array.from(halls[i].children).some(el => el.tagName === 'TABLE');
+    if (childs) { addSortType(halls[i]) };
+  }
+}
+
+
+function addSortType(hall, last_child_prev = false) {
+  const table = hall.querySelector('table');
+  const trs_length = table.querySelectorAll('tbody tr').length;
+  const tds_last = table.querySelectorAll('tbody tr td:last-child');
+  const check = [...tds_last].every(el=> el.textContent == tds_last[0].textContent);
+  const th_title = table.querySelector('th:last-child');
+  if (trs_length > 1 && !check) {
+    th_title.title = 'Сортировать';
+    th_title.className = 'down';
+    th_title.addEventListener('click', () => {
+      sortingTable(table, th_title, last_child_prev);
+    });
+  }
+}
+
+function sortingTableAlg(trs, name_class, last_child_prev = false) {
+  let trs_sorted = Array.from(trs).sort((a, b) => {
+    let A, B;
+
+    if (last_child_prev) {
+      A = a.lastElementChild.previousElementSibling.innerHTML;
+      B = b.lastElementChild.previousElementSibling.innerHTML;
+    } else {
+      A = a.lastElementChild.innerHTML;
+      B = b.lastElementChild.innerHTML;
+    }
+
+    if (name_class === 'down') {
+      if (A > B) return 1;
+      if (A < B) return -1;
+      return 0;
+    }
+
+    if (name_class === 'up') {
+      if (A > B) return -1;
+      if (A < B) return 1;
+      return 0;
     }
   });
+
+  return trs_sorted;
 }
 
-
-if (filtered_films_container) {
-  filtered_films_container.addEventListener('click', async (e) => {
-    if (e.target.classList.contains('filtered_films_resize_toBig')) {
-      const name = e.target.parentElement.dataset.movieName;
-      const filtered_films_cards = e.currentTarget.querySelectorAll('.filtered_films_cards');
-      filtered_films_cards.forEach(el => {
-        el.parentElement.removeChild(el);
-      });
-
-      const response = await fetch(`${window.origin}/api/movie/${name}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (!response.ok) {
-        filtered_films_container.innerHTML = '<p style = "color: var(--light_violet)">Произошла ошибка при загрузке</p>';
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      } else {
-        const movie = await response.json();
-        const filtered_films = document.createElement('div');
-        filtered_films.className = 'filtered_films filtered_films_full_screen';
-        filtered_films.style.backgroundImage = `url('/posters/${movie.cinema_path}')`;
-        filtered_films.innerHTML = `
-        <button class="filtered_films_resize filtered_films_resize_toSmall" title="Свернуть"></button>
-        <div class="filtered_films_descr">
-        <h4>${movie.cinema_name}</h4>
-        <div>
-        <p>${movie.cinema_desc}</p>  
-        <p>Страна:<span>${movie.country_desc}</span></p>
-        <p>Возрастные ограничения:<span>${movie.age_desc}</span></p>
-        <p>Длительность:<span>${movie.cinema_duration} мин.</span></p>
-        </div><button class="btn_main_style btn_ordinary afisha_btn">Приобрести билет</button></div>`
-        filtered_films_container.append(filtered_films);
-        const filtered_films_resize_toSmall = filtered_films.querySelector('.filtered_films_resize_toSmall');
-        filtered_films_resize_toSmall.addEventListener('click', async () => {
-          const resize_films = filtered_films_container.querySelector('.filtered_films_full_screen');
-          const result = await fetch('/filtered-movie');
-          const new_content = await result.text();
-          filtered_films_container.removeChild(resize_films);
-          filtered_films_container.innerHTML = new_content;
-        }, { once: true });
-      }
-    }
-  })
-};
-
-async function createdListofFilters(params) {
-/*   console.log(params); */
-  const query_str = new URLSearchParams(params).toString();
-  /*    console.log(query_str);
-     console.log(params); */
-     const response = await fetch(`/filtered-movie?${query_str}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-});
-const filtered_films_container = document.querySelector('.filtered_films_container');
-const new_content = await response.text();
-filtered_films_container.innerHTML = new_content;
+function sortingTable(table, th_title) {
+  let tbody = table.querySelector('tbody');
+  let new_tbody = document.createElement('tbody');
+  let trs = Array.from(tbody.querySelectorAll('tr'));
+  let sortedTrs = sortingTableAlg(trs, th_title.className);
+  new_tbody.append(...sortedTrs);
+  table.replaceChild(new_tbody, tbody);
+  th_title.className = th_title.className === 'down' ? 'up' : 'down';
 }
-
-
-
-;// ./schedule.js
-
+;// ./index.js
 
 
 
@@ -700,6 +739,13 @@ filtered_films_container.innerHTML = new_content;
 
 
 
+
+
+
+/* import './modules_css/common.css';
+import './modules_css/header.css'; */
+/* import hello1 from './modules_js/hello1.js'; 
+import hello2 from './modules_js/hello2.js'; */
 
 /******/ })()
 ;

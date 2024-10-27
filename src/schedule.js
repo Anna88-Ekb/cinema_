@@ -9,5 +9,5 @@ import './modules_css/footer_other.css';
 
 
 import './modules_js/header.js';
-
+import './modules_js/cinema_session.js';
 import './modules_js/afisha.js';

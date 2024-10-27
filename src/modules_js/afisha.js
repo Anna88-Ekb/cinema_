@@ -33,13 +33,6 @@ if (filter_films_container) {
         country: country || false,
         age: age || false
       }
-
-/*       Object.keys(params).forEach(key => {
-        if (params[key] === false) {
-          delete params[key];
-        }
-      }); */
-
       createdListofFilters(params);
     }
   });
@@ -93,10 +86,7 @@ if (filtered_films_container) {
 };
 
 async function createdListofFilters(params) {
-/*   console.log(params); */
   const query_str = new URLSearchParams(params).toString();
-  /*    console.log(query_str);
-     console.log(params); */
      const response = await fetch(`/filtered-movie?${query_str}`, {
       method: 'GET',
       headers: {

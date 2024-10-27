@@ -1,7 +1,250 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
 
-;// ./modules_js/client_validate.js
+/***/ 294:
+/***/ (() => {
+
+const filter_films_container = document.querySelector('.filter_films_container');
+const filtered_films_container = document.querySelector('.filtered_films_container');
+
+if (filter_films_container) {
+  filter_films_container.addEventListener('click', (e) => {
+    if (e.target.tagName === 'INPUT') {
+      const filter_films = e.currentTarget.querySelectorAll(`input[name="${e.target.name}"]`);
+      const all_filter_films = filter_films_container.querySelectorAll('input[type="checkbox"]:checked');
+      filter_films.forEach(element => {
+        if (element !== e.target && e.target.checked) {
+          element.disabled = true;
+          element.style.cursor = 'auto';
+          element.nextElementSibling.style.backgroundColor = '#e14234';
+          element.title = 'Можно применить только один фильтр';
+        }
+        if (!e.target.checked) {
+          element.disabled = false;
+          element.style.cursor = 'pointer';
+          element.nextElementSibling.style.backgroundColor = '';
+          element.title = 'Нажмите для применения фильтра';
+        }
+      });
+
+      let type, country, age;
+      all_filter_films.forEach((el) => {
+        if (el.name === 'type') type = el.value;
+        if (el.name === 'country') country = el.value;
+        if (el.name === 'age') age = el.value;
+      });
+
+      const params = {
+        type: type || false,
+        country: country || false,
+        age: age || false
+      }
+      createdListofFilters(params);
+    }
+  });
+}
+
+
+if (filtered_films_container) {
+  filtered_films_container.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('filtered_films_resize_toBig')) {
+      const name = e.target.parentElement.dataset.movieName;
+      const filtered_films_cards = e.currentTarget.querySelectorAll('.filtered_films_cards');
+      filtered_films_cards.forEach(el => {
+        el.parentElement.removeChild(el);
+      });
+
+      const response = await fetch(`${window.origin}/api/movie/${name}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+        filtered_films_container.innerHTML = '<p style = "color: var(--light_violet)">Произошла ошибка при загрузке</p>';
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      } else {
+        const movie = await response.json();
+        const filtered_films = document.createElement('div');
+        filtered_films.className = 'filtered_films filtered_films_full_screen';
+        filtered_films.style.backgroundImage = `url('/posters/${movie.cinema_path}')`;
+        filtered_films.innerHTML = `
+        <button class="filtered_films_resize filtered_films_resize_toSmall" title="Свернуть"></button>
+        <div class="filtered_films_descr">
+        <h4>${movie.cinema_name}</h4>
+        <div>
+        <p>${movie.cinema_desc}</p>  
+        <p>Страна:<span>${movie.country_desc}</span></p>
+        <p>Возрастные ограничения:<span>${movie.age_desc}</span></p>
+        <p>Длительность:<span>${movie.cinema_duration} мин.</span></p>
+        </div><button class="btn_main_style btn_ordinary afisha_btn">Приобрести билет</button></div>`
+        filtered_films_container.append(filtered_films);
+        const filtered_films_resize_toSmall = filtered_films.querySelector('.filtered_films_resize_toSmall');
+        filtered_films_resize_toSmall.addEventListener('click', async () => {
+          const resize_films = filtered_films_container.querySelector('.filtered_films_full_screen');
+          const result = await fetch('/filtered-movie');
+          const new_content = await result.text();
+          filtered_films_container.removeChild(resize_films);
+          filtered_films_container.innerHTML = new_content;
+        }, { once: true });
+      }
+    }
+  })
+};
+
+async function createdListofFilters(params) {
+  const query_str = new URLSearchParams(params).toString();
+     const response = await fetch(`/filtered-movie?${query_str}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+});
+const filtered_films_container = document.querySelector('.filtered_films_container');
+const new_content = await response.text();
+filtered_films_container.innerHTML = new_content;
+}
+
+
+
+
+/***/ }),
+
+/***/ 978:
+/***/ ((__webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+
+const cinema_sessions_filter = document.querySelector('.cinema_sessions_filter');
+if(cinema_sessions_filter){
+  cinema_sessions_filter.addEventListener('click', function(e) {
+    const input = cinema_sessions_filter.querySelector('input[type="text"]');
+    input.addEventListener('input', findTextOverlap);
+
+    if(e.target.classList.contains('movie_list_btn')) {
+      cinema_sessions_filter.children[1].classList.contains('block') ? 
+      (cinema_sessions_filter.children[1].classList.remove('block'),
+      cinema_sessions_filter.children[1].classList.add('unblock'),
+      cinema_sessions_filter.classList.remove('gradient')) :
+      (cinema_sessions_filter.children[1].classList.remove('unblock'),
+      cinema_sessions_filter.children[1].classList.add('block'),
+      cinema_sessions_filter.classList.add('gradient'));
+    }
+    
+    if (e.target === input) {
+      if(!cinema_sessions_filter.children[1].classList.contains('block')) {
+        cinema_sessions_filter.children[1].classList.add('block');
+        cinema_sessions_filter.children[1].classList.remove('unblock');
+        cinema_sessions_filter.classList.add('gradient');
+      } 
+    }
+    
+    if(e.target.tagName === "LI") {
+      input.value = e.target.textContent;   
+    }
+    
+    
+    
+  })
+    
+}
+
+ function findTextOverlap() {
+  const search_value = this.value.toLowerCase();
+  const list = document.querySelectorAll('.cinema_sessions_filter ul li');
+  const list_text = [...list].map(el => el.textContent.toLowerCase());
+  const marks = document.querySelectorAll('.cinema_sessions_filter ul li mark');
+  if(marks) {marks.forEach(el => el.parentElement.textContent = el.parentElement.textContent)}
+
+  if(search_value.length > 1) {
+    const check = list_text.some(el => el.includes(search_value));
+    if(check) {
+      list_text.forEach((el, i) => {
+        if(el.includes(search_value)) {
+          const index = el.indexOf(search_value);
+          const before = list[i].textContent.substring(0, index);
+          const match = list[i].textContent.substring(index, index + search_value.length);
+          const after = list[i].textContent.substring(index + search_value.length);
+          list[i].innerHTML = before + '<mark class="marked"><b>' + match + '</b></mark>' + after;
+          this.setAttribute('maxlength', `${search_value.length + 1}`);
+        }
+        list[i].scrollIntoView({
+          behavior: 'instant',
+          block: 'nearest'
+        });
+      })
+    } else {
+      this.setAttribute('maxlength', '2')
+    }
+  } 
+
+}
+
+createTableSlider('cinema_sessions_calendar_slider_container', 'cinema_sessions_calendar_prev', 'cinema_sessions_calendar_next');
+
+function createTableSlider(parent_class, class_prev, class_next) {
+  const prev = document.querySelector(`.${class_prev}`);
+  const next = document.querySelector(`.${class_next}`);
+  let tables = document.querySelectorAll(`.${parent_class} table`);
+  prev.style.display = 'none';
+  let i = 0;
+  next.addEventListener('click', function () {
+    if (i < tables.length) {
+      tables = document.querySelectorAll(`.${parent_class} table`);
+      tables[0].parentElement.insertAdjacentElement('beforeend', tables[0]);
+      prev.style.display = 'block';
+      i++;
+    }
+    if (i === tables.length - 1) {
+      this.style.display = 'none';
+    }
+  });
+  prev.addEventListener('click', function () {
+    if (i < tables.length) {
+      tables = document.querySelectorAll(`.${parent_class} table`);
+      tables[tables.length - 1].parentElement.insertAdjacentElement('afterbegin', tables[tables.length - 1]);
+      next.style.display = 'block';
+      i--;
+    }
+    if (i === 0) {
+      this.style.display = 'none';
+    }
+  });
+};
+
+const tables = document.querySelectorAll('.cinema_sessions_calendar_slider_container table');
+if (tables) {
+  const response = await fetch(`${window.origin}/api/movies-calendar-days`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const data = await response.json();
+  console.log(data);
+
+}
+
+
+
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } }, 1);
+
+/***/ }),
+
+/***/ 70:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   HP: () => (/* binding */ spaceInputCheck),
+/* harmony export */   KC: () => (/* binding */ validateLoginLength),
+/* harmony export */   Kc: () => (/* binding */ hidePass),
+/* harmony export */   Lv: () => (/* binding */ validateEmailLength),
+/* harmony export */   Yt: () => (/* binding */ validatePhoneNums),
+/* harmony export */   eX: () => (/* binding */ validatePasswordLength),
+/* harmony export */   xI: () => (/* binding */ validatePhoneLength),
+/* harmony export */   zM: () => (/* binding */ postAHint)
+/* harmony export */ });
+/* unused harmony export returnErrorText */
 
 const months = (/* unused pure expression or super */ null && ([
   'январь', 'февраль', 'март', 'апрель', 'май', 'июнь',
@@ -83,7 +326,6 @@ function validatePhoneNums(input) {
   }
 
   input.value = value;
-  console.log(input.value);
 }
 
 function validatePhoneLength(input) {
@@ -228,7 +470,13 @@ function validatePasswordLength(input) {
 }
 
 
-;// ./modules_js/header.js
+
+/***/ }),
+
+/***/ 647:
+/***/ ((__unused_webpack___webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
+
+/* harmony import */ var _client_validate_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(70);
 
 
 const menu_main_list = document.querySelector('.menu_main_list');
@@ -246,6 +494,8 @@ Array.from(menu_main_list.children).forEach(el => {
     })
   }
 });
+
+
 
 contacts.addEventListener('click', (e) => {
   const footer = document.querySelector('#footer');
@@ -278,7 +528,7 @@ function openEntranceForm() {
   // Закрыть форму входа и регистрации
   form_close.addEventListener('click', closeEntranceForm, { once: true });
   //Смена пароля в первой форме
-  hide_pass.addEventListener('click', hidePass);
+  hide_pass.addEventListener('click', _client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .hidePass */ .Kc);
   // Обработчик кнопки регистрации
   registration_btn.addEventListener('click', handleRegistrationBtnClick);
   // Обработчик кнопки восстановления пароля
@@ -297,12 +547,12 @@ function openEntranceForm() {
     if (prev_form_btn) {
       prev_form_btn.removeEventListener('click', handlePrevFormBtnClick);
     }
-    hide_pass.removeEventListener('click', hidePass);
+    hide_pass.removeEventListener('click', _client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .hidePass */ .Kc);
     resetForm();
   }
 
   function resetForm() {
-    if (hide_pass.previousElementSibling.type == 'password') { hidePass({ passes: [hide_pass] }) };
+    if (hide_pass.previousElementSibling.type == 'password') { (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .hidePass */ .Kc)({ passes: [hide_pass] }) };
     const pass = registration_form.querySelector('#registration_form_pass');
     const repeat_pass = registration_form.querySelector('#registration_form_repeat_pass');
     const passes = [pass, repeat_pass];
@@ -358,52 +608,52 @@ function openEntranceForm() {
     //МЕТКА
     if (phone) {
       phone.addEventListener('input', () => {
-        validatePhoneNums(phone);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneNums */ .Yt)(phone);
       });
       phone.addEventListener('change', () => {
-        validatePhoneLength(phone);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneLength */ .xI)(phone);
       });
     }
 
     if (email) {
       email.addEventListener('input', () => {
-        spaceInputCheck(email);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(email);
       });
       email.addEventListener('change', () => {
-        validateEmailLength(email);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateEmailLength */ .Lv)(email);
       });
     }
 
     if (login) {
       login.addEventListener('input', () => {
-        spaceInputCheck(login);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(login);
       });
       login.addEventListener('change', () => {
-        validateLoginLength(login);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateLoginLength */ .KC)(login);
       });
     }
 
     if (pass && repeat_pass) {
 
       pass.addEventListener('input', () => {
-        spaceInputCheck(pass);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(pass);
       });
       repeat_pass.addEventListener('input', () => {
-        spaceInputCheck(repeat_pass);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(repeat_pass);
       });
 
       pass.addEventListener('change', () => {
-        validatePasswordLength(pass);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePasswordLength */ .eX)(pass);
       });
       repeat_pass.addEventListener('change', () => {
         if (repeat_pass.value.trim() != pass.value.trim()) {
-          postAHint(repeat_pass, `Пароли должны совпадать`);
+          (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(repeat_pass, `Пароли должны совпадать`);
         }
       });
       repeat_pass.addEventListener('paste', (e) => {
         e.preventDefault();
         repeat_pass.value='';
-        postAHint(repeat_pass, `Запрещено вставлять значение в поле`);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(repeat_pass, `Запрещено вставлять значение в поле`);
       });
     }
 
@@ -418,7 +668,7 @@ function openEntranceForm() {
     let pass = document.querySelector('#registration_form_pass');
     let repeat_pass = document.querySelector('#registration_form_repeat_pass');
     const passes = [pass.nextElementSibling, repeat_pass.nextElementSibling];
-    hidePass({ passes: passes });
+    (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .hidePass */ .Kc)({ passes: passes });
   }
 
   function handleRestorePasswordBtnClick(e) {
@@ -453,7 +703,7 @@ function openEntranceForm() {
   }
 
   function validatePhoneNumsResetPass() {
-    validatePhoneNums(reset_pass_type);
+    (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneNums */ .Yt)(reset_pass_type);
   }
 
   if (select) {
@@ -474,17 +724,17 @@ function openEntranceForm() {
 
     if (login.value.trim().length === 0 || password.value.trim().length === 0) {
       if (login.value.trim().length === 0) {
-        postAHint(login, "Заполните поле");
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(login, "Заполните поле");
       }
       if (password.value.trim().length === 0) {
-        postAHint(password, "Заполните поле");
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(password, "Заполните поле");
       }
     } else {
       if (`${login.value.trim()}` in users && password.value.trim() != users[login.value.trim()].password) {
-        postAHint(password, "Неверный пароль");
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(password, "Неверный пароль");
       }
       if (!(`${login.value.trim()}` in users)) {
-        postAHint(login, "Неверный логин");
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(login, "Неверный логин");
       }
     }
   }
@@ -506,21 +756,21 @@ function openEntranceForm() {
         })
       }
       if (input.value.trim().length === 0) {
-        postAHint(input, "Заполните поле");
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(input, "Заполните поле");
       }
     } else {
       if (select.selectedIndex === 1 && input.classList.contains('login')) {
-        `${input.value.trim()}` in users ? closeEntranceForm() : postAHint(input, "Данные не найдены");
+        `${input.value.trim()}` in users ? closeEntranceForm() : (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(input, "Данные не найдены");
       }
       if (select.selectedIndex === 2 && input.classList.contains('phone')) {
         const phones = Object.values(users).filter(el => {
           const temp = input.value.trim();
           return el.phone === temp.substring(0, 2) + temp.substring(3, 6) + temp.substring(7, 10) + temp.substring(11, 13) + temp.substring(14);
         });
-        phones.length > 0 ? closeEntranceForm() : postAHint(input, "Данные не найдены");
+        phones.length > 0 ? closeEntranceForm() : (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(input, "Данные не найдены");
       }
       if (select.selectedIndex === 3 && input.classList.contains('email')) {
-        Object.values(users).filter(el => el.email === input.value.trim().toLowerCase()).length > 0 ? closeEntranceForm() : postAHint(input, "Данные не найдены");
+        Object.values(users).filter(el => el.email === input.value.trim().toLowerCase()).length > 0 ? closeEntranceForm() : (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(input, "Данные не найдены");
       }
     }
   }
@@ -533,17 +783,17 @@ function openEntranceForm() {
     let temp = [...registration_form].every(el => el.value.trim().length > 0);
     if (temp && agreement[0].checked) {
       if (pass.value.trim() != pass_repeat.value.trim()) {
-        postAHint(pass_repeat, `Пароли должны совпасть`);
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(pass_repeat, `Пароли должны совпасть`);
       } else {
-        if (validateEmailLength(email) && validatePhoneLength(phone) && validateLoginLength(login) && validatePasswordLength(pass)) {
+        if ((0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateEmailLength */ .Lv)(email) && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneLength */ .xI)(phone) && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateLoginLength */ .KC)(login) && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePasswordLength */ .eX)(pass)) {
           const users_email = Object.values(users).filter(el => el.email === email.value.trim().toLowerCase());
           const users_phone = Object.values(users).filter(el => el.phone === phone.value.substring(0, 2) + phone.value.substring(3, 6) + phone.value.substring(7, 10) + phone.value.substring(11, 13) + phone.value.substring(14));
           if (`${login.value.trim()}` in users) {
-            postAHint(login, `Логин занят, восстановите доступ`);
+            (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(login, `Логин занят, восстановите доступ`);
           } else if (users_phone.length > 0) {
-            postAHint(phone, `Номер используется, восстановите доступ`);
+            (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(phone, `Номер используется, восстановите доступ`);
           } else if (users_email.length > 0) {
-            postAHint(email, `Почта используется, восстановите доступ`);
+            (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(email, `Почта используется, восстановите доступ`);
           } else {
             users[login.value.trim()] = {
               'password': `${pass.value.trim()}`,
@@ -561,7 +811,7 @@ function openEntranceForm() {
     } else {
       registration_form.forEach(el => {
         if (el.value.trim().length < 1) {
-          postAHint(el, `Заполните поле`);
+          (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(el, `Заполните поле`);
         }
       })
       if (!agreement[0].checked) {
@@ -573,159 +823,18 @@ function openEntranceForm() {
 }
 
 
-;// ./modules_js/premiere.js
 
-const premiere_slider = document.querySelector('.premiere_slider');
-if(premiere_slider) getSliderVisible(premiere_slider.children);
+/***/ }),
 
-function getSliderVisible(obj) {
-const premiere_slider_prev = premiere_slider.nextElementSibling.querySelector('.premiere_slider_prev');
-const premiere_slider_next = premiere_slider.nextElementSibling.querySelector('.premiere_slider_next');
-  let i = 0;
-  let j = null;
-  let pauseSlider = false;
+/***/ 599:
+/***/ ((__webpack_module__, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
-  function installPauseOnSlider() {
-    if (!pauseSlider) {
-      pauseSlider = true;
-      const elems = document.querySelectorAll('.centered');
-      elems.forEach((el) => el.classList.remove('centered'));
-      this.classList.add('centered');
-    }
-  }
-
-  function unInstallPauseOnSlider() {
-    if (pauseSlider) {
-      this.classList.remove('centered');
-      pauseSlider = false;
-      showSlides();
-    }
-  }
-
-  function showSlides() {
-    if (j !== null) obj[j].classList.remove('centered');
-    let arr = Array.from(obj).slice(i, i + 3);
-    arr.forEach(el => {
-      el.classList.remove("unblock");
-      el.addEventListener('mouseenter', installPauseOnSlider);
-      el.addEventListener('mouseleave', unInstallPauseOnSlider);
-    });
-    let centerIndex = Math.floor(arr.length / 2);
-    arr[centerIndex].classList.add('centered');
-  }
-
-  function hideSlides(arr, next_el_visible = true) {
-    arr.forEach(el => {
-      el.classList.add("unblock");
-      el.removeEventListener('mouseenter', installPauseOnSlider);
-      el.removeEventListener('mouseleave', unInstallPauseOnSlider);
-    });
-    j = i + 1;
-    if (next_el_visible) {
-      ((i + 1) % (obj.length - 1) <= obj.length - 3) ? (i = (i + 1) % (obj.length - 1)) : (i = 0);
-    } else {
-      if (i > 0) { i-- }
-      else { i = obj.length - 3; }
-    }
-    showSlides();
-  }
-
-  setInterval(function () {
-    if (!pauseSlider) hideSlides(Array.from(obj).slice(i, i + 3));
-  }, 8000);
-  showSlides();
-
-  function getNextSlider() {
-    pauseSlider = true;
-    hideSlides(Array.from(obj).slice(i, i + 3));
-  }
-
-  function getPrevSlider() {
-    pauseSlider = true;
-    if (i > 0) {
-      i--;
-      let view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
-      view.forEach((el) => el.classList.remove('centered'));
-      view[0].previousElementSibling.classList.remove('unblock');
-      view[2].classList.add('unblock');
-      view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
-      view[1].classList.add('centered');
-    }
-    hideSlides(Array.from(obj).slice(i, i + 3), false);
-  }
-  premiere_slider_next.addEventListener('click', getNextSlider);
-  premiere_slider_prev.addEventListener('click', getPrevSlider);
-}
-;// ./modules_js/today.js
-const today_buy_btn = document.querySelector('.today_buy_btn');
-
-today_buy_btn.addEventListener('click', function() {
-  window.location.assign('/schedule-page');
-});
-
-const halls = document.querySelectorAll('.hall');
-
-if(halls) {
-  for (let i = 1; i < halls.length; i++) {
-    let childs = Array.from(halls[i].children).some(el => el.tagName === 'TABLE');
-    if (childs) { addSortType(halls[i]) };
-  }
-}
-
-
-function addSortType(hall, last_child_prev = false) {
-  const table = hall.querySelector('table');
-  const trs_length = table.querySelectorAll('tbody tr').length;
-  const tds_last = table.querySelectorAll('tbody tr td:last-child');
-  const check = [...tds_last].every(el=> el.textContent == tds_last[0].textContent);
-  const th_title = table.querySelector('th:last-child');
-  if (trs_length > 1 && !check) {
-    th_title.title = 'Сортировать';
-    th_title.className = 'down';
-    th_title.addEventListener('click', () => {
-      sortingTable(table, th_title, last_child_prev);
-    });
-  }
-}
-
-function sortingTableAlg(trs, name_class, last_child_prev = false) {
-  let trs_sorted = Array.from(trs).sort((a, b) => {
-    let A, B;
-
-    if (last_child_prev) {
-      A = a.lastElementChild.previousElementSibling.innerHTML;
-      B = b.lastElementChild.previousElementSibling.innerHTML;
-    } else {
-      A = a.lastElementChild.innerHTML;
-      B = b.lastElementChild.innerHTML;
-    }
-
-    if (name_class === 'down') {
-      if (A > B) return 1;
-      if (A < B) return -1;
-      return 0;
-    }
-
-    if (name_class === 'up') {
-      if (A > B) return -1;
-      if (A < B) return 1;
-      return 0;
-    }
-  });
-
-  return trs_sorted;
-}
-
-function sortingTable(table, th_title) {
-  let tbody = table.querySelector('tbody');
-  let new_tbody = document.createElement('tbody');
-  let trs = Array.from(tbody.querySelectorAll('tr'));
-  let sortedTrs = sortingTableAlg(trs, th_title.className);
-  new_tbody.append(...sortedTrs);
-  table.replaceChild(new_tbody, tbody);
-  th_title.className = th_title.className === 'down' ? 'up' : 'down';
-}
-;// ./index.js
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony import */ var _modules_js_header_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(647);
+/* harmony import */ var _modules_js_cinema_session_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(978);
+/* harmony import */ var _modules_js_afisha_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(294);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_modules_js_cinema_session_js__WEBPACK_IMPORTED_MODULE_1__]);
+_modules_js_cinema_session_js__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 
@@ -740,11 +849,130 @@ function sortingTable(table, th_title) {
 
 
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
-/* import './modules_css/common.css';
-import './modules_css/header.css'; */
-/* import hello1 from './modules_js/hello1.js'; 
-import hello2 from './modules_js/hello2.js'; */
+/***/ })
 
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/async module */
+/******/ 	(() => {
+/******/ 		var webpackQueues = typeof Symbol === "function" ? Symbol("webpack queues") : "__webpack_queues__";
+/******/ 		var webpackExports = typeof Symbol === "function" ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 		var webpackError = typeof Symbol === "function" ? Symbol("webpack error") : "__webpack_error__";
+/******/ 		var resolveQueue = (queue) => {
+/******/ 			if(queue && queue.d < 1) {
+/******/ 				queue.d = 1;
+/******/ 				queue.forEach((fn) => (fn.r--));
+/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
+/******/ 			}
+/******/ 		}
+/******/ 		var wrapDeps = (deps) => (deps.map((dep) => {
+/******/ 			if(dep !== null && typeof dep === "object") {
+/******/ 				if(dep[webpackQueues]) return dep;
+/******/ 				if(dep.then) {
+/******/ 					var queue = [];
+/******/ 					queue.d = 0;
+/******/ 					dep.then((r) => {
+/******/ 						obj[webpackExports] = r;
+/******/ 						resolveQueue(queue);
+/******/ 					}, (e) => {
+/******/ 						obj[webpackError] = e;
+/******/ 						resolveQueue(queue);
+/******/ 					});
+/******/ 					var obj = {};
+/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
+/******/ 					return obj;
+/******/ 				}
+/******/ 			}
+/******/ 			var ret = {};
+/******/ 			ret[webpackQueues] = x => {};
+/******/ 			ret[webpackExports] = dep;
+/******/ 			return ret;
+/******/ 		}));
+/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
+/******/ 			var queue;
+/******/ 			hasAwait && ((queue = []).d = -1);
+/******/ 			var depQueues = new Set();
+/******/ 			var exports = module.exports;
+/******/ 			var currentDeps;
+/******/ 			var outerResolve;
+/******/ 			var reject;
+/******/ 			var promise = new Promise((resolve, rej) => {
+/******/ 				reject = rej;
+/******/ 				outerResolve = resolve;
+/******/ 			});
+/******/ 			promise[webpackExports] = exports;
+/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
+/******/ 			module.exports = promise;
+/******/ 			body((deps) => {
+/******/ 				currentDeps = wrapDeps(deps);
+/******/ 				var fn;
+/******/ 				var getResult = () => (currentDeps.map((d) => {
+/******/ 					if(d[webpackError]) throw d[webpackError];
+/******/ 					return d[webpackExports];
+/******/ 				}))
+/******/ 				var promise = new Promise((resolve) => {
+/******/ 					fn = () => (resolve(getResult));
+/******/ 					fn.r = 0;
+/******/ 					var fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
+/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
+/******/ 				});
+/******/ 				return fn.r ? promise : getResult();
+/******/ 			}, (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue)));
+/******/ 			queue && queue.d < 0 && (queue.d = 0);
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module used 'module' so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__(599);
+/******/ 	
 /******/ })()
 ;

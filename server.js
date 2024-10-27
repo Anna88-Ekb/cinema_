@@ -65,12 +65,14 @@ app.get('/schedule-page', async (_, res) => {
     const response_movies_type = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies-type');
     const response_movies_age = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies-age');
     const response_movies = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies');
+    const response_movies_calendar = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies-calendar')
     const movies = await response_movies.json();
     const country = await response_movies_country.json();
     const type = await response_movies_type.json();
     const age = await response_movies_age.json();
+    const calendar = await response_movies_calendar.json();
     res.render('schedule_page', {
-      title: "Cinema-кинотеатр", country, type, age, movies
+      title: "Cinema-кинотеатр", country, type, age, movies, calendar
     });
   } catch (error) {
     console.error('Ошибка при запросе к API:', error);
@@ -103,3 +105,14 @@ app.get('/pages_info', (_, res) => {
 
 
 app.listen(process.env.PORT || 4000, () => console.log('server started'));
+
+
+/* select extract(month from session_date) as month, extract (day from date_trunc('month', session_date) + interval '1 month -1 day') AS max_day from cinema_session 
+where session_date >= current_date
+group by 1, 2
+order by
+case
+when extract (MONTH FROM CURRENT_DATE) = extract(month from session_date) then 0 
+when extract (MONTH FROM CURRENT_DATE) < extract(month from session_date) then 1
+else 2
+end, extract(month from session_date); */

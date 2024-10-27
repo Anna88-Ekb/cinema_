@@ -2,7 +2,7 @@
   <h2>Расписание</h2>
   <div class="cinema_sessions_container">
     <div class="cinema_sessions_filters">
-      <div class="cinema_sessions_filter">
+      <div class="cinema_sessions_filter gradient">
         <div class="cinema_sessions_filter_container">
           <div class="cinema_sessions_filter_error"><button class="cinema_sessions_filter_error_btn"
               title="Закрыть"><span></span></button>
@@ -14,14 +14,14 @@
               title="Свернуть/развернуть"><span></span></button>
           </div>
         </div>
+        <ul class="block">
+          {{#each movies}}
+          <li>{{{this.cinema_name}}}</li>
+          {{/each}}
+        </ul>
       </div>
       <div class="cinema_sessions_halls"></div>
     </div>
-    <div class="cinema_sessions_calendar_slider" tabindex="0">
-      <div class="cinema_sessions_calendar_slider_container">
-      </div>
-      <div class="cinema_sessions_calendar_prev"></div>
-      <div class="cinema_sessions_calendar_next"></div>
-    </div>
+    {{> cinema_session/cinema_session_calendar}}
   </div>
 </section>
