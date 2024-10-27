@@ -78,7 +78,7 @@ h4 {
 }
 
 .visibility {
-  visibility: visible !important;
+  visibility: visible!important;
 }
 
 .gradient {
@@ -96,6 +96,7 @@ h4 {
 .centered {
   flex-basis: 50%!important;
 }
+
 
 a {
   text-decoration: none;
@@ -145,4 +146,413 @@ section {
   color: var(--grey_blue);
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: var(--red);
+}
+
+.top_title {
+  display: block;
+  color: rgba(72, 149, 167, 0.5);
+  text-align: center;
+  font-size: 7.2rem;
+  letter-spacing: 2rem;
+}
+
+.marked {
+  background-color: var(--red);
+  color: var(--grey_blue);
+  font-size: 2rem;
+}
+
+.vertical li {
+  margin-top: 1rem;
+}
+
+.gorizontal {
+  display: flex;
+}
+
+.checkbox_style>li>span {
+  display: inline-block;
+  margin: 0 1rem;
+  vertical-align: middle;
+  width: 2rem;
+  height: 2rem;
+  position: relative;
+}
+
+.checkbox_style>li label {
+  vertical-align: middle;
+}
+
+.checkbox_style input[type="checkbox"] {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border: 1px solid transparent;
+  opacity: 0;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+
+.checkbox_style input[type="checkbox"]+span {
+  background-color: #fff;
+  border: 1px solid var(--dark_violet);
+  border-radius: 2px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: none;
+  transition: .3s;
+}
+
+.checkbox_style input[type="checkbox"]:checked+span {
+  background: var(--dark_violet) url(../images/icons/check-mark.svg) no-repeat;
+  background-size: contain;
+}
+
+/* ФОРМЫ */
+.entrance_form_big_container,
+.buy_form_big_container {
+  top: 0;
+  left: 0;
+  z-index: 11;
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(29, 27, 28, 0.5);
+  backdrop-filter: sepia(90%);
+}
+
+.entrance_form_container,
+.buy_form_container {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  width: max-content;
+  transform: translate(-50%, -50%);
+  background-color: var(--light_violet);
+  border: 1px solid var(--dark_violet);
+  min-height: 30rem;
+}
+
+.entrance_form_container::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  width: 100%;
+  height: 30px;
+  background-color: var(--dark_violet);
+  display: block;
+}
+
+.entrance_form_container::after {
+  content: '';
+  top: -70px;
+  position: absolute;
+  width: 100%;
+  height: 30px;
+  background-color: var(--dark_violet);
+  display: block;
+  transform: rotate(355deg);
+  border-top-left-radius: 15%;
+}
+
+.entrance_form,
+.restore_password_form {
+  margin: 3rem 2rem;
+  width: 30rem;
+  height: 10rem;
+}
+
+.registration_form {
+  margin: 3rem 2rem;
+  width: 60rem;
+  animation-duration: .3s;
+  animation-name: changeWidthRegForm;
+}
+
+@keyframes changeWidthRegForm {
+  from {
+    width: 30rem;
+  }
+
+  to {
+    width: 60rem;
+  }
+}
+
+.registration_form fieldset>div>label+div{
+  position: relative;
+}
+
+.registration_form fieldset>div>label+div>p {
+  font-size: 1.2rem;
+  color: var(--red);
+  position: absolute;
+  /* bottom: -1.5rem; */
+  left: 0;
+}
+
+.entrance_form div>input,
+.restore_password_form div>input,
+.entrance_form input[type="button"],
+.restore_password_form input[type="button"],
+.entrance_form_container select {
+  width: 100%;
+}
+
+.restore_password_form input[type='button'] {
+  margin-top: 2.5rem;
+}
+
+.entrance_form div,
+.restore_password_form>div {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.registration_form fieldset>div:nth-child(n+2):nth-child(-n+4)>label+div::after,
+.entrance_form div:first-child::after,
+.restore_password_form>div::after,
+.buy_form_get_contacts>div>div:last-child::after {
+  content: '';
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* background-color: #e14234; */
+}
+
+.entrance_form div>svg,
+.registration_form div>svg,
+.registration_form fieldset>div>label+div::after,
+.entrance_form div:first-child::after,
+.restore_password_form>div::after,
+.buy_form_get_contacts>div>div:last-child::after {
+  position: absolute;
+  right: .5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+}
+
+.entrance_form div>svg,
+.registration_form div>svg,
+.registration_form input[type="checkbox"]:not(:disabled) {
+  cursor: pointer;
+}
+
+.entrance_form div>svg:hover path,
+.registration_form div>svg:hover path {
+  fill: rgba(72, 64, 121, 0.5);
+}
+
+form div:has(.login)::after {
+  background-image: url(../images/icons/ticket.svg);
+}
+
+form div:has(.phone)::after {
+  background-image: url(../images/icons/phone-signal.svg);
+}
+
+form div:has(.email)::after {
+  background-image: url(../images/icons/mail-free.svg);
+}
+
+
+form input,
+select,
+.today_buy_btn {
+  border: 1px solid var(--dark_violet);
+  outline-offset: 2px;
+  outline-color: var(--dark_violet);
+}
+
+option,
+.buy_form_choiсe_error {
+  height: 2rem;
+}
+
+.entrance_form input[type='text'],
+.entrance_form input[type='password'],
+.registration_form input[type='text'],
+.registration_form input[type='password'],
+.restore_password_form input[type='text'],
+.buy_form [type='text'] {
+  padding: 0.5rem 3rem 0.5rem 0.5rem;
+  font-size: initial;
+  min-height: 4rem;
+  min-width: 28rem;
+  border-radius: 2px;
+}
+
+.entrance_form input[type="button"],
+.restore_password_form input[type="button"] {
+  padding: 1rem;
+}
+
+.entrance_form_container select {
+  padding: 1rem 0.5rem;
+  margin: 2rem 0;
+  border-radius: 2px;
+  text-align: center;
+}
+
+.registration_form input[type="button"] {
+  display: block;
+  width: 50%;
+  margin: 2rem auto 0 auto;
+  padding: 1rem;
+}
+
+.agreement {
+  width: max-content;
+  margin: 0 auto;
+}
+
+.registration_form fieldset ul {
+  margin: 1rem 0;
+}
+
+.registration,
+.restore_password {
+  text-align: center;
+  height: 2rem;
+}
+
+form a,
+form button,
+form input[type='button'] {
+  outline-offset: 2px;
+  outline-color: var(--dark_violet);
+  transition: 0.3s;
+}
+
+.registration {
+  margin-bottom: 1rem;
+}
+
+.restore_password,
+.halls h4 {
+  margin-bottom: 2rem;
+}
+
+.entrance_form a {
+  text-align: center;
+  color: var(--dark_violet);
+}
+
+.entrance_form a:hover {
+  color: rgba(72, 64, 121, 0.8);
+  font-size: 2rem;
+}
+
+.entrance_form_close,
+.buy_form_close {
+  background: var(--dark_violet) url(../images/icons/close-bold-svgrepo-com.svg) no-repeat;
+  background-size: contain;
+  width: 4rem;
+  height: 4rem;
+  position: absolute;
+  z-index: 11;
+  border: 1px solid var(--light_violet);
+  border-radius: 50%;
+  outline-offset: 2px;
+  outline-color: var(--dark_violet);
+}
+
+.entrance_form_close:hover {
+  background-color: var(--red);
+}
+
+.entrance_form_close {
+  top: -4.2rem;
+  left: 1rem;
+}
+
+.buy_form_close {
+  top: 0;
+  right: 0;
+}
+
+.registration_form fieldset {
+  padding: 1rem;
+  border-color: rgba(72, 149, 167, 0.3);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.registration_form legend {
+  padding: 0 1rem;
+  font-size: 2rem;
+  text-transform: uppercase;
+  color: var(--dark_violet);
+  text-align: center;
+  background-color: var(--light_violet);
+}
+
+.registration_form label {
+  margin: auto 0;
+  cursor: pointer;
+}
+
+.agreement a {
+  font-size: 1.2rem;
+  vertical-align: super;
+  margin-left: 1rem;
+  color: rgba(72, 64, 121, 0.8);
+  transition: .3s;
+}
+
+.agreement a:hover {
+  color: var(--violet);
+}
+
+.registration_form fieldset div:not(div:last-child) {
+  display: flex;
+  justify-content: space-between;
+}
+
+.registration_form fieldset>div:nth-child(n+3) {
+  margin-top: 3rem;
+}
+
+
+.registration_form fieldset div:not(div:last-child) input,
+.entrance_form div>input,
+.restore_password_form div>input {
+  outline-color: var(--red);
+}
+
+.registration_form fieldset div:not(div:last-child) input:focus,
+.entrance_form div>input:focus,
+.restore_password_form div>input:focus {
+  border: 1px solid var(--red);
+}
+
+.down::after,
+.up::after {
+  content: ' ';
+  display: inline-block;
+  margin-left: 1rem;
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--light_violet);
+}
+
+.down::after {
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+}
+
+.up::after {
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+
+.down,
+.up {
+  cursor: pointer;
+  transition: .3s;
+}
+
+.down:hover,
+.up:hover {
+  background-color: rgba(72, 64, 121, 0.8);
 }

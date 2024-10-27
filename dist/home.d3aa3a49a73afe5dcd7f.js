@@ -1,4 +1,235 @@
-import {hidePass, postAHint, validatePhoneNums, validatePhoneLength, spaceInputCheck, validateEmailLength, validateLoginLength, validatePasswordLength} from  './client_validate.js';
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+
+;// ./modules_js/client_validate.js
+
+const months = (/* unused pure expression or super */ null && ([
+  'январь', 'февраль', 'март', 'апрель', 'май', 'июнь',
+  'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'
+]));
+const all_nums = '0123456789';
+const abc = 'abcdefghijklmnopqrstuvwxyz';
+const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const rus_abc = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+const RUS_ABC = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+const symbols = './?><!@#$%^&*()-_=+';
+const symbols_mini = '.-_';
+
+function hidePass({ passes = false }) {
+  if (!passes) { this.previousElementSibling.type == 'text' ? this.previousElementSibling.type = 'password' : this.previousElementSibling.type = 'text'; }
+  else {
+    passes.forEach(el => {
+      el.previousElementSibling.type == "text" ? el.previousElementSibling.type = "password" : el.previousElementSibling.type = "text";
+    });
+  }
+}
+
+//разместить подсказку
+function postAHint(input, text_error) {
+  const p = document.createElement('p');
+  p.textContent = text_error;
+  if (input.parentElement.lastElementChild.tagName === 'P') {
+    input.parentElement.removeChild(input.parentElement.lastElementChild);
+  }
+  input.parentElement.append(p);
+  input.addEventListener('input', function () {
+    if (this.parentElement.lastElementChild.tagName === 'P') {
+      this.parentElement.removeChild(this.parentElement.lastElementChild);
+    }
+  }, { once: true });
+}
+
+function validatePhoneNums(input) {
+  const start_phone = '+7';
+  let value = input.value.trim();
+
+  if (!value.startsWith(start_phone)) {
+    value = start_phone + '()';
+  }
+
+  let after_start_phone_nums = value.substring(3);
+
+  if (after_start_phone_nums[0] === '0') {
+    value = start_phone + '()';
+  } else {
+    let res = [];
+    for (let i = 0; i < after_start_phone_nums.length; i++) {
+      if (all_nums.includes(after_start_phone_nums[i])) {
+        res.push(after_start_phone_nums[i]);
+      }
+    }
+
+    let formatted = start_phone;
+
+    if (res.length > 0) {
+      formatted += '(' + res.slice(0, 3).join('') + ')';
+    } else {
+      formatted += '()';
+    }
+
+    if (res.length > 3) {
+      formatted += res.slice(3, 6).join('');
+    }
+
+    if (res.length > 6) {
+      formatted += '-' + res.slice(6, 8).join('');
+    }
+
+    if (res.length > 8) {
+      formatted += '-' + res.slice(8, 10).join('');
+    }
+
+    value = formatted;
+  }
+
+  input.value = value;
+  console.log(input.value);
+}
+
+function validatePhoneLength(input) {
+  let arr_nums = Array.from(input.value).filter(el => all_nums.includes(el));
+  if (arr_nums.length < 11) {
+    return postAHint(input, "Номер телефона должен содержать 11 цифр");
+  }
+  if (input.value.includes(' ')) {
+    return postAHint(input, "Пробелы не допускаются");
+  }
+  return true;
+}
+
+function returnErrorText(parent, text, time) {
+  const parent_start_text = parent.textContent;
+  parent.textContent = text;
+  setTimeout(function () {
+    text === parent_start_text ? parent.textContent = "" : parent.textContent = parent_start_text;
+  }, time);
+}
+
+function spaceInputCheck(input) {
+  if (input.value.indexOf(' ') != -1) { input.value = input.value.split(' ').join('') };
+}
+
+function validateEmailLength(input) {
+  if (input.value.length < 6) {
+    return postAHint(input, "Не менее 6 символов");
+  }
+
+  if (input.value.length > 30) {
+    input.value = input.value.substring(0, 30);
+    return postAHint(input, "Допускается 30 символов к вводу");
+  };
+
+  if (input.value.includes(' ')) {
+    return postAHint(input, "Пробелы не допускаются");
+  }
+
+  if (!abc.includes(input.value[input.value.length - 1]) && !ABC.includes(input.value[input.value.length - 1])
+    && !rus_abc.includes(input.value[input.value.length - 1]) && !RUS_ABC.includes(input.value[input.value.length - 1]) && !all_nums.includes(input.value[input.value.length - 1])) {
+    return postAHint(input, "Доменная зона не может заканчиваться на символ");
+  }
+
+  let temp = input.value.split('@');
+
+  if (temp.length != 2) {
+    return postAHint(input, "Поле почты должно содержать @");
+  }
+
+
+  let check_temp_rus = temp[0].split('').some(el => {
+    if (rus_abc.includes(el) || RUS_ABC.includes(el)) {
+      return true;
+    }
+  })
+
+  if (check_temp_rus) {
+    return postAHint(input, "Имя почты не должно содержать кириллицу");
+  }
+
+
+  let domain = input.value.substring(input.value.lastIndexOf('@') + 1);
+  let check_ru = [...domain].every(el => rus_abc.includes(el) || RUS_ABC.includes(el) || all_nums.includes(el) || '._-'.includes(el));
+  let check_en = [...domain].every(el => abc.includes(el) || ABC.includes(el) || all_nums.includes(el) || '._-'.includes(el));
+
+  if (!check_en && !check_ru) {
+    return postAHint(input, "В доменной зоне должен быть один алфавит");
+  }
+
+
+  if (!rus_abc.includes(domain[0]) && !RUS_ABC.includes(domain[0]) && !abc.includes(domain[0]) && !ABC.includes(domain[0]) && !all_nums.includes(domain[0])) {
+    return postAHint(input, "За знаком @ только буквенно-числовые символы");
+  }
+
+
+  if (!domain.includes('.')) {
+    return postAHint(input, "Доменная зона должна разделяться точкой");
+  }
+
+  let domain_zone = domain.substring(domain.lastIndexOf('.') + 1);
+  if (domain_zone.length < 2) {
+    return postAHint(input, "Доменная зона должна содержать два символа и больше");
+  }
+
+  return true;
+
+};
+
+function validateLoginLength(input) {
+  if (input.value.length < 8) {
+    return postAHint(input, "Не менее 8 символов");
+  }
+
+  if (input.value.length > 20) {
+    input.value = input.value.substring(0, 20);
+    return postAHint(input, "Допускается 20 символов к вводу");
+  };
+
+  if (input.value.includes(' ')) {
+    return postAHint(input, "Пробелы не допускаются");
+  }
+
+  [...input.value].forEach(el => {
+    if (!abc.includes(el) && !ABC.includes(el) && !all_nums.includes(el) && !symbols.includes(el)) {
+      return postAHint(input, `Логин должен состоять из латинских символов, цифр или ${symbols}`);
+    }
+  })
+  return true;
+}
+
+function validatePasswordLength(input) {
+  if (input.value.length < 10) {
+    return postAHint(input, "Не менее 10 символов");
+  }
+
+  if (input.value.length > 30) {
+    input.value = input.value.substring(0, 30);
+    return postAHint(input, "Допускается 30 символов к вводу");
+  };
+
+  if (input.value.includes(' ')) {
+    return postAHint(input, "Пробелы не допускаются");
+  }
+
+  [...input.value].forEach(el => {
+    if (!abc.includes(el) && !ABC.includes(el) && !all_nums.includes(el) && !symbols.includes(el)) {
+      return postAHint(input, `Пароль должен состоять из латинских символов, цифр или ${symbols}`);
+    }
+  })
+
+  let temp_abc = [...input.value].every(el => abc.includes(el));
+  let temp_ABC = [...input.value].every(el => ABC.includes(el));
+  let temp_nums = [...input.value].every(el => all_nums.includes(el));
+  let temp_symbols = [...input.value].every(el => symbols.includes(el));
+
+  if (temp_abc || temp_ABC || temp_nums || temp_symbols) {
+    return postAHint(input, `Пароль должен состоять из различного типа символов`);
+  }
+
+  return true;
+}
+
+
+;// ./modules_js/header.js
+
 
 const menu_main_list = document.querySelector('.menu_main_list');
 const entrance_form_btn = document.querySelector('.entrance_form_btn');
@@ -341,3 +572,179 @@ function openEntranceForm() {
   }
 }
 
+
+;// ./modules_js/premiere.js
+
+const premiere_slider = document.querySelector('.premiere_slider');
+if(premiere_slider) getSliderVisible(premiere_slider.children);
+
+function getSliderVisible(obj) {
+const premiere_slider_prev = premiere_slider.nextElementSibling.querySelector('.premiere_slider_prev');
+const premiere_slider_next = premiere_slider.nextElementSibling.querySelector('.premiere_slider_next');
+  let i = 0;
+  let j = null;
+  let pauseSlider = false;
+
+  function installPauseOnSlider() {
+    if (!pauseSlider) {
+      pauseSlider = true;
+      const elems = document.querySelectorAll('.centered');
+      elems.forEach((el) => el.classList.remove('centered'));
+      this.classList.add('centered');
+    }
+  }
+
+  function unInstallPauseOnSlider() {
+    if (pauseSlider) {
+      this.classList.remove('centered');
+      pauseSlider = false;
+      showSlides();
+    }
+  }
+
+  function showSlides() {
+    if (j !== null) obj[j].classList.remove('centered');
+    let arr = Array.from(obj).slice(i, i + 3);
+    arr.forEach(el => {
+      el.classList.remove("unblock");
+      el.addEventListener('mouseenter', installPauseOnSlider);
+      el.addEventListener('mouseleave', unInstallPauseOnSlider);
+    });
+    let centerIndex = Math.floor(arr.length / 2);
+    arr[centerIndex].classList.add('centered');
+  }
+
+  function hideSlides(arr, next_el_visible = true) {
+    arr.forEach(el => {
+      el.classList.add("unblock");
+      el.removeEventListener('mouseenter', installPauseOnSlider);
+      el.removeEventListener('mouseleave', unInstallPauseOnSlider);
+    });
+    j = i + 1;
+    if (next_el_visible) {
+      ((i + 1) % (obj.length - 1) <= obj.length - 3) ? (i = (i + 1) % (obj.length - 1)) : (i = 0);
+    } else {
+      if (i > 0) { i-- }
+      else { i = obj.length - 3; }
+    }
+    showSlides();
+  }
+
+  setInterval(function () {
+    if (!pauseSlider) hideSlides(Array.from(obj).slice(i, i + 3));
+  }, 8000);
+  showSlides();
+
+  function getNextSlider() {
+    pauseSlider = true;
+    hideSlides(Array.from(obj).slice(i, i + 3));
+  }
+
+  function getPrevSlider() {
+    pauseSlider = true;
+    if (i > 0) {
+      i--;
+      let view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+      view.forEach((el) => el.classList.remove('centered'));
+      view[0].previousElementSibling.classList.remove('unblock');
+      view[2].classList.add('unblock');
+      view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+      view[1].classList.add('centered');
+    }
+    hideSlides(Array.from(obj).slice(i, i + 3), false);
+  }
+  premiere_slider_next.addEventListener('click', getNextSlider);
+  premiere_slider_prev.addEventListener('click', getPrevSlider);
+}
+;// ./modules_js/today.js
+const today_buy_btn = document.querySelector('.today_buy_btn');
+
+today_buy_btn.addEventListener('click', function() {
+  window.location.assign('/schedule-page');
+});
+
+const halls = document.querySelectorAll('.hall');
+
+if(halls) {
+  for (let i = 1; i < halls.length; i++) {
+    let childs = Array.from(halls[i].children).some(el => el.tagName === 'TABLE');
+    if (childs) { addSortType(halls[i]) };
+  }
+}
+
+
+function addSortType(hall, last_child_prev = false) {
+  const table = hall.querySelector('table');
+  const trs_length = table.querySelectorAll('tbody tr').length;
+  const tds_last = table.querySelectorAll('tbody tr td:last-child');
+  const check = [...tds_last].every(el=> el.textContent == tds_last[0].textContent);
+  const th_title = table.querySelector('th:last-child');
+  if (trs_length > 1 && !check) {
+    th_title.title = 'Сортировать';
+    th_title.className = 'down';
+    th_title.addEventListener('click', () => {
+      sortingTable(table, th_title, last_child_prev);
+    });
+  }
+}
+
+function sortingTableAlg(trs, name_class, last_child_prev = false) {
+  let trs_sorted = Array.from(trs).sort((a, b) => {
+    let A, B;
+
+    if (last_child_prev) {
+      A = a.lastElementChild.previousElementSibling.innerHTML;
+      B = b.lastElementChild.previousElementSibling.innerHTML;
+    } else {
+      A = a.lastElementChild.innerHTML;
+      B = b.lastElementChild.innerHTML;
+    }
+
+    if (name_class === 'down') {
+      if (A > B) return 1;
+      if (A < B) return -1;
+      return 0;
+    }
+
+    if (name_class === 'up') {
+      if (A > B) return -1;
+      if (A < B) return 1;
+      return 0;
+    }
+  });
+
+  return trs_sorted;
+}
+
+function sortingTable(table, th_title) {
+  let tbody = table.querySelector('tbody');
+  let new_tbody = document.createElement('tbody');
+  let trs = Array.from(tbody.querySelectorAll('tr'));
+  let sortedTrs = sortingTableAlg(trs, th_title.className);
+  new_tbody.append(...sortedTrs);
+  table.replaceChild(new_tbody, tbody);
+  th_title.className = th_title.className === 'down' ? 'up' : 'down';
+}
+;// ./index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* import './modules_css/common.css';
+import './modules_css/header.css'; */
+/* import hello1 from './modules_js/hello1.js'; 
+import hello2 from './modules_js/hello2.js'; */
+
+/******/ })()
+;

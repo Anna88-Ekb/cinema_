@@ -1,9 +1,9 @@
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}}</title>
-    <link rel="stylesheet" href="{{cssFile}}" />
+    <link rel="stylesheet" href="{{homeCssFile}}" />
   </head>
   <body>
     <div class="container">
@@ -14,7 +14,15 @@
           {{>header/entrance}}
         </div>
       </div>
+      <div class="pages">
+      {{>about_us}}
+      {{>premiere_content}}
+      {{>today}}
+      {{>location}}
+      </div>
+      {{>footer_home}}
+      {{>entrance_form}}
     </div>
-    <script src="{{jsFile}}"></script>
+    <script src="{{homeJsFile}}"></script>
   </body>
 </html>

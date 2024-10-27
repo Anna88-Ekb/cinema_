@@ -1,0 +1,148 @@
+.zal1 h4 {
+  position: relative;
+  display: inline-block;
+}
+
+.zal1 h4::before {
+  content: '2D';
+  position: absolute;
+  right: -3rem;
+  top: -3rem;
+  opacity: .5;
+  font-family: var(--h2_font);
+  color: var(--grey_blue);
+  font-size: 4.8rem;
+  transform: rotate(30deg);
+}
+
+.halls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3.5rem;
+}
+
+.halls>div>img {
+  margin-top: 3.5rem;
+}
+
+.halls_about {
+  font-size: var(--mini_important_text);
+}
+
+.halls h4 {
+  margin-bottom: 2rem;
+}
+
+.halls table {
+  text-align: left;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.halls table td,
+.halls table th {
+  border: 1px dotted rgba(72, 149, 167, 0.3);
+  padding: .5rem;
+}
+
+.halls table th {
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+}
+
+.halls img {
+  display: block;
+  width: 400px;
+}
+
+.halls div:nth-child(4) img {
+  margin-left: auto;
+}
+
+.halls div:nth-child(4) p>span {
+  text-align: end;
+}
+
+.halls div:nth-child(2),
+.halls div:nth-child(3) {
+  flex-basis: 40%;
+}
+
+.halls div:nth-child(3) thead tr th:first-child {
+  width: 60%;
+}
+
+.halls>div:nth-child(2) {
+  align-self: center;
+  padding: 0 1rem;
+}
+
+.halls div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 0 1rem;
+}
+
+
+
+.today {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--light_violet);
+}
+
+.today h2 span {
+  color: var(--grey_blue);
+}
+
+.today_buy {
+  margin: auto 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.today_buy>div p,
+.today_buy>div span {
+  font-size: 4.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.today_buy>div>span {
+  color: rgba(72, 149, 167, 0.3);
+  display: block;
+}
+
+.today_buy>div>span>span {
+  color: rgba(72, 149, 167, 0.5);
+}
+
+.today_buy>div>p {
+  color: var(--grey_blue);
+  text-align: center;
+}
+
+.today_buy>div>p>span {
+  color: var(--red);
+  font-family: var(--h2_font);
+}
+
+.today_buy>div {
+  max-width: max-content;
+}
+
+.today_buy>div>span+span {
+  padding-left: 3.5rem;
+}
+
+.today_buy_btn {
+  align-self: center;
+  height: max-content;
+  margin-right: calc(400px/2);
+  transform: translateX(50%);
+  border: 1px solid var(--dark_violet);
+  outline-offset: 2px;
+  outline-color: var(--dark_violet);
+}
+

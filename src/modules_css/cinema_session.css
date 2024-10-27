@@ -7,7 +7,9 @@
 .cinema_sessions_container {
   display: flex;
   justify-content: space-between;
+  margin-top: 2rem;
 }
+
 .cinema_sessions_calendar_prev,
 .cinema_sessions_calendar_next {
   position: absolute;
@@ -23,6 +25,7 @@
   left: .5rem;
   transform: rotate(180deg);
 }
+
 .cinema_sessions_calendar_next {
   right: .5rem;
 }
@@ -36,6 +39,7 @@
   width: 100%;
   border-collapse: collapse;
 }
+
 .cinema_sessions_halls div h4 {
   margin: 1rem 0;
 }
@@ -58,7 +62,7 @@
   width: 45%;
   background-color: var(--violet);
   background: linear-gradient(81deg, rgba(72, 149, 167, 1) 25%, rgba(225, 66, 52, 1) 75%);
-   border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5%;
   border-bottom-right-radius: 5%;
@@ -140,6 +144,7 @@
   background-position: center;
   backdrop-filter: sepia(80%);
 }
+
 .cinema_sessions_calendar_slider_container table tbody td a:hover {
   background-color: var(--red);
 }
@@ -160,28 +165,22 @@
   display: flex;
 }
 
-.cinema_sessions_filter,
-.cinema_sessions_halls {
-/*   width: 50%; */
-  padding: 0 1rem;
-}
-
 .cinema_sessions_halls {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 60%;
+  padding: 0 1rem;
 }
 
 .cinema_sessions_hall table tbody td:first-child {
   width: 45%;
 }
+
 .cinema_sessions_hall table tbody td {
   width: 10%;
 }
 
-.cinema_sessions_halls {
-  width: 60%;
-}
 .cinema_sessions_filter {
   padding-top: 1rem;
   max-height: 65rem;
@@ -241,6 +240,7 @@
 .cinema_sessions_filter_error_btn>span {
   clip-path: polygon(20% 0%, 0% 20%, 30% 50%, 0% 80%, 20% 100%, 50% 70%, 80% 100%, 100% 80%, 70% 50%, 100% 20%, 80% 0%, 50% 30%);
 }
+
 .movie_list_btn>span {
   clip-path: polygon(50% 100%, 0 0, 100% 0);
 }
@@ -266,12 +266,6 @@
   text-align: center;
   vertical-align: super;
   width: 80%;
-}
-
-.marked {
-  background-color: var(--red);
-  color: var(--grey_blue);
-  font-size: 2rem;
 }
 
 .cinema_sessions_filter ul {
@@ -312,31 +306,8 @@
 .cinema_sessions_filter_error {
   display: none;
 }
-.cinema_sessions_container {
-}
-.cinema_sessions_filters {
-}
-.cinema_sessions_filter {
-}
-.cinema_sessions_filter_container {
-}
-.cinema_sessions_filter_error {
-}
-.cinema_sessions_filter_error_btn {
-}
+
 .search_list_container {
-}
-.search_list_btn {
-}
-.movie_list_btn {
-}
-.cinema_sessions_halls {
-}
-.cinema_sessions_calendar_slider {
-}
-.cinema_sessions_calendar_slider_container {
-}
-.cinema_sessions_calendar_prev {
-}
-.cinema_sessions_calendar_next {
+  height: 5rem;
+  display: flex;
 }

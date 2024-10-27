@@ -1,0 +1,107 @@
+<section class="today" id="today">
+  <h2>Сегодня <span>в кинотеатре</span></h2>
+  <div class="halls">
+    <div>
+      <p class="halls_about">Экран в большом зале <b>№1 - 6,5</b> на <b>4</b> метра. <span><b>92</b> посадочных
+          мест.</span> </p>
+      <img src="../images/background/zal1.png" alt="zal1" />
+    </div>
+    <div class="zal1 hall">
+      <h4>Зал №1</h4>
+      {{#currentHall halls 1}}
+      <table>
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>Время</th>
+            <th>Тип</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each sessions}}
+          <tr>
+            <td>{{cinema_name}}</td>
+            <td>{{session_time}}</td>
+            <td>{{graphics_desc}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      {{/currentHall}}
+    </div>
+    <div>
+      <div class="zal2 hall">
+        <h4>Зал №2</h4>
+        {{#currentHall halls 2}}
+              <table>
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>Время</th>
+            <th>Тип</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each sessions}}
+          <tr>
+            <td>{{cinema_name}}</td>
+            <td>{{session_time}}</td>
+            <td>{{graphics_desc}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+        {{/currentHall}}
+      </div>
+      <div class="zal3 hall">
+        <h4>Зал №3</h4>
+        {{#currentHall halls 3}}
+              <table>
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>Время</th>
+            <th>Тип</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each sessions}}
+          <tr>
+            <td>{{cinema_name}}</td>
+            <td>{{session_time}}</td>
+            <td>{{graphics_desc}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+        {{/currentHall}}
+      </div>
+
+
+    </div>
+
+    <div>
+      <p class="halls_about">
+        Экран в залах
+        <b>№2</b>
+        и
+        <b>№3</b>
+        -
+        <b>4,2</b>
+        на
+        <b>2,3</b>
+        метра.
+        <span>По <b>18</b> посадочных мест.</span>
+      </p>
+      <img src="../images/background/zal2.png" alt="zal2" />
+    </div>
+  </div>
+  <div class="today_buy">
+    <div>
+      <span>Качество<span> Комфорт</span></span>
+      <span>Безопасность <span> Новинки</span></span>
+      <p class="today_start_price">Цены от <span>200</span> рублей</p>
+    </div>
+    <button class="btn_main_style btn_accent today_buy_btn">купить билет</button>
+  </div>
+</section>

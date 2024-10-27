@@ -1,0 +1,109 @@
+.premiere_content {
+  margin: auto 0;
+}
+
+.premiere {
+  justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--light_violet);
+}
+
+.premiere_slider {
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  height: 50rem;
+  width: 80%;
+  background-color: var(--dark_violet);
+  overflow: hidden;
+}
+
+.premiere_slider_item {
+  flex-basis: 25%;
+  background-color: #9e7b3b;
+  transition: 0.5s;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  color: var(--light_blue);
+}
+
+.premiere_slider_item>div {
+  visibility: hidden;
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.premiere_slider_item.centered >div {
+  visibility: visible;
+  backdrop-filter: brightness(60%);
+}
+
+.premiere_slider_item_film_info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.premiere_slider_item_film_date {
+  margin-left: 2rem;
+}
+.premiere_slider_item_film_date h4 {
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: var(--black-blue); 
+}
+
+.premiere_slider_item_film_date h4+ul {
+  font-weight: 700;
+  margin-top: 1rem;
+  font-size: 2.4rem;
+}
+
+.premiere_slider_item_btn,
+.premiere_slider_item_film_date li+li {
+  margin-top: 1rem;
+}
+
+.premiere_slider_item_name {
+  letter-spacing: 1.1rem;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: var(--black-blue);
+  font-family: var(--other_font_title);
+}
+
+.premiere_slider_item_film_info p:has(span){
+  font-weight: 700;
+}
+
+.premiere_slider_item_film_info p>span{
+  font-weight: 400;
+  margin-left: 1rem;
+}
+
+.premiere_slider_buttons {
+  width: 150px;
+  height: 50px;
+  margin: 5rem auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.premiere_slider_next,
+.premiere_slider_prev{
+  width: 50px;
+  height: 50px;
+}
+.premiere_slider_prev {
+  transform: rotate(180deg);
+}
+
+.premiere_slider_next,
+.premiere_slider_prev {
+  background-image: url(../images/icons/right-arrow-5.svg);
+  cursor: pointer;
+}
+

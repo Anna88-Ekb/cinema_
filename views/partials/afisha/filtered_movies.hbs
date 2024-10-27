@@ -1,0 +1,6 @@
+{{#each movies}}
+<div class="filtered_films filtered_films_cards" style="background-image: url(/posters/{{{this.cinema_path}}});"
+  data-movie-name="{{{this.cinema_name}}}">
+  <button class="filtered_films_resize filtered_films_resize_toBig" title="Развернуть"></button>
+</div>
+{{/each}}

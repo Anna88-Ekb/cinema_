@@ -1,4 +1,235 @@
-import {hidePass, postAHint, validatePhoneNums, validatePhoneLength, spaceInputCheck, validateEmailLength, validateLoginLength, validatePasswordLength} from  './client_validate.js';
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+
+;// ./modules_js/client_validate.js
+
+const months = (/* unused pure expression or super */ null && ([
+  'январь', 'февраль', 'март', 'апрель', 'май', 'июнь',
+  'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'
+]));
+const all_nums = '0123456789';
+const abc = 'abcdefghijklmnopqrstuvwxyz';
+const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const rus_abc = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+const RUS_ABC = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+const symbols = './?><!@#$%^&*()-_=+';
+const symbols_mini = '.-_';
+
+function hidePass({ passes = false }) {
+  if (!passes) { this.previousElementSibling.type == 'text' ? this.previousElementSibling.type = 'password' : this.previousElementSibling.type = 'text'; }
+  else {
+    passes.forEach(el => {
+      el.previousElementSibling.type == "text" ? el.previousElementSibling.type = "password" : el.previousElementSibling.type = "text";
+    });
+  }
+}
+
+//разместить подсказку
+function postAHint(input, text_error) {
+  const p = document.createElement('p');
+  p.textContent = text_error;
+  if (input.parentElement.lastElementChild.tagName === 'P') {
+    input.parentElement.removeChild(input.parentElement.lastElementChild);
+  }
+  input.parentElement.append(p);
+  input.addEventListener('input', function () {
+    if (this.parentElement.lastElementChild.tagName === 'P') {
+      this.parentElement.removeChild(this.parentElement.lastElementChild);
+    }
+  }, { once: true });
+}
+
+function validatePhoneNums(input) {
+  const start_phone = '+7';
+  let value = input.value.trim();
+
+  if (!value.startsWith(start_phone)) {
+    value = start_phone + '()';
+  }
+
+  let after_start_phone_nums = value.substring(3);
+
+  if (after_start_phone_nums[0] === '0') {
+    value = start_phone + '()';
+  } else {
+    let res = [];
+    for (let i = 0; i < after_start_phone_nums.length; i++) {
+      if (all_nums.includes(after_start_phone_nums[i])) {
+        res.push(after_start_phone_nums[i]);
+      }
+    }
+
+    let formatted = start_phone;
+
+    if (res.length > 0) {
+      formatted += '(' + res.slice(0, 3).join('') + ')';
+    } else {
+      formatted += '()';
+    }
+
+    if (res.length > 3) {
+      formatted += res.slice(3, 6).join('');
+    }
+
+    if (res.length > 6) {
+      formatted += '-' + res.slice(6, 8).join('');
+    }
+
+    if (res.length > 8) {
+      formatted += '-' + res.slice(8, 10).join('');
+    }
+
+    value = formatted;
+  }
+
+  input.value = value;
+  console.log(input.value);
+}
+
+function validatePhoneLength(input) {
+  let arr_nums = Array.from(input.value).filter(el => all_nums.includes(el));
+  if (arr_nums.length < 11) {
+    return postAHint(input, "Номер телефона должен содержать 11 цифр");
+  }
+  if (input.value.includes(' ')) {
+    return postAHint(input, "Пробелы не допускаются");
+  }
+  return true;
+}
+
+function returnErrorText(parent, text, time) {
+  const parent_start_text = parent.textContent;
+  parent.textContent = text;
+  setTimeout(function () {
+    text === parent_start_text ? parent.textContent = "" : parent.textContent = parent_start_text;
+  }, time);
+}
+
+function spaceInputCheck(input) {
+  if (input.value.indexOf(' ') != -1) { input.value = input.value.split(' ').join('') };
+}
+
+function validateEmailLength(input) {
+  if (input.value.length < 6) {
+    return postAHint(input, "Не менее 6 символов");
+  }
+
+  if (input.value.length > 30) {
+    input.value = input.value.substring(0, 30);
+    return postAHint(input, "Допускается 30 символов к вводу");
+  };
+
+  if (input.value.includes(' ')) {
+    return postAHint(input, "Пробелы не допускаются");
+  }
+
+  if (!abc.includes(input.value[input.value.length - 1]) && !ABC.includes(input.value[input.value.length - 1])
+    && !rus_abc.includes(input.value[input.value.length - 1]) && !RUS_ABC.includes(input.value[input.value.length - 1]) && !all_nums.includes(input.value[input.value.length - 1])) {
+    return postAHint(input, "Доменная зона не может заканчиваться на символ");
+  }
+
+  let temp = input.value.split('@');
+
+  if (temp.length != 2) {
+    return postAHint(input, "Поле почты должно содержать @");
+  }
+
+
+  let check_temp_rus = temp[0].split('').some(el => {
+    if (rus_abc.includes(el) || RUS_ABC.includes(el)) {
+      return true;
+    }
+  })
+
+  if (check_temp_rus) {
+    return postAHint(input, "Имя почты не должно содержать кириллицу");
+  }
+
+
+  let domain = input.value.substring(input.value.lastIndexOf('@') + 1);
+  let check_ru = [...domain].every(el => rus_abc.includes(el) || RUS_ABC.includes(el) || all_nums.includes(el) || '._-'.includes(el));
+  let check_en = [...domain].every(el => abc.includes(el) || ABC.includes(el) || all_nums.includes(el) || '._-'.includes(el));
+
+  if (!check_en && !check_ru) {
+    return postAHint(input, "В доменной зоне должен быть один алфавит");
+  }
+
+
+  if (!rus_abc.includes(domain[0]) && !RUS_ABC.includes(domain[0]) && !abc.includes(domain[0]) && !ABC.includes(domain[0]) && !all_nums.includes(domain[0])) {
+    return postAHint(input, "За знаком @ только буквенно-числовые символы");
+  }
+
+
+  if (!domain.includes('.')) {
+    return postAHint(input, "Доменная зона должна разделяться точкой");
+  }
+
+  let domain_zone = domain.substring(domain.lastIndexOf('.') + 1);
+  if (domain_zone.length < 2) {
+    return postAHint(input, "Доменная зона должна содержать два символа и больше");
+  }
+
+  return true;
+
+};
+
+function validateLoginLength(input) {
+  if (input.value.length < 8) {
+    return postAHint(input, "Не менее 8 символов");
+  }
+
+  if (input.value.length > 20) {
+    input.value = input.value.substring(0, 20);
+    return postAHint(input, "Допускается 20 символов к вводу");
+  };
+
+  if (input.value.includes(' ')) {
+    return postAHint(input, "Пробелы не допускаются");
+  }
+
+  [...input.value].forEach(el => {
+    if (!abc.includes(el) && !ABC.includes(el) && !all_nums.includes(el) && !symbols.includes(el)) {
+      return postAHint(input, `Логин должен состоять из латинских символов, цифр или ${symbols}`);
+    }
+  })
+  return true;
+}
+
+function validatePasswordLength(input) {
+  if (input.value.length < 10) {
+    return postAHint(input, "Не менее 10 символов");
+  }
+
+  if (input.value.length > 30) {
+    input.value = input.value.substring(0, 30);
+    return postAHint(input, "Допускается 30 символов к вводу");
+  };
+
+  if (input.value.includes(' ')) {
+    return postAHint(input, "Пробелы не допускаются");
+  }
+
+  [...input.value].forEach(el => {
+    if (!abc.includes(el) && !ABC.includes(el) && !all_nums.includes(el) && !symbols.includes(el)) {
+      return postAHint(input, `Пароль должен состоять из латинских символов, цифр или ${symbols}`);
+    }
+  })
+
+  let temp_abc = [...input.value].every(el => abc.includes(el));
+  let temp_ABC = [...input.value].every(el => ABC.includes(el));
+  let temp_nums = [...input.value].every(el => all_nums.includes(el));
+  let temp_symbols = [...input.value].every(el => symbols.includes(el));
+
+  if (temp_abc || temp_ABC || temp_nums || temp_symbols) {
+    return postAHint(input, `Пароль должен состоять из различного типа символов`);
+  }
+
+  return true;
+}
+
+
+;// ./modules_js/header.js
+
 
 const menu_main_list = document.querySelector('.menu_main_list');
 const entrance_form_btn = document.querySelector('.entrance_form_btn');
@@ -341,3 +572,134 @@ function openEntranceForm() {
   }
 }
 
+
+;// ./modules_js/afisha.js
+const filter_films_container = document.querySelector('.filter_films_container');
+const filtered_films_container = document.querySelector('.filtered_films_container');
+
+if (filter_films_container) {
+  filter_films_container.addEventListener('click', (e) => {
+    if (e.target.tagName === 'INPUT') {
+      const filter_films = e.currentTarget.querySelectorAll(`input[name="${e.target.name}"]`);
+      const all_filter_films = filter_films_container.querySelectorAll('input[type="checkbox"]:checked');
+      filter_films.forEach(element => {
+        if (element !== e.target && e.target.checked) {
+          element.disabled = true;
+          element.style.cursor = 'auto';
+          element.nextElementSibling.style.backgroundColor = '#e14234';
+          element.title = 'Можно применить только один фильтр';
+        }
+        if (!e.target.checked) {
+          element.disabled = false;
+          element.style.cursor = 'pointer';
+          element.nextElementSibling.style.backgroundColor = '';
+          element.title = 'Нажмите для применения фильтра';
+        }
+      });
+
+      let type, country, age;
+      all_filter_films.forEach((el) => {
+        if (el.name === 'type') type = el.value;
+        if (el.name === 'country') country = el.value;
+        if (el.name === 'age') age = el.value;
+      });
+
+      const params = {
+        type: type || false,
+        country: country || false,
+        age: age || false
+      }
+
+/*       Object.keys(params).forEach(key => {
+        if (params[key] === false) {
+          delete params[key];
+        }
+      }); */
+
+      createdListofFilters(params);
+    }
+  });
+}
+
+
+if (filtered_films_container) {
+  filtered_films_container.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('filtered_films_resize_toBig')) {
+      const name = e.target.parentElement.dataset.movieName;
+      const filtered_films_cards = e.currentTarget.querySelectorAll('.filtered_films_cards');
+      filtered_films_cards.forEach(el => {
+        el.parentElement.removeChild(el);
+      });
+
+      const response = await fetch(`${window.origin}/api/movie/${name}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+        filtered_films_container.innerHTML = '<p style = "color: var(--light_violet)">Произошла ошибка при загрузке</p>';
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      } else {
+        const movie = await response.json();
+        const filtered_films = document.createElement('div');
+        filtered_films.className = 'filtered_films filtered_films_full_screen';
+        filtered_films.style.backgroundImage = `url('/posters/${movie.cinema_path}')`;
+        filtered_films.innerHTML = `
+        <button class="filtered_films_resize filtered_films_resize_toSmall" title="Свернуть"></button>
+        <div class="filtered_films_descr">
+        <h4>${movie.cinema_name}</h4>
+        <div>
+        <p>${movie.cinema_desc}</p>  
+        <p>Страна:<span>${movie.country_desc}</span></p>
+        <p>Возрастные ограничения:<span>${movie.age_desc}</span></p>
+        <p>Длительность:<span>${movie.cinema_duration} мин.</span></p>
+        </div><button class="btn_main_style btn_ordinary afisha_btn">Приобрести билет</button></div>`
+        filtered_films_container.append(filtered_films);
+        const filtered_films_resize_toSmall = filtered_films.querySelector('.filtered_films_resize_toSmall');
+        filtered_films_resize_toSmall.addEventListener('click', async () => {
+          const resize_films = filtered_films_container.querySelector('.filtered_films_full_screen');
+          const result = await fetch('/filtered-movie');
+          const new_content = await result.text();
+          filtered_films_container.removeChild(resize_films);
+          filtered_films_container.innerHTML = new_content;
+        }, { once: true });
+      }
+    }
+  })
+};
+
+async function createdListofFilters(params) {
+/*   console.log(params); */
+  const query_str = new URLSearchParams(params).toString();
+  /*    console.log(query_str);
+     console.log(params); */
+     const response = await fetch(`/filtered-movie?${query_str}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+});
+const filtered_films_container = document.querySelector('.filtered_films_container');
+const new_content = await response.text();
+filtered_films_container.innerHTML = new_content;
+}
+
+
+
+;// ./schedule.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/******/ })()
+;

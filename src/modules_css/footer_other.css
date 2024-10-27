@@ -1,0 +1,49 @@
+footer {
+  min-height: 18rem;
+  height: auto;
+  padding: 1rem;
+  position: relative;
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+}
+
+.footer_container {
+  display: flex;
+  max-width: 65%;
+  margin: 0 auto;
+  justify-content: space-between;
+}
+
+.footer_container img {
+  width: 3rem;
+  height: 3rem;
+  margin-left: 2rem;
+  vertical-align: middle;
+}
+
+.footer_container img[alt="Vk"] {
+  width: 6rem;
+}
+
+.footer_container img[alt="Feedback"] {
+  width: 6rem;
+  height: 7rem;
+}
+
+.footer_container>ul>li:first-child,
+.buy_form_choiсe_error {
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+.footer_container ul:first-child a:hover {
+  color: var(--red);
+}
+
+footer ul>li~li {
+  margin-top: 1rem;
+}
+
+.footer_container ul:first-child a {
+  transition: 0.3s;
+}

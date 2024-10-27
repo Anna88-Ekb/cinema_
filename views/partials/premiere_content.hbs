@@ -1,0 +1,38 @@
+<section class="premiere" id="premiere">
+  <h2>Премьеры <span class="top_title">Успейте приобрести билеты</span></h2>
+
+  <div class="premiere_content">
+    <div class="premiere_slider">
+      {{#each movies}}
+      <div class="premiere_slider_item unblock" style="background-image: url(/posters/{{this.cinema_path}});">
+        <div>
+          <h3 class="premiere_slider_item_name">{{this.cinema_name}}</h3>
+          <div>
+            <div class="premiere_slider_item_film_info">
+              <div>
+                <p>{{this.cinema_desc}}</p>
+                <p>Страна:<span>{{this.cinema_country}}</span></p>
+                <p>Возраст:<span>{{this.age}}</span></p>
+                <p>Длительность:<span>{{this.cinema_duration}} мин.</span></p>
+              </div>
+              <div class="premiere_slider_item_film_date">
+                <h4>Ближайшие показы:</h4>
+                <ul>
+                  {{#each this.sessions}}
+                  <li>{{session_date}} {{session_time}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+            </div><input class="premiere_slider_item_btn btn_main_style btn_ordinary" type="button"
+              value="Приобрести билет">
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    <div class="premiere_slider_buttons">
+      <div class="premiere_slider_prev"></div>
+      <div class="premiere_slider_next"></div>
+    </div>
+  </div>
+</section>

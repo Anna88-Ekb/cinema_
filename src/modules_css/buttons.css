@@ -74,3 +74,23 @@
   transform: translateY(-50%);
   left: 0;
 }
+
+.prev_form_btn {
+  font-size: initial;
+  text-transform: capitalize;
+  background-color: transparent;
+  border: 0;
+  color: var(--dark_violet);
+}
+
+.prev_form_btn::before {
+  content: "\00AB";
+  font-family: var(--h1_font);
+  width: 2.4rem;
+  height: 2.4rem;
+  padding-right: 1rem;
+}
+
+.prev_form_btn:hover {
+  color: rgba(72, 64, 121, 0.8);
+}

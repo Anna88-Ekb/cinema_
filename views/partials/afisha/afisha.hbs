@@ -1,0 +1,41 @@
+<section class="afisha" id="afisha">
+  <h2>Афиша</h2>
+  <div class="afisha_container">
+    <div class="filter_films_container">
+      <div class="filter_films">
+        <h4>Раздел</h4>
+        <ul class="vertical checkbox_style">
+          {{#each type}}
+          <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="{{{this.name}}}"
+                value="{{{this.type_desc}}}"><span></span></span><label>{{this.type_desc}}<span>{{this.type_count}}</span></label>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="filter_films">
+        <h4>Страна</h4>
+        <ul class="vertical checkbox_style">
+          {{#each country}}
+          <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="{{{this.name}}}"
+                value="{{{this.country_name}}}"><span></span></span><label>{{this.country_name}}<span>{{this.movie_count}}</span></label>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="filter_films">
+        <h4>Страна</h4>
+        <ul class="vertical checkbox_style">
+          {{#each age}}
+          <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="{{{this.name}}}"
+                value="{{{this.age_desc}}}"><span></span></span><label>{{this.age_desc}}<span>{{this.age_count}}</span></label>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+    <div class="filtered_films_container">
+      {{> afisha/filtered_movies}}
+    </div>
+
+  </div>
+</section>
