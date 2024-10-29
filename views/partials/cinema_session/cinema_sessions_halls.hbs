@@ -1,0 +1,26 @@
+{{#each halls}}
+<div class="cinema_sessions_hall">
+  <h4>Зал {{this.hall_id}}</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Время</th>
+        <th>Тип</th>
+        <th>Цена</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each this.sessions}}
+      <tr>
+        <td>{{cinema_name}}</td>
+        <td>{{session_time}}</td>
+        <td>{{graphics_desc}}</td>
+        <td>{{basic_price}}</td>
+        <td data-hall="{{{../hall_id}}}" class="session_buy_btn" data-date="{{{session_day}}}" data-time="{{{session_time}}}" data-movie-name="{{{cinema_name}}}">        <a>Купить</a></td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+{{/each}}

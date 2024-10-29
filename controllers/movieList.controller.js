@@ -72,27 +72,26 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
     res.json(movies);
   };
 
-  async getTodayMoviesList(req, res) {
+  async getDayMoviesList(req, res) {
+    const day = req.params.day;
     const result = await db.query(`
-    select h.hall_id, h.hall_name, c.cinema_name, to_char(session_time, 'HH24:MI') as session_time, g.graphics_desc from cinema_session cs
+    select h.hall_id, h.hall_name, c.cinema_name, to_char(session_date, 'YYYY-MM-DD') as session_day ,to_char(session_time, 'HH24:MI') as session_time, g.graphics_desc, cs.session_basic_price as basic_price  from cinema_session cs
     JOIN cinema c ON  cs.cinema_cinema_id = c.cinema_id
     JOIN hall h ON  cs.hall_hall_id = h.hall_id
     JOIN graphics g ON  cs.graphics_graphics_id=g.graphics_id
-    where session_date = CURRENT_DATE
+    where session_date = $1
     order by h.hall_id, session_time;
-    `);
-
-    /* '2024-10-26' */
+    `, [day]);
     const rows = result.rows;
     const halls = rows.reduce((acc, row) => {
-
-      let hall = acc.find(h => h.hall_id === row.hall_id);
-
+    let hall = acc.find(h => h.hall_id === row.hall_id);
       if (hall) {
         hall.sessions.push({
           cinema_name: row.cinema_name,
+          session_day: row.session_day,
           session_time: row.session_time,
-          graphics_desc: row.graphics_desc
+          graphics_desc: row.graphics_desc,
+          basic_price: row.basic_price
         });
       } else {
         acc.push({
@@ -100,8 +99,10 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
           hall_name: row.hall_name,
           sessions: [{
             cinema_name: row.cinema_name,
+            session_day: row.session_day,
             session_time: row.session_time,
-            graphics_desc: row.graphics_desc
+            graphics_desc: row.graphics_desc,
+            basic_price: row.basic_price
           }]
         });
       }
@@ -115,12 +116,12 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
     if (Object.keys(req.query).length > 0) {
       const filters = [];
       const queryParams = [];
-    
+
       if (req.query.type && req.query.type !== 'false') {
         filters.push(`t.type_desc = $${queryParams.length + 1}`);
         queryParams.push(req.query.type);
       }
-    
+
       if (req.query.country && req.query.country !== 'false') {
         filters.push(`(select string_agg(country_name, ', ')
         from country where country_id in
@@ -129,13 +130,12 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
         where c.cinema_id = p.cinema_cinema_id)) LIKE $${queryParams.length + 1}`);
         queryParams.push(`%${req.query.country}%`);
       }
-    
+
       if (req.query.age && req.query.age !== 'false') {
         filters.push(`a.age_desc = $${queryParams.length + 1}`);
         queryParams.push(req.query.age);
       }
-    
-      // Начинаем с базового SQL-запроса
+
       let query = `
       select c.cinema_id,
       c.cinema_name,
@@ -162,16 +162,13 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
       and (c.cinema_end_date > current_date
       or c.cinema_end_date is null))
       `;
-    
-      // Добавляем динамические условия
+
       if (filters.length > 0) {
         query += ' AND ' + filters.join(' AND ');
       }
-    
-      // Выполняем запрос с параметрами
       const result = await db.query(query, queryParams);
       res.json(result.rows);
-    }  else {
+    } else {
       const result = await db.query(`
       select c.cinema_id,
       c.cinema_name,
@@ -222,6 +219,17 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
     (c.cinema_end_date > CURRENT_DATE OR c.cinema_end_date IS NULL));`, [name]);
     res.json(movie.rows[0]);
   }
+
+  async getDaysByMovieName(req, res) {
+  const name = req.params.name;
+  const date_path = await db.query(`select distinct to_char(cs.session_date, 'YYYY-MM-DD') as session, c.cinema_path from cinema_session cs
+  join cinema c on c.cinema_id = cs.cinema_cinema_id 
+  where cs.session_date >= current_date
+  and lower(c.cinema_name) = $1
+  order by 1;`, [name]);
+  res.json(date_path.rows);
+  } 
+
 }
 export const movieList = new movieListController();
 

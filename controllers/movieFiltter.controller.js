@@ -56,8 +56,8 @@ class movieSelection {
   async getMoviesDate(req, res) {
     const result = await db.query(`
     select extract(month from session_date) as month, extract(day from session_date) as day, extract(year from session_date) as year from (select distinct 
-    session_date from cinema_session)
-    order by 3, 1, 2;
+      session_date from cinema_session where session_date >= current_date)
+      order by 3, 1, 2;
     `);
     res.json(result.rows);
   }

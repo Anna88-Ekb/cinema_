@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { json } from 'express';
 import { engine } from 'express-handlebars';
 import path from 'path';
 import { __filename, __dirname } from './__dirname.js';
@@ -10,11 +10,17 @@ const app = express();
 
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
+
 app.use('/posters', express.static(path.join(__dirname, 'posters')))
 app.use('/api', moviesRoutes);
 app.use('/api', moviesFilterRoutes);
-
 
 app.engine('hbs', engine({
   extname: 'hbs',
@@ -24,25 +30,31 @@ app.engine('hbs', engine({
     homeCssFile: manifest['home.css'],
     homeJsFile: manifest['home.js'],
     scheduleCssFile: manifest['schedule.css'],
-    scheduleJsFile: manifest['schedule.js']
+    scheduleJsFile: manifest['schedule.js'],
+    currentHall: function (halls, hallId, options) {
+      const hall = halls.find(h => h.hall_id === hallId);
+      if (hall) {
+        return options.fn(hall);
+      } else {
+        return '<p>Сегодня киносеансы не проводятся</p>';
+      }
+    }
   }
 }));
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 
-
 app.get('/', async (_, res) => {
   try {
     const response_movies = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies-slider');
     const movies = await response_movies.json();
-    const response_movies_today = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies-today');
+    const response_movies_today = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movies-day/:${date_db_format}`);
     const halls = await response_movies_today.json();
     res.render('home', {
       title: "Cinema-кинотеатр", movies, halls,
       helpers: {
         currentHall: function (halls, hallId, options) {
-          // Проверяем, есть ли зал с заданным hallId
           const hall = halls.find(h => h.hall_id === hallId);
           if (hall) {
             return options.fn(hall);
@@ -65,14 +77,16 @@ app.get('/schedule-page', async (_, res) => {
     const response_movies_type = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies-type');
     const response_movies_age = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies-age');
     const response_movies = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies');
-    const response_movies_calendar = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies-calendar')
+    const response_movies_calendar = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies-calendar');
+    const response_movies_day = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movies-day/:${date_db_format}`);
     const movies = await response_movies.json();
     const country = await response_movies_country.json();
     const type = await response_movies_type.json();
     const age = await response_movies_age.json();
     const calendar = await response_movies_calendar.json();
+    const halls = await response_movies_day.json();
     res.render('schedule_page', {
-      title: "Cinema-кинотеатр", country, type, age, movies, calendar
+      title: "Cinema-кинотеатр", country, type, age, movies, calendar, halls
     });
   } catch (error) {
     console.error('Ошибка при запросе к API:', error);
@@ -103,16 +117,22 @@ app.get('/pages_info', (_, res) => {
   res.sendFile(__dirname + '/dist/pages_info/index.html');
 });
 
+app.get('/schedule-day/', async(req, res) => {
+  try{
+    const response_movies_day = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movies-day/:${req.query.year}-${req.query.month}-${req.query.day}`);
+    const halls = await response_movies_day.json();
+    res.render('partials/cinema_session/cinema_sessions_halls', {halls});
+  }catch(error){
+    console.error('Ошибка при запросе к API:', error);
+    res.status(500).send('Ошибка сервера');
+  }
+  });
 
-app.listen(process.env.PORT || 4000, () => console.log('server started'));
+
+app.listen(process.env.PORT || 3000, () => console.log('Запуск!'));
 
 
-/* select extract(month from session_date) as month, extract (day from date_trunc('month', session_date) + interval '1 month -1 day') AS max_day from cinema_session 
-where session_date >= current_date
-group by 1, 2
-order by
-case
-when extract (MONTH FROM CURRENT_DATE) = extract(month from session_date) then 0 
-when extract (MONTH FROM CURRENT_DATE) < extract(month from session_date) then 1
-else 2
-end, extract(month from session_date); */
+
+
+const date = new Date().toLocaleDateString('ru-RU', {timeZone: "Europe/Moscow"});
+const date_db_format = date.substring(6)+'-'+date.substring(3, 5) + '-' +date.substring(0,2);
