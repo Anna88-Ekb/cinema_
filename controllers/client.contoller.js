@@ -69,7 +69,7 @@ class Client{
    
     try{
       const search_phone = await db.query(`select client_phone from client
-      where client_phone = $1;`, [client.phone.toLowerCase()]);
+      where client_phone = $1;`, [client.phone]);
    
       if(search_phone.rows.length > 0) {
         res.status(202).json({message: 'Инструкции будут высланы на предоставленный номер телефона.'});
@@ -91,7 +91,7 @@ class Client{
       if(search_login.rows.length > 0) {
         res.status(202).json({message: 'Инструкции будут высланы на предоставленный адрес электронной почты.'});
       } else {
-        res.status(404).json({success: 'Клиент не найден. Перепроверьте введенный адрес или воспользуйтесь другим способом.'});
+        res.status(404).json({success: 'Клиент не найден. Перепроверьте данные или воспользуйтесь другим способом.'});
       }
     }catch(error) {
      res.status(500).json({ success: false, error: error.message });
