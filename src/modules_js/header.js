@@ -100,7 +100,7 @@ async function openEntranceForm() {
             client_agreement_newsletter: agreement[1].checked
           }
           }
-          console.log(client);
+
           try{
             let response = await fetch(`${window.origin}/new-client`, {
               method: 'POST',
@@ -109,6 +109,30 @@ async function openEntranceForm() {
               },
               body: JSON.stringify(client)
             });
+            const answer = await response.json();
+            if(answer.message) {
+              const div = document.createElement('div');
+              div.className = 'entrance_form_container_error';
+              div.insertAdjacentText('afterbegin', `${answer.message}`);
+              const form = document.querySelector('.registration_form');
+              form.reset();
+              form.before(div);
+              setTimeout(() => {
+                div.remove();
+              }, 8000);
+            }
+            if(answer.success === true) {
+              const div = document.createElement('div');
+              div.className = 'entrance_form_container_success';
+              div.insertAdjacentText('afterbegin', `Регистрация пройдена.`);
+              const form = document.querySelector('.registration_form');
+              form.reset();
+              form.before(div);
+              setTimeout(() => {
+                const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+                document.body.children[0].removeChild(entrance_form_big_container);
+              }, 8000);
+            }
           } catch(error) {
             console.error(error);
           }
@@ -122,7 +146,7 @@ async function openEntranceForm() {
       }, { once: true });
     }, { once: true });
 
-    //форма восттановления пароля
+    //форма восстановления пароля
     const restore_password = document.querySelector('.restore_password a');
     restore_password.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -139,9 +163,119 @@ async function openEntranceForm() {
         const phone = document.querySelector('.phone');
         const email = document.querySelector('.email');
         const elements = Array.from(document.querySelectorAll('.login, .phone, .email'));
-        console.log(elements);
-        if(email && validateEmailLength(email) || login && validateLoginLength(login) ||phone && validatePhoneLength(phone)){
-          console.log('tr');
+    
+        if(email && validateEmailLength(email) || login && validateLoginLength(login) || phone && validatePhoneLength(phone)){
+          if(email && validateEmailLength(email)) {
+            try{
+              const check_email = await fetch(`${window.origin}/search-client-mail`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({email: email.value})
+              });
+              const res = await check_email.json();
+              if(res.message) {
+                const div = document.createElement('div');
+                div.className = 'entrance_form_container_success';
+                div.insertAdjacentText('afterbegin', `${res.message}`);
+                const form = document.querySelector('.restore_password_form');
+                form.reset();
+                form.before(div);
+                setTimeout(() => {
+                  const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+                  document.body.children[0].removeChild(entrance_form_big_container);
+                }, 8000);
+              }
+              if(res.success) {
+                const div = document.createElement('div');
+                div.className = 'entrance_form_container_error';
+                div.insertAdjacentText('afterbegin', `${res.success}`);
+                const form = document.querySelector('.restore_password_form');
+                form.reset();
+                form.before(div);
+                setTimeout(() => {
+                  div.remove();
+                }, 8000);
+              }
+            }catch(error) {
+              console.error(error.message);
+            }
+          }
+          if(login && validateLoginLength(login)) {
+            try{
+              const check_login = await fetch(`${window.origin}/search-client-login`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({login: login.value})
+              });
+              const res = await check_login.json();
+              if(res.message) {
+                const div = document.createElement('div');
+                div.className = 'entrance_form_container_success';
+                div.insertAdjacentText('afterbegin', `${res.message}`);
+                const form = document.querySelector('.restore_password_form');
+                form.reset();
+                form.before(div);
+                setTimeout(() => {
+                  const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+                  document.body.children[0].removeChild(entrance_form_big_container);
+                }, 8000);
+              }
+              if(res.success) {
+                const div = document.createElement('div');
+                div.className = 'entrance_form_container_error';
+                div.insertAdjacentText('afterbegin', `${res.success}`);
+                const form = document.querySelector('.restore_password_form');
+                form.reset();
+                form.before(div);
+                setTimeout(() => {
+                  div.remove();
+                }, 8000);
+              }
+            }catch(error) {
+              console.error(error.message);
+            }
+          }
+          if(phone && validatePhoneLength(phone)) {
+            try{
+              const check_phone = await fetch(`${window.origin}/search-client-phone`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({phone: phone.value})
+              });
+              const res = await check_phone.json();
+              if(res.message) {
+                const div = document.createElement('div');
+                div.className = 'entrance_form_container_success';
+                div.insertAdjacentText('afterbegin', `${res.message}`);
+                const form = document.querySelector('.restore_password_form');
+                form.reset();
+                form.before(div);
+                setTimeout(() => {
+                  const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+                  document.body.children[0].removeChild(entrance_form_big_container);
+                }, 8000);
+              }
+              if(res.success) {
+                const div = document.createElement('div');
+                div.className = 'entrance_form_container_error';
+                div.insertAdjacentText('afterbegin', `${res.success}`);
+                const form = document.querySelector('.restore_password_form');
+                form.reset();
+                form.before(div);
+                setTimeout(() => {
+                  div.remove();
+                }, 8000);
+              }
+            }catch(error) {
+              console.error(error.message);
+            }
+          }
         }
       });
       const form_close = document.querySelector('.entrance_form_close');

@@ -6,6 +6,7 @@ import { manifest } from './manifest.js';
 import moviesRoutes from './routes/movies.routes.js';
 import moviesFilterRoutes from './routes/movieFilter.routes.js';
 import clientRoutes from './routes/client.routes.js';
+import { error } from 'console';
 
 const app = express();
 
@@ -22,7 +23,8 @@ app.use(express.static(path.join(__dirname, 'dist'), {
 app.use('/posters', express.static(path.join(__dirname, 'posters')))
 app.use('/api', moviesRoutes);
 app.use('/api', moviesFilterRoutes);
-app.use('/api', clientRoutes);
+app.use('/server-api', clientRoutes);
+
 
 app.engine('hbs', engine({
   extname: 'hbs',
@@ -90,16 +92,16 @@ app.get('/schedule-page', async (_, res) => {
 
 app.get('/filtered-movie', async (req, res) => {
   try {
-    if(Object.keys(req.query).length > 0) {
- /*      console.log(req.query); */
+    if (Object.keys(req.query).length > 0) {
+      /*      console.log(req.query); */
       const queryString = new URLSearchParams(req.query).toString();
       const response_movies = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movies?${queryString}`);
       const movies = await response_movies.json();
-      res.render('partials/afisha/filtered_movies', {movies});
+      res.render('partials/afisha/filtered_movies', { movies });
     } else {
       const response_movies = await fetch(process.env.SERV_HOST + process.env.PORT + '/api/movies');
       const movies = await response_movies.json();
-      res.render('partials/afisha/filtered_movies', {movies});
+      res.render('partials/afisha/filtered_movies', { movies });
     }
   } catch (error) {
     console.error('Ошибка при запросе к API:', error);
@@ -111,33 +113,115 @@ app.get('/pages_info', async (_, res) => {
   res.sendFile(__dirname + '/dist/pages_info/index.html');
 });
 
-app.get('/schedule-day/', async(req, res) => {
-  try{
+app.get('/schedule-day/', async (req, res) => {
+  try {
     const response_movies_day = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movies-day/:${req.query.year}-${req.query.month}-${req.query.day}`);
     const halls = await response_movies_day.json();
-    res.render('partials/cinema_session/cinema_sessions_halls', {halls});
-  }catch(error){
+    res.render('partials/cinema_session/cinema_sessions_halls', { halls });
+  } catch (error) {
     console.error('Ошибка при запросе к API:', error);
     res.status(500).send('Ошибка сервера');
   }
 });
 
 app.post('/new-client', async (req, res) => {
-console.log(req.body);
+  try {
+    const clientResponse = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/new-client/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+
+    if (!clientResponse.ok) {
+      const errorData = await clientResponse.json();
+      if (errorData.message) {
+        return res.status(400).json({ message: errorData.message });
+      } else {
+        throw new Error(`Ошибка сервера: ${clientResponse.status}`);
+      }
+    }
+    res.status(200).json({ success: true});
+  } catch(e) {
+    console.error('Ошибка при создании клиента:', error.message);
+    res.status(500).json({ error: 'Ошибка при создании клиента' });
+  }
 });
 
-
-app.get('/entarance-form/', async(_, res) => {
+app.get('/entarance-form/', async (_, res) => {
   res.render('partials/header/entrance_form');
 });
 
-app.get('/registration-form/', async(_, res) => {
+app.get('/registration-form/', async (_, res) => {
   res.render('partials/header/registration_form');
 });
 
-app.get('/restore-password-form/', async(_, res) => {
+app.get('/restore-password-form/', async (_, res) => {
   res.render('partials/header/restore_password_form');
 });
+
+app.post('/search-client-mail', async(req, res) => {
+try{
+  const client_email = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/search-client-mail/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req.body)
+  });
+
+  const a_client_email = await client_email.json();
+  if(a_client_email.message){
+    res.status(200).json({message: a_client_email.message});
+  }
+  else if(a_client_email.success) {
+    res.status(404).json({success: a_client_email.success});
+  }
+
+}catch(error){
+  res.status(500).json(error.message);
+}
+});
+
+app.post('/search-client-phone', async(req, res) => {
+  try{
+    const client_phone = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/search-client-phone/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+  
+    const a_client_phone= await client_phone.json();
+    if(a_client_phone.message){
+      res.status(200).json({message: a_client_phone.message});
+    }
+    else if(a_client_phone.success) {
+      res.status(404).json({success: a_client_phone.success});
+    }
+  
+  }catch(error){
+    res.status(500).json(error.message);
+  }
+  });
+
+app.post('/search-client-login', async(req, res) => {
+  try{
+    const client_login = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/search-client-login/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+  
+    const a_client_login = await client_login.json();
+    if(a_client_login.message){
+      res.status(200).json({message: a_client_login.message});
+    }
+    else if(a_client_login.success) {
+      res.status(404).json({success: a_client_login.success});
+    }
+  
+  }catch(error){
+    res.status(500).json(error.message);
+  }
+  });
+
 
 
 app.listen(process.env.PORT || 3000, () => console.log('Запуск!'));
@@ -145,5 +229,5 @@ app.listen(process.env.PORT || 3000, () => console.log('Запуск!'));
 
 
 
-const date = new Date().toLocaleDateString('ru-RU', {timeZone: "Europe/Moscow"});
-const date_db_format = date.substring(6)+'-'+date.substring(3, 5) + '-' +date.substring(0,2);
+const date = new Date().toLocaleDateString('ru-RU', { timeZone: "Europe/Moscow" });
+const date_db_format = date.substring(6) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
