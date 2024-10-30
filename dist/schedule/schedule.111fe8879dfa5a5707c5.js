@@ -344,7 +344,6 @@ __webpack_async_result__();
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   HP: () => (/* binding */ spaceInputCheck),
 /* harmony export */   KC: () => (/* binding */ validateLoginLength),
-/* harmony export */   Kc: () => (/* binding */ hidePass),
 /* harmony export */   Lv: () => (/* binding */ validateEmailLength),
 /* harmony export */   Yt: () => (/* binding */ validatePhoneNums),
 /* harmony export */   eX: () => (/* binding */ validatePasswordLength),
@@ -365,14 +364,7 @@ const RUS_ABC = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭ�
 const symbols = './?><!@#$%^&*()-_=+';
 const symbols_mini = '.-_';
 
-function hidePass({ passes = false }) {
-  if (!passes) { this.previousElementSibling.type == 'text' ? this.previousElementSibling.type = 'password' : this.previousElementSibling.type = 'text'; }
-  else {
-    passes.forEach(el => {
-      el.previousElementSibling.type == "text" ? el.previousElementSibling.type = "password" : el.previousElementSibling.type = "text";
-    });
-  }
-}
+
 
 //разместить подсказку
 function postAHint(input, text_error) {
@@ -613,368 +605,232 @@ contacts.addEventListener('click', (e) => {
 
 entrance_form_btn.addEventListener('click', openEntranceForm);
 
-function openEntranceForm() {
-  // ПЕРЕМЕННЫЕ ФОРМ
-  const forms = document.querySelectorAll('.entrance_form_big_container form');
-  const [entrance_form, registration_form, restore_password_form] = forms;
-  const form_close = document.querySelector('.entrance_form_close');
-  const entrance_form_menu = entrance_form.querySelectorAll('a');
-  const [registration_btn, restore_password_btn] = entrance_form_menu;
-  let select = document.querySelector('.restore_password_form select');
-  const reset_pass_type = select.nextElementSibling.querySelector('input');
-  const entrance = entrance_form.querySelector('input[type="button"]');
-  const hide_pass = entrance_form.querySelector('.password+svg');
-  let prev_form_btn;
-  entrance_form.parentElement.parentElement.style.display = 'block';
-  entrance_form.style.display = 'block';
-  document.body.style.overflowY = 'hidden';
+async function openEntranceForm() {
+  try {
+    //форма входа
+    const entrance_form = await fetch(`${window.origin}/entarance-form/`);
+    const form_container = await entrance_form.text();
+    document.body.children[0].insertAdjacentHTML('afterbegin', form_container);
 
-  //СОБЫТИЯ
-  // Закрыть форму входа и регистрации
-  form_close.addEventListener('click', closeEntranceForm, { once: true });
-  //Смена пароля в первой форме
-  hide_pass.addEventListener('click', _client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .hidePass */ .Kc);
-  // Обработчик кнопки регистрации
-  registration_btn.addEventListener('click', handleRegistrationBtnClick);
-  // Обработчик кнопки восстановления пароля
-  restore_password_btn.addEventListener('click', handleRestorePasswordBtnClick);
-  //Проверка вводимых данных для входа в аккаунт
-  entrance.addEventListener('click', openUserAccount);
+    const form_close = document.querySelector('.entrance_form_close');
+    form_close.addEventListener('click', () => {
+      const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+      document.body.children[0].removeChild(entrance_form_big_container);
+    }, { once: true });
 
+    formFunc('.entrance_form');
+    const btn = document.querySelector('.entrance_form input[type="button"]');
 
-  //ФУНКЦИИ
-  function closeEntranceForm() {
-    entrance_form.parentElement.parentElement.style.display = 'none';
-    forms.forEach(el => { el.style.display = 'none'; el.reset(); });
-    document.body.style.overflowY = 'scroll';
-    registration_btn.removeEventListener('click', handleRegistrationBtnClick);
-    restore_password_btn.removeEventListener('click', handleRestorePasswordBtnClick);
-    if (prev_form_btn) {
-      prev_form_btn.removeEventListener('click', handlePrevFormBtnClick);
-    }
-    hide_pass.removeEventListener('click', _client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .hidePass */ .Kc);
-    resetForm();
-  }
+    btn.addEventListener('click', function checkClientvalue(e) {
+      e.preventDefault();
+      const login = document.querySelector('.login');
+      const password = document.querySelectorAll('.password');
+/*       if(validateLoginLength(login) &&  validatePasswordLength(password)) {
+        console.log('tr');
+        try{
 
-  function resetForm() {
-    if (hide_pass.previousElementSibling.type == 'password') { (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .hidePass */ .Kc)({ passes: [hide_pass] }) };
-    const pass = registration_form.querySelector('#registration_form_pass');
-    const repeat_pass = registration_form.querySelector('#registration_form_repeat_pass');
-    const passes = [pass, repeat_pass];
-    const agreement = document.querySelectorAll('.agreement input[type="checkbox"]');
-    if (agreement[0]) {
-      agreement[0].nextElementSibling.style.backgroundColor = '';
-    }
-    if (pass.type == 'password' || repeat_pass.type == 'password') {
-      pass.type = 'text';
-      repeat_pass.type = 'text';
-    }
-    passes.forEach(el => el.removeEventListener('click', hidePasses));
-    const entrance_form_errors = document.querySelectorAll('.entrance_form>div>p');
-    const registration_form_errors = registration_form.querySelectorAll('.registration_form fieldset>div>label+div>input');
-    if (entrance_form_errors) { entrance_form_errors.forEach(el => el.parentElement.removeChild(el)); };
-    select = document.querySelector('.restore_password_form select');
-    if (select.classList.contains('red_color')) { select.classList.remove('red_color') };
-    select.removeEventListener('change', installInputType);
-    if (reset_pass_type.parentElement.lastElementChild.tagName === 'P') {
-      reset_pass_type.parentElement.removeChild(reset_pass_type.parentElement.lastElementChild);
-    }
-    if (reset_pass_type) { reset_pass_type.className = ''; }
-    registration_form_errors.forEach(el => {
-      if (el.parentElement.lastElementChild.tagName === 'P') {
-        el.parentElement.removeChild(el.parentElement.lastElementChild);
-      }
-    })
-  }
-
-  function returnBack(prev) {
-    entrance_form.reset();
-    prev.parentElement.reset();
-    prev.parentElement.style.display = 'none';
-    entrance_form.style.display = 'block';
-    prev.removeEventListener('click', handlePrevFormBtnClick);
-    resetForm();
-  }
-
-  function handleRegistrationBtnClick(e) {
-    e.preventDefault();
-    openRegistrationForm();
-  }
-
-  function openRegistrationForm() {
-    const phone = registration_form.querySelector('.phone');
-    const email = registration_form.querySelector('.email');
-    const login = registration_form.querySelector('#registration_form_login');
-    const pass = document.querySelector('#registration_form_pass');
-    const repeat_pass = document.querySelector('#registration_form_repeat_pass');
-    const reg_btn = registration_form.querySelector('input[type="button"]');
-    const passes = [pass.nextElementSibling, repeat_pass.nextElementSibling];
-    passes.forEach(el => el.addEventListener('click', hidePasses));
-    //МЕТКА
-    if (phone) {
-      phone.addEventListener('input', () => {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneNums */ .Yt)(phone);
-      });
-      phone.addEventListener('change', () => {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneLength */ .xI)(phone);
-      });
-    }
-
-    if (email) {
-      email.addEventListener('input', () => {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(email);
-      });
-      email.addEventListener('change', () => {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateEmailLength */ .Lv)(email);
-      });
-    }
-
-    if (login) {
-      login.addEventListener('input', () => {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(login);
-      });
-      login.addEventListener('change', () => {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateLoginLength */ .KC)(login);
-      });
-    }
-
-    if (pass && repeat_pass) {
-
-      pass.addEventListener('input', () => {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(pass);
-      });
-      repeat_pass.addEventListener('input', () => {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(repeat_pass);
-      });
-
-      pass.addEventListener('change', () => {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePasswordLength */ .eX)(pass);
-      });
-      repeat_pass.addEventListener('change', () => {
-        if (repeat_pass.value.trim() != pass.value.trim()) {
-          (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(repeat_pass, `Пароли должны совпадать`);
+        } catch(error) {
+          console.log(error);
         }
-      });
-      repeat_pass.addEventListener('paste', (e) => {
+      }; */
+    })
+
+    //форма регистрации
+    const registration = document.querySelector('.registration a');
+    registration.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const registration_form = await fetch(`${window.origin}/registration-form/`);
+      const form_container = await registration_form.text();
+      const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+      document.body.children[0].removeChild(entrance_form_big_container);
+      document.body.children[0].insertAdjacentHTML('afterbegin', form_container);
+      formFunc('.registration_form');
+      const form_close = document.querySelector('.entrance_form_close');
+      form_close.addEventListener('click', () => {
+        const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+        document.body.children[0].removeChild(entrance_form_big_container);
+      }, { once: true });
+      const back = document.querySelector('.prev_form_btn');
+      const btn = document.querySelector('.registration_form input[type="button"]');
+      btn.addEventListener('click', async (e)=>{
         e.preventDefault();
-        repeat_pass.value='';
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(repeat_pass, `Запрещено вставлять значение в поле`);
-      });
-    }
-
-    entrance_form.style.display = 'none';
-    registration_form.style.display = 'block';
-    prev_form_btn = registration_form.querySelector('.prev_form_btn');
-    prev_form_btn.addEventListener('click', handlePrevFormBtnClick);
-    reg_btn.addEventListener('click', userRegistration);
-  }
-
-  function hidePasses() {
-    let pass = document.querySelector('#registration_form_pass');
-    let repeat_pass = document.querySelector('#registration_form_repeat_pass');
-    const passes = [pass.nextElementSibling, repeat_pass.nextElementSibling];
-    (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .hidePass */ .Kc)({ passes: passes });
-  }
-
-  function handleRestorePasswordBtnClick(e) {
-    e.preventDefault();
-    openRestorePasswordForm();
-  }
-
-  function openRestorePasswordForm() {
-    entrance_form.style.display = 'none';
-    restore_password_form.style.display = 'block';
-    prev_form_btn = restore_password_form.querySelector('.prev_form_btn');
-    prev_form_btn.addEventListener('click', handlePrevFormBtnClick);
-    select.addEventListener('change', installInputType);
-    const restore_password_form_btn = restore_password_form.querySelector('input[type="button"]');
-    restore_password_form_btn.addEventListener('click', sendResetPasswData);
-  }
-
-  function handlePrevFormBtnClick(e) {
-    e.preventDefault();
-    returnBack(prev_form_btn);
-  }
-
-  function installInputType() {
-    reset_pass_type.className = `${select[select.selectedIndex].value}`;
-    /* if(reset_pass_type.value.length>0) {reset_pass_type.value=''}; */
-    if (reset_pass_type.classList.contains('phone')) {
-      if (reset_pass_type.value.length > 0) { reset_pass_type.value = '' };
-      reset_pass_type.addEventListener('input', validatePhoneNumsResetPass);
-    } else {
-      reset_pass_type.removeEventListener('input', validatePhoneNumsResetPass);
-    }
-  }
-
-  function validatePhoneNumsResetPass() {
-    (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneNums */ .Yt)(reset_pass_type);
-  }
-
-  if (select) {
-    select.addEventListener('change', installInputType);
-  }
-
-  function openUserAccount() {
-    const errors = document.querySelectorAll('.entrance_form>div>p');
-    if (errors) { errors.forEach(el => el.parentElement.removeChild(el)); };
-    const login = this.parentElement.querySelector('.login');
-    const password = this.parentElement.querySelector('.password');
-    if (`${login.value.trim()}` in users && password.value.trim() === users[login.value.trim()].password) {
-      entrance_form_btn.removeEventListener('click', openEntranceForm);
-      entrance_form_btn.textContent = login.value.trim();
-      entrance_form_btn.title = "Личный кабинет находится на техническом обслуживании";
-      closeEntranceForm();
-    }
-
-    if (login.value.trim().length === 0 || password.value.trim().length === 0) {
-      if (login.value.trim().length === 0) {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(login, "Заполните поле");
-      }
-      if (password.value.trim().length === 0) {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(password, "Заполните поле");
-      }
-    } else {
-      if (`${login.value.trim()}` in users && password.value.trim() != users[login.value.trim()].password) {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(password, "Неверный пароль");
-      }
-      if (!(`${login.value.trim()}` in users)) {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(login, "Неверный логин");
-      }
-    }
-  }
-
-  function sendResetPasswData() {
-    const input = reset_pass_type;
-    if (select.classList.contains('red_color')) {
-      select.classList.remove('red_color');
-    }
-    if (input.parentElement.lastElementChild.tagName === 'P') {
-      input.parentElement.removeChild(input.parentElement.lastElementChild);
-    }
-
-    if (select.selectedIndex === 0 || input.value.trim().length === 0) {
-      if (select.selectedIndex === 0) {
-        select.classList.add('red_color');
-        select.addEventListener('click', function () {
-          select.classList.remove('red_color');
-        })
-      }
-      if (input.value.trim().length === 0) {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(input, "Заполните поле");
-      }
-    } else {
-      if (select.selectedIndex === 1 && input.classList.contains('login')) {
-        `${input.value.trim()}` in users ? closeEntranceForm() : (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(input, "Данные не найдены");
-      }
-      if (select.selectedIndex === 2 && input.classList.contains('phone')) {
-        const phones = Object.values(users).filter(el => {
-          const temp = input.value.trim();
-          return el.phone === temp.substring(0, 2) + temp.substring(3, 6) + temp.substring(7, 10) + temp.substring(11, 13) + temp.substring(14);
-        });
-        phones.length > 0 ? closeEntranceForm() : (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(input, "Данные не найдены");
-      }
-      if (select.selectedIndex === 3 && input.classList.contains('email')) {
-        Object.values(users).filter(el => el.email === input.value.trim().toLowerCase()).length > 0 ? closeEntranceForm() : (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(input, "Данные не найдены");
-      }
-    }
-  }
-
-  function userRegistration() {
-    const registration_form = document.querySelectorAll('.registration_form fieldset>div>label+div>input');
-    const [email, phone, login, pass, pass_repeat] = registration_form;
-    const contacts = document.querySelectorAll('.send_ticket_type input[type="checkbox"]');
-    const agreement = document.querySelectorAll('.agreement input[type="checkbox"]');
-    let temp = [...registration_form].every(el => el.value.trim().length > 0);
-    if (temp && agreement[0].checked) {
-      if (pass.value.trim() != pass_repeat.value.trim()) {
-        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(pass_repeat, `Пароли должны совпасть`);
-      } else {
-        if ((0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateEmailLength */ .Lv)(email) && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneLength */ .xI)(phone) && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateLoginLength */ .KC)(login) && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePasswordLength */ .eX)(pass)) {
-          const users_email = Object.values(users).filter(el => el.email === email.value.trim().toLowerCase());
-          const users_phone = Object.values(users).filter(el => el.phone === phone.value.substring(0, 2) + phone.value.substring(3, 6) + phone.value.substring(7, 10) + phone.value.substring(11, 13) + phone.value.substring(14));
-          if (`${login.value.trim()}` in users) {
-            (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(login, `Логин занят, восстановите доступ`);
-          } else if (users_phone.length > 0) {
-            (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(phone, `Номер используется, восстановите доступ`);
-          } else if (users_email.length > 0) {
-            (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(email, `Почта используется, восстановите доступ`);
-          } else {
-            users[login.value.trim()] = {
-              'password': `${pass.value.trim()}`,
-              'tickets': [],
-              'email': `${email.value.trim().toLowerCase()}`,
-              'phone': `${phone.value.substring(0, 2) + phone.value.substring(3, 6) + phone.value.substring(7, 10) + phone.value.substring(11, 13) + phone.value.substring(14)}`,
-              'preferred_contcts': { 'mail': `${contacts[0].checked}`, 'phone': `${contacts[1].checked}`, 'account': 'true' },
-              'pdn': `${agreement[0].checked}`,
-              'newsletter': `${agreement[1].checked}`
-            };
-            closeEntranceForm();
+        const login = document.querySelector('.login');
+        const phone = document.querySelector('.phone');
+        const password = document.querySelectorAll('.password');
+        const email = document.querySelector('.email');
+        const check = [...password].every(el=> (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePasswordLength */ .eX)(el));
+        const send_ticket_type = document.querySelectorAll('.send_ticket_type input[type="checkbox"]');
+        const agreement = document.querySelectorAll('.agreement input[type="checkbox"]');
+        if(password[0].value === password[1].value &&  (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateEmailLength */ .Lv)(email) && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateLoginLength */ .KC)(login) && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneLength */ .xI)(phone)
+        && send_ticket_type[2].checked && agreement[0].checked && check){
+          const client = {
+          client_login: login.value.trim(),
+          client_phone: getNumOfPhone(phone.value),
+          client_password: password[0].value,
+          client_email: email.value.trim(),
+          client_preference: {
+            client_preference_phone: send_ticket_type[1].checked, 
+            client_preference_email: send_ticket_type[0].checked, 
+            client_preference_account: send_ticket_type[2].checked
+          }, 
+          agrement: {
+            client_agreement_processing: agreement[0].checked,
+            client_agreement_newsletter: agreement[1].checked
+          }
+          }
+          console.log(client);
+          try{
+            let response = await fetch(`${window.origin}/new-client`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(client)
+            });
+          } catch(error) {
+            console.error(error);
           }
         }
-      }
-    } else {
-      registration_form.forEach(el => {
-        if (el.value.trim().length < 1) {
-          (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(el, `Заполните поле`);
-        }
-      })
-      if (!agreement[0].checked) {
-        agreement[0].nextElementSibling.style.backgroundColor = '#e14234';
-      }
-    }
+      });
+      back.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+        document.body.children[0].removeChild(entrance_form_big_container);
+        openEntranceForm();
+      }, { once: true });
+    }, { once: true });
 
+    //форма восттановления пароля
+    const restore_password = document.querySelector('.restore_password a');
+    restore_password.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const restore_password = await fetch(`${window.origin}/restore-password-form/`);
+      const form_container = await restore_password.text();
+      const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+      document.body.children[0].removeChild(entrance_form_big_container);
+      document.body.children[0].insertAdjacentHTML('afterbegin', form_container);
+      formFunc('.restore_password_form');
+      const btn = document.querySelector('.restore_password_form input[type="button"]');
+      btn.addEventListener('click', async (e)=>{
+        e.preventDefault();
+        const login = document.querySelector('.login');
+        const phone = document.querySelector('.phone');
+        const email = document.querySelector('.email');
+        const elements = Array.from(document.querySelectorAll('.login, .phone, .email'));
+        console.log(elements);
+        if(email && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateEmailLength */ .Lv)(email) || login && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateLoginLength */ .KC)(login) ||phone && (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneLength */ .xI)(phone)){
+          console.log('tr');
+        }
+      });
+      const form_close = document.querySelector('.entrance_form_close');
+      form_close.addEventListener('click', () => {
+        const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+        document.body.children[0].removeChild(entrance_form_big_container);
+      }, { once: true });
+      const back = document.querySelector('.prev_form_btn');
+      back.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+        document.body.children[0].removeChild(entrance_form_big_container);
+        openEntranceForm();
+      }, { once: true });
+    }, { once: true });
+
+  } catch (error) {
+    console.error(error);
   }
 }
 
-function addSortType(hall, td_num) {
-  const table = hall.querySelector('table');
-  const trs_length = table.querySelectorAll('tbody tr').length;
-  const tds_last = table.querySelectorAll(`tbody tr td:nth-child(${td_num})`);
-  const check = [...tds_last].every(el => el.textContent === tds_last[0].textContent);
-  const th_title = table.querySelector(`th:nth-child(${td_num})`);
+function formFunc(classname) {
+  const parent = document.querySelector(`${classname}`)
+  const hide_pass = parent.querySelectorAll(`.password+svg`);
+  const select = parent.querySelector('select');
+  const email = parent.querySelector('.email');
+  const phone = parent.querySelector('.phone');
+  const login = parent.querySelector('.login');
+  const password = parent.querySelectorAll('.password');
 
-  if (trs_length > 1 && !check) {
-    th_title.title = 'Сортировать';
-    th_title.className = 'down';
-    th_title.addEventListener('click', () => {
-      sortingTable(table, th_title, td_num);
+  if (phone) {
+    phone.addEventListener('input', () => {
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneNums */ .Yt)(phone);
+    });
+    phone.addEventListener('change', () => {
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePhoneLength */ .xI)(phone);
     });
   }
+
+  if (email) {
+    email.addEventListener('input', () => {
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(email);
+    });
+    email.addEventListener('change', () => {
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateEmailLength */ .Lv)(email);
+    });
+  }
+
+  if (login) {
+    login.addEventListener('input', () => {
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(login);
+    });
+    login.addEventListener('change', () => {
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validateLoginLength */ .KC)(login);
+    });
+  }
+
+  if (password[0]) {
+    password[0].addEventListener('input', () => {
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(password[0]);
+    });
+    password[0].addEventListener('change', () => {
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .validatePasswordLength */ .eX)(password[0]);
+    });
+  }
+
+  if(password[1]) {
+    password[1].addEventListener('input', () => {
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .spaceInputCheck */ .HP)(password[1]);
+    });
+    password[1].addEventListener('change', () => {
+      if (password[1].value.trim() != password[0].value.trim()) {
+        (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(password[1], `Пароли должны совпадать`);
+      }
+    });
+    password[1].addEventListener('paste', (e) => {
+      e.preventDefault();
+      password[1].value='';
+      (0,_client_validate_js__WEBPACK_IMPORTED_MODULE_0__/* .postAHint */ .zM)(password[1], `Запрещено вставлять значение в поле`);
+    });
+  }
+
+  if (hide_pass.length) {
+    hide_pass.forEach(el => {
+      el.addEventListener('click', function() {
+        hide_pass.forEach(e => {
+          e.previousElementSibling.type == "text" ? e.previousElementSibling.type = "password" : e.previousElementSibling.type = "text";
+        })
+      })
+    });
+  }
+
+  if(select){
+    select.addEventListener('change', installInputType);
+  }
+
 }
 
-function sortingTableAlg(trs, name_class, td_num) {
-  let trs_sorted = Array.from(trs).sort((a, b) => {
-    const A = a.children[td_num - 1].textContent.trim();
-    const B = b.children[td_num - 1].textContent.trim();
-
-    if (name_class === 'down') {
-      if (A > B) return 1;
-      if (A < B) return -1;
-      return 0;
-    }
-
-    if (name_class === 'up') {
-      if (A > B) return -1;
-      if (A < B) return 1;
-      return 0;
-    }
-  });
-
-  return trs_sorted;
+function installInputType() {
+  const reset_pass_type = this.parentElement.querySelector('input');
+  reset_pass_type.className = this[this.selectedIndex].value;
+  reset_pass_type.value = '';
+  let new_inp = reset_pass_type.cloneNode(true);
+  reset_pass_type.parentElement.replaceChild(new_inp, reset_pass_type);
+  formFunc(`.${this.parentElement.className}`);
 }
 
-function sortingTable(table, th_title, td_num) {
-  const tbody = table.querySelector('tbody');
-  const new_tbody = document.createElement('tbody');
-  const trs = Array.from(tbody.querySelectorAll('tr'));
-  const sortedTrs = sortingTableAlg(trs, th_title.className, td_num);
 
-  new_tbody.append(...sortedTrs);
-  table.replaceChild(new_tbody, tbody);
-  th_title.className = th_title.className === 'down' ? 'up' : 'down';
+function getNumOfPhone(str) {
+  return [...str].filter(el => !isNaN(+el)).join('');
 }
-
 
 /***/ }),
 

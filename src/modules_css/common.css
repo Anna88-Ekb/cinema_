@@ -285,7 +285,7 @@ section {
   position: relative;
 }
 
-.registration_form fieldset>div>label+div>p {
+.entrance_form>div p, .restore_password_form>div p, .registration_form fieldset>div>label+div>p, .buy_form_get_contacts>div>div p {
   font-size: 1.2rem;
   color: var(--red);
   position: absolute;

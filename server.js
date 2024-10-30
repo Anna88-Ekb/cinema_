@@ -5,6 +5,7 @@ import { __filename, __dirname } from './__dirname.js';
 import { manifest } from './manifest.js';
 import moviesRoutes from './routes/movies.routes.js';
 import moviesFilterRoutes from './routes/movieFilter.routes.js';
+import clientRoutes from './routes/client.routes.js';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.static(path.join(__dirname, 'dist'), {
 app.use('/posters', express.static(path.join(__dirname, 'posters')))
 app.use('/api', moviesRoutes);
 app.use('/api', moviesFilterRoutes);
+app.use('/api', clientRoutes);
 
 app.engine('hbs', engine({
   extname: 'hbs',
@@ -30,15 +32,7 @@ app.engine('hbs', engine({
     homeCssFile: manifest['home.css'],
     homeJsFile: manifest['home.js'],
     scheduleCssFile: manifest['schedule.css'],
-    scheduleJsFile: manifest['schedule.js'],
-    currentHall: function (halls, hallId, options) {
-      const hall = halls.find(h => h.hall_id === hallId);
-      if (hall) {
-        return options.fn(hall);
-      } else {
-        return '<p>Сегодня киносеансы не проводятся</p>';
-      }
-    }
+    scheduleJsFile: manifest['schedule.js']
   }
 }));
 
@@ -113,7 +107,7 @@ app.get('/filtered-movie', async (req, res) => {
   }
 })
 
-app.get('/pages_info', (_, res) => {
+app.get('/pages_info', async (_, res) => {
   res.sendFile(__dirname + '/dist/pages_info/index.html');
 });
 
@@ -126,7 +120,24 @@ app.get('/schedule-day/', async(req, res) => {
     console.error('Ошибка при запросе к API:', error);
     res.status(500).send('Ошибка сервера');
   }
-  });
+});
+
+app.post('/new-client', async (req, res) => {
+console.log(req.body);
+});
+
+
+app.get('/entarance-form/', async(_, res) => {
+  res.render('partials/header/entrance_form');
+});
+
+app.get('/registration-form/', async(_, res) => {
+  res.render('partials/header/registration_form');
+});
+
+app.get('/restore-password-form/', async(_, res) => {
+  res.render('partials/header/restore_password_form');
+});
 
 
 app.listen(process.env.PORT || 3000, () => console.log('Запуск!'));

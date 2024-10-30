@@ -11,14 +11,7 @@ const RUS_ABC = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭ�
 const symbols = './?><!@#$%^&*()-_=+';
 const symbols_mini = '.-_';
 
-export function hidePass({ passes = false }) {
-  if (!passes) { this.previousElementSibling.type == 'text' ? this.previousElementSibling.type = 'password' : this.previousElementSibling.type = 'text'; }
-  else {
-    passes.forEach(el => {
-      el.previousElementSibling.type == "text" ? el.previousElementSibling.type = "password" : el.previousElementSibling.type = "text";
-    });
-  }
-}
+
 
 //разместить подсказку
 export function postAHint(input, text_error) {
