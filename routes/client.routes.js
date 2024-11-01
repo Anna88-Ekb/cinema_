@@ -5,4 +5,5 @@ router.post('/new-client', actionClient.addNewClient);
 router.post('/search-client-mail', actionClient.checkClientMail);
 router.post('/search-client-phone', actionClient.checkClientPhone);
 router.post('/search-client-login', actionClient.checkClientLogin);
+router.post('/entrance-client', actionClient.entranceClient);
 export default router;

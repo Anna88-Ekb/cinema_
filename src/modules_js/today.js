@@ -1,3 +1,5 @@
+document.addEventListener('DOMContentLoaded', async () => {
+
 const today_buy_btn = document.querySelector('.today_buy_btn');
 
 today_buy_btn.addEventListener('click', function() {
@@ -12,7 +14,6 @@ if(halls) {
     if (childs) { addSortType(halls[i], 3)};
   }
 }
-
 
 function addSortType(hall, td_num) {
   const table = hall.querySelector('table');
@@ -62,4 +63,4 @@ function sortingTable(table, th_title, td_num) {
   th_title.className = th_title.className === 'down' ? 'up' : 'down';
 }
 
-
+});

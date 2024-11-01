@@ -1,4 +1,5 @@
-const filter_films_container = document.querySelector('.filter_films_container');
+document.addEventListener('DOMContentLoaded', async () => {
+  const filter_films_container = document.querySelector('.filter_films_container');
 const filtered_films_container = document.querySelector('.filtered_films_container');
 
 if (filter_films_container) {
@@ -37,7 +38,6 @@ if (filter_films_container) {
     }
   });
 }
-
 
 if (filtered_films_container) {
   filtered_films_container.addEventListener('click', async (e) => {
@@ -97,5 +97,6 @@ const filtered_films_container = document.querySelector('.filtered_films_contain
 const new_content = await response.text();
 filtered_films_container.innerHTML = new_content;
 }
+});
 
 

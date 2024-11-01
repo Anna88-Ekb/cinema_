@@ -25,7 +25,7 @@
 :root {
   --dark_violet: #484079;
   --violet: #646093;
-  --grey_violet: #9898bc;
+  --grey_violet: #545056;
   --bright_violet: #82aaff;
   --light_violet: #d2e2f9;
   --light_blue: #b6fafb;
@@ -484,7 +484,7 @@ form input[type='button'] {
   outline-color: var(--dark_violet);
 }
 
-.entrance_form_close:hover {
+.entrance_form_close:hover, .buy_form_close:hover {
   background-color: var(--red);
 }
 
@@ -602,6 +602,252 @@ form input[type='button'] {
 .entrance_form_container_error {
   background-color: var(--red);
 }
+
+.buy_form_container {
+  overflow-y: scroll;
+  max-height: 80%;
+  width: calc(192rem*0.7);
+}
+
+.buy_form_container fieldset {
+  border: none;
+}
+
+.buy_form {
+  margin: 1rem;
+  height: 70%;
+/*   calc(192rem - 2rem) */
+}
+
+.buy_form legend>span {
+  margin-left: .5rem;
+  color: var(--red);
+}
+
+.buy_form legend {
+  text-transform: uppercase;
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+}
+
+.buy_form_choiсe_list {
+  background-color: var(--dark_violet);
+}
+
+.buy_form_get_place legend,
+.buy_form_choiсe_error,
+.buy_form_choiсe_filter legend {
+  text-align: center;
+}
+
+.buy_form_get_place {
+  padding: 1rem;
+  width: 40%;
+}
+
+.buy_form_get_place legend,
+.buy_form_choiсe_error,
+.buy_form_choiсe_filter legend {
+  text-align: center;
+}
+
+.buy_form_get_place table {
+  padding: 1rem;
+  border: 1px solid var(--red);
+  margin: 0 auto;
+  border-spacing: .5rem;
+  border-collapse: separate;
+}
+
+.buy_form_get_place table tbody td {
+  position: relative;
+  padding: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(225, 66, 52, .5) url(..//images/armchair.png) no-repeat center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.buy_form_get_place table tbody td:has(input) {
+  background-color: var(--light_violet);
+}
+
+.buy_form_get_place table tbody td>input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 11;
+  cursor: pointer;
+}
+
+.buy_form_get_place table tbody td>span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.buy_form_get_place table tbody td>input:checked+span {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(72, 64, 121, 0.5);
+}
+
+.buy_form_get_place table tbody td:has(input):hover {
+  background-color: var(--grey_blue);
+}
+
+.buy_form_choiсe_error {
+  color: var(--red);
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+
+.buy_form_choiсe_filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  min-height: 6rem;
+}
+
+.buy_form_choiсe_filter fieldset {
+  color: var(--light_violet);
+}
+
+.buy_form_choiсe_filter p {
+  font-size: 2.4rem;
+  color: var(--light_violet);
+  font-weight: bold;
+}
+
+.buy_form_choiсe_filter p>span {
+  font-weight: normal;
+  margin-left: 1rem;
+}
+
+.buy_form_choiсe_filter_time_add {
+  width: 40%;
+}
+
+.buy_form_choiсe_filter_time_add select {
+  width: 25%;
+  height: 3rem;
+}
+
+.buy_form_choiсe_filter_time_add input {
+  width: 40%;
+  height: 3rem;
+}
+
+.buy_form_choiсe_filter_hall_add,
+.buy_form_choiсe_filter_time_add {
+  margin: 1rem 0;
+}
+
+.buy_form_choiсe_filter,
+.buy_form_choiсe_filter_time_add {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buy_form_choiсe_filter {
+  padding: 0 1rem;
+  min-height: 6rem;
+}
+
+.total_price span {
+  margin: 0 1rem;
+  color: var(--dark_violet);
+  font-weight: bold;
+  font-size: 2.4rem;
+}
+
+.total_price {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  position: relative;
+}
+
+.buy_form_get_place_checked {
+  min-height: 12rem;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.buy_form_get_place_checked ul {
+  margin: 1rem 1rem 1rem 0;
+}
+
+.buy_form_get_place_checked ul>li>span {
+  margin-left: 1rem;
+  font-weight: normal;
+}
+
+.buy_form_get_place_checked {
+  margin-top: 1rem;
+  background-color: var(--violet);
+  font-weight: bold;
+}
+
+.buy_form_get_contacts>div {
+  display: flex;
+}
+
+.buy_form_get_contacts>div>div{
+  margin: auto 0;
+}
+
+.buy_form_get_contacts>div+div {
+  margin-top: 2rem;
+}
+
+.buy_form_get_contacts>div>div:first-child {
+  width: 60%;
+}
+
+.buy_form_get_contacts>div>div:last-child {
+  width: 40%;
+}
+
+.buy_form_get_contacts>div>div:last-child input {
+  width: 100%;
+}
+
+.buy_form_get_contacts label>span,
+.buy_form_get_contacts>div>div>div {
+  color: var(--red);
+}
+
+.buy_form_get_contacts>div>div:last-child {
+  position: relative;
+  height: max-content;
+}
+
+.buy_form_get_contacts {
+ /*   background-color: hotpink; */
+  width: 60%;
+  align-self: center;
+}
+
+.buy_form_get {
+  display: flex;
+  margin: 2rem 0;
+}
+
+.buy_form_get_place_tbody {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  margin: 0 auto;}
 .logo img {
   width: 3rem;
   height: 3rem;
@@ -747,7 +993,7 @@ nav {
   background-color: rgba(72, 64, 121, 0.8);
 }
 
-.entrance_form_btn {
+.entrance_form_btn, .account_form_btn {
   border: 0;
   background-color: var(--dark_violet);
   align-self: center;
@@ -759,19 +1005,19 @@ nav {
   position: relative;
 }
 
-.entrance_form_btn:hover {
+.entrance_form_btn:hover, .account_form_btn:hover {
   color: var(--light_violet);
 }
 
-.entrance_form_btn:hover .entrance_form_img path {
+.entrance_form_btn:hover .entrance_form_img path , .account_form_btn:hover .account_form_img path {
   fill: var(--light_violet);
 }
 
-.entrance_form_img path {
+.entrance_form_img path, .account_form_img path {
   fill: var(--red);
 }
 
-.entrance_form_img {
+.entrance_form_img, .account_form_img {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -796,6 +1042,11 @@ nav {
 
 .prev_form_btn:hover {
   color: rgba(72, 64, 121, 0.8);
+}
+
+.buy_form button {
+  width: 50%;
+  margin-top: 1rem;
 }
 
 .afisha {

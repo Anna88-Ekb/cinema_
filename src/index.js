@@ -13,7 +13,4 @@ import './modules_js/premiere.js';
 import './modules_js/today.js';
 
 
-/* import './modules_css/common.css';
-import './modules_css/header.css'; */
-/* import hello1 from './modules_js/hello1.js'; 
-import hello2 from './modules_js/hello2.js'; */
+

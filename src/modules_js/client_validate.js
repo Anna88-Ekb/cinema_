@@ -215,3 +215,6 @@ export function validatePasswordLength(input) {
   return true;
 }
 
+export function getNumOfPhone(str) {
+  return [...str].filter(el => !isNaN(+el)).join('');
+}

@@ -97,6 +97,30 @@ class Client{
      res.status(500).json({ success: false, error: error.message });
     }
   }
+
+  async entranceClient(req, res) {
+    const client = req.body;
+
+    try{
+      const search_client = await db.query(`select client_login from client
+      where client_login = $1;`, [client.login]);
+      if(search_client.rows.length > 0) {
+        const search_client = await db.query(`select client_login, client_password from client
+        where client_login = $1 AND client_password = $2;`, [client.login, client.password]);
+
+        if(search_client.rows.length > 0) {
+          res.status(200).json({entrance: true, login: search_client.rows[0].client_login});
+        }else{
+          res.status(404).json({message: 'Пароль указан неверно.'});
+        }
+      } else{
+        res.status(404).json({message: 'Логин указан неверно.'});
+      }
+    } catch(error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
 };
 
 export const actionClient = new Client();

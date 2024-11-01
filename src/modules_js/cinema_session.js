@@ -1,3 +1,5 @@
+document.addEventListener('DOMContentLoaded', async () => {
+
 const cinema_sessions_filter = document.querySelector('.cinema_sessions_filter');
 const cinema_sessions_halls = document.querySelector('.cinema_sessions_halls');
 
@@ -217,3 +219,5 @@ function sortingTable(table, th_title, td_num) {
   table.replaceChild(new_tbody, tbody);
   th_title.className = th_title.className === 'down' ? 'up' : 'down';
 }
+
+});

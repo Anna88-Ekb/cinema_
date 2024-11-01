@@ -7,6 +7,7 @@ import moviesRoutes from './routes/movies.routes.js';
 import moviesFilterRoutes from './routes/movieFilter.routes.js';
 import clientRoutes from './routes/client.routes.js';
 import { error } from 'console';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -19,11 +20,19 @@ app.use(express.static(path.join(__dirname, 'dist'), {
     }
   }
 }));
+app.use(cookieParser(process.env.COOKIE));
+app.use((req, res, next) => {
+  res.locals.login = Boolean(req.cookies.client_login);
+  next();
+});
+
 
 app.use('/posters', express.static(path.join(__dirname, 'posters')))
 app.use('/api', moviesRoutes);
 app.use('/api', moviesFilterRoutes);
 app.use('/server-api', clientRoutes);
+
+
 
 
 app.engine('hbs', engine({
@@ -40,6 +49,7 @@ app.engine('hbs', engine({
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
+
 
 app.get('/', async (_, res) => {
   try {
@@ -148,7 +158,7 @@ app.post('/new-client', async (req, res) => {
 });
 
 app.get('/entarance-form/', async (_, res) => {
-  res.render('partials/header/entrance_form');
+  res.render('partials/header/entrance_form', {client:true});
 });
 
 app.get('/registration-form/', async (_, res) => {
@@ -199,7 +209,7 @@ app.post('/search-client-phone', async(req, res) => {
   }catch(error){
     res.status(500).json(error.message);
   }
-  });
+});
 
 app.post('/search-client-login', async(req, res) => {
   try{
@@ -220,8 +230,49 @@ app.post('/search-client-login', async(req, res) => {
   }catch(error){
     res.status(500).json(error.message);
   }
-  });
+});
 
+app.post('/entrance-client', async(req, res) => {
+
+    try{
+      const client = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/entrance-client`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body)
+      });
+    
+      const a_client = await client.json();
+
+      if(a_client.message){
+        res.status(404).json({message: a_client.message});
+      }
+      else if(a_client.entrance === true) {
+    
+        res.cookie('client_login', `${a_client.login}`, {
+          path: '/',
+          encode: String 
+        });
+
+        const login = a_client.login;
+       /*  res.render('partials/header/entrance', {login}); */
+        res.status(200).json({entrance: a_client.entrance});
+      }
+    
+    }catch(error){
+      res.status(500).json(error.message);
+    }
+});
+  
+app.get('/buy-ticket/', async (req, res) => {
+
+const response_movies_day = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-days/${req.query.movie_name}`);
+const movie_days = await response_movies_day.json();
+res.render('partials/buy_form/buy_form', {movie_days});
+});
+
+app.get('/cinema-panel-entrance', async (_, res)=> {
+  res.render('entrance_worker', {title:'Синема/Форма входа'});
+})
 
 
 app.listen(process.env.PORT || 3000, () => console.log('Запуск!'));
