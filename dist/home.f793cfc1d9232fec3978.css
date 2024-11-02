@@ -806,6 +806,10 @@ form input[type='button'] {
   margin: auto 0;
 }
 
+.buy_form_get_contacts>div{
+  justify-content: space-between;
+}
+
 .buy_form_get_contacts>div+div {
   margin-top: 2rem;
 }
@@ -817,12 +821,16 @@ form input[type='button'] {
 .buy_form_get_contacts>div>div:last-child {
   width: 40%;
 }
+.buy_form_get_contacts h4 {
+  font-weight: normal;
+  margin-bottom: 1rem;
+}
 
 .buy_form_get_contacts>div>div:last-child input {
   width: 100%;
 }
 
-.buy_form_get_contacts label>span,
+.buy_form_get_contacts label>span, .buy_form_get_contacts div p span,
 .buy_form_get_contacts>div>div>div {
   color: var(--red);
 }

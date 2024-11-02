@@ -1,3 +1,4 @@
+import {openBuyForm} from './buy_ticket.js';
 document.addEventListener('DOMContentLoaded', async () => {
 
 const cinema_sessions_filter = document.querySelector('.cinema_sessions_filter');
@@ -170,6 +171,20 @@ if (tables) {
       }
     });
   })
+  if(cinema_sessions_halls) {
+    cinema_sessions_halls.addEventListener('click', async function(e) {
+      if(e.target.tagName === 'A' && e.target.textContent==='Купить'){
+        const parent = e.target.parentElement;
+        const params = {
+          movie_name: parent.dataset.movieName,
+          hall_num: parent.dataset.hall,
+          movie_date: parent.dataset.date,
+          movie_time: parent.dataset.time,
+        };
+        openBuyForm(params);
+      };
+    });
+  }
 }
 
 function addSortType(hall, td_num) {

@@ -43,7 +43,13 @@ app.engine('hbs', engine({
     homeCssFile: manifest['home.css'],
     homeJsFile: manifest['home.js'],
     scheduleCssFile: manifest['schedule.css'],
-    scheduleJsFile: manifest['schedule.js']
+    scheduleJsFile: manifest['schedule.js'],
+    dateFormatRU: function(day) {
+      return day.substring(8) + '.' + day.substring(5, 7) + '.' + day.substring(0, 4);
+   },
+   dateFormatDB: function(day) {
+      return day.substring(6) + '-' + day.substring(3, 5) + '-' + day.substring(0, 2);
+   }
   }
 }));
 
@@ -253,9 +259,19 @@ app.post('/entrance-client', async(req, res) => {
           encode: String 
         });
 
-        const login = a_client.login;
-       /*  res.render('partials/header/entrance', {login}); */
-        res.status(200).json({entrance: a_client.entrance});
+/*         res.cookie('client_login', `${a_client.login}`, {
+          path: '/schedule-page',
+          encode: String 
+        });
+ */
+
+      const login = a_client.login;
+       res.render('partials/header/entrance', {login}, (err, html) => {
+        if (err) {
+          return res.status(500).json({ error: 'Ошибка рендеринга кнопки' });
+        }
+        res.status(200).json({ entrance: html });
+      });
       }
     
     }catch(error){
@@ -263,11 +279,30 @@ app.post('/entrance-client', async(req, res) => {
     }
 });
   
-app.get('/buy-ticket/', async (req, res) => {
+app.get('/buy-ticket', async (req, res) => {
 
+let client_preference = false;
+
+if(req.cookies.client_login) {
+const request_client_preference = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/preference-client-contacts/?login=${req.cookies.client_login}`)
+client_preference = await request_client_preference.json();
+};
+
+console.log(client_preference);
+
+if(Object.keys(req.query).length === 1 && req.query.movie_name) {
 const response_movies_day = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-days/${req.query.movie_name}`);
 const movie_days = await response_movies_day.json();
-res.render('partials/buy_form/buy_form', {movie_days});
+const movie_name = movie_days[0].cinema_name;
+
+res.render('partials/buy_form/buy_form', {movie_name, client_preference: client_preference[0]});
+} else {
+const request_params = {...req.query};
+ /*  console.log(req.query); */
+res.render('partials/buy_form/buy_form', {request_params, client_preference: client_preference[0]});
+  
+}
+
 });
 
 app.get('/cinema-panel-entrance', async (_, res)=> {

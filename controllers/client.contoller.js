@@ -121,6 +121,21 @@ class Client{
     }
   }
 
+  async getPreferenceClientContacts(req, res) {
+  const searched_login = req.query.login;
+  const client_contacts = await db.query(`
+  select
+  CASE WHEN client_preference_email = true THEN client_email END as preference_email,
+  CASE WHEN client_preference_phone = true THEN client_phone END as preference_phone,
+  CASE WHEN client_preference_account = true THEN client_login END as preference_account
+  from client
+  where client_login = $1;
+  `, [searched_login]);
+  res.json(client_contacts.rows);
+  }
+
+  
+
 };
 
 export const actionClient = new Client();

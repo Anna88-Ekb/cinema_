@@ -70,6 +70,10 @@ async function openEntranceForm() {
           }
           if (res.entrance) {
             const entrance_form_big_container = document.querySelector('.entrance_form_big_container');
+            if(entrance_form_btn.classList.contains('entrance_form_btn')) {
+              entrance_form_btn.insertAdjacentHTML('beforebegin', `${res.entrance}`);
+              entrance_form_btn.parentElement.removeChild(entrance_form_btn);
+            }
             document.body.children[0].removeChild(entrance_form_big_container);
           }
 
