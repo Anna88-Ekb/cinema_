@@ -1,0 +1,58 @@
+<fieldset class="buy_form_get_place">
+  <legend>Выберите место<span>*</span></legend>
+  {{#if hall_place}}
+  <table data-hall="{{{request_params.hall_num}}}" data-movie="{{{request_params.movie_name}}}"
+    data-day="{{{request_params.movie_date}}}" data-time="{{{request_params.movie_time}}}">
+    {{#if (eq hall_place.hall_id 1) }}
+    <tbody class="buy_form_get_place_tbody">
+      {{#each hall_place.places}}
+      {{#if (or (eq place_row 1) (eq place_row 2))}}
+      <tr>
+        {{#each this.place_col}}
+        {{#if (true this.col_status)}}
+        <td></td>
+        {{else}}
+        <td title="Ряд {{{../place_row}}}. Место {{{this.col_num}}}" `><input data-place="{{{this.col_num}}}"
+            data-row="{{{../place_row}}}" type="checkbox"><span></span></td>
+        {{/if}}
+        {{/each}}
+      </tr>
+      {{/if}}
+      {{/each}}
+    </tbody>
+    <tbody class="buy_form_get_place_tbody">
+      {{#each hall_place.places}}
+      {{#if (not (eq place_row 1) (eq place_row 2))}}
+      <tr>
+        {{#each this.place_col}}
+        {{#if (true this.col_status)}}
+        <td></td>
+        {{else}}
+        <td title="Ряд {{{../place_row}}}. Место {{{this.col_num}}}" `><input data-place="{{{this.col_num}}}"
+            data-row="{{{../place_row}}}" type="checkbox"><span></span></td>
+        {{/if}}
+        {{/each}}
+      </tr>
+      {{/if}}
+      {{/each}}
+    </tbody>
+    {{/if}}
+    {{#if (invers (eq hall_place.hall_id 1))}}
+    <tbody class="buy_form_get_place_tbody">
+      {{#each hall_place.places}}
+      <tr>
+        {{#each this.place_col}}
+        {{#if (true this.col_status)}}
+        <td></td>
+        {{else}}
+        <td title="Ряд {{{../place_row}}}. Место {{{this.col_num}}}" `><input data-place="{{{this.col_num}}}"
+            data-row="{{{../place_row}}}" type="checkbox"><span></span></td>
+        {{/if}}
+        {{/each}}
+      </tr>
+      {{/each}}
+    </tbody>
+    {{/if}}
+  </table>
+  {{/if}}
+</fieldset>

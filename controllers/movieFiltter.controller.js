@@ -61,6 +61,29 @@ class movieSelection {
     `);
     res.json(result.rows);
   }
+
+  async getMoviesMonthByMovieName(req, res) {
+  const movie_name = req.query.name;
+  const req_months = await db.query(`select  extract (month from session_date) as month, to_char(session_date, 'TMmonth') as month_name, extract (year from session_date)  as year from cinema_session cs
+  join cinema c on cs.cinema_cinema_id =  c.cinema_id
+  where (lower(c.cinema_name) = $1 or c.cinema_name = $1)
+  and cs.session_date >= current_date
+  group by 1, 2, 3
+  order by 3, 1;`, [movie_name]);
+  res.json(req_months.rows)
+  }
+
+  async getDaysByMovieNameAndMonth(req, res) {
+  const request_movies = await db.query(`select to_char(cs.session_date, 'YYYY-MM-DD') as session_date from cinema_session cs
+  join cinema c on cs.cinema_cinema_id =  c.cinema_id
+  where ( lower(c.cinema_name) = $1 or c.cinema_name = $1 )
+  and extract (month from cs.session_date) = $2
+  and extract (year from cs.session_date) = $3
+  and cs.session_date >= current_date
+  group by 1;`, [req.query.name, req.query.month_num, req.query.year]);
+  console.log(request_movies.rows);
+  res.json(request_movies.rows);
+  }
 };
 
 export const movieFilterSelection = new movieSelection();

@@ -361,7 +361,7 @@ form div:has(.email)::after {
 
 form input,
 select,
-.today_buy_btn {
+.today_buy_btn, .afisha_btn {
   border: 1px solid var(--dark_violet);
   outline-offset: 2px;
   outline-color: var(--dark_violet);
@@ -580,6 +580,8 @@ form input[type='button'] {
 }
 
 .buy_form_container {
+  display: flex;
+  flex-direction: column;
   overflow-y: scroll;
   max-height: 80%;
   width: calc(192rem*0.7);
@@ -591,11 +593,11 @@ form input[type='button'] {
 
 .buy_form {
   margin: 1rem;
-  height: 70%;
+/*   height: 70%; */
 /*   calc(192rem - 2rem) */
 }
 
-.buy_form legend>span {
+.buy_form legend>span, .registration_form fieldset label span, .buy_form_get_contacts label>span {
   margin-left: .5rem;
   color: var(--red);
 }
@@ -806,7 +808,7 @@ form input[type='button'] {
   width: 100%;
 }
 
-.buy_form_get_contacts label>span, .buy_form_get_contacts div p span,
+.buy_form_get_contacts div p span,
 .buy_form_get_contacts>div>div>div {
   color: var(--red);
 }

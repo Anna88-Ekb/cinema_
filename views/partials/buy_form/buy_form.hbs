@@ -7,11 +7,17 @@
                 <div class="buy_form_choiсe_filter">
                     {{#if movie_name}}
                     <p class="buy_form_choiсe_filter_name">Название:<span>{{movie_name}}</span></p>
+                    <fieldset class="buy_form_choiсe_filter_time_add"> 
+                    <legend>Выберите время сеанса<span>*</span></legend>
+                    {{> buy_form/buy_form_selection_month}}
+                    {{> buy_form/buy_form_selection_days}}
+                    {{> buy_form/buy_form_selection_hours}}
+                    </fieldset>
                     {{/if}}
                     {{#if request_params}}
                     <p class="buy_form_choiсe_filter_name">Название:<span>{{request_params.movie_name}}</span></p>
                     <p class="buy_form_choiсe_filter_time">Время сеанса:<span>{{dateFormatRU request_params.movie_date}}
-                            {{request_params.movie_time}}</span></p>
+                    {{request_params.movie_time}}</span></p>
                     {{/if}}
                 </div>
             </div>
@@ -55,187 +61,9 @@
                     {{/if}}
                     {{/if}}
                 </div>
-                <fieldset class="buy_form_get_place">
-                    <legend>Выберите место<span>*</span></legend>
-                    <table data-hall="0" data-movie="27" data-day="25.11.2024" data-time="20:00" tabindex="0">
-                        <tbody class="buy_form_get_place_tbody">
-                            <tr>
-                                <td title="Ряд: 1 Место: 1"><input data-place="1" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 1 Место: 3"><input data-place="3" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 1 Место: 4"><input data-place="4" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 1 Место: 6"><input data-place="6" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 1 Место: 7"><input data-place="7" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 1 Место: 8"><input data-place="8" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 1 Место: 9"><input data-place="9" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 1 Место: 10"><input data-place="10" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 1 Место: 11"><input data-place="11" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 1 Место: 13"><input data-place="13" data-row="1" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td title="Ряд: 2 Место: 1"><input data-place="1" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 2 Место: 3"><input data-place="3" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 2 Место: 4"><input data-place="4" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 2 Место: 5"><input data-place="5" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 2 Место: 7"><input data-place="7" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 2 Место: 8"><input data-place="8" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 2 Место: 9"><input data-place="9" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 2 Место: 10"><input data-place="10" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td></td>
-                                <td title="Ряд: 2 Место: 13"><input data-place="13" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 2 Место: 14"><input data-place="14" data-row="2" data-price="750"
-                                        type="checkbox"><span></span></td>
-                            </tr>
-                        </tbody>
-                        <tbody class="buy_form_get_place_tbody">
-                            <tr>
-                                <td title="Ряд: 3 Место: 1"><input data-place="1" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 3 Место: 2"><input data-place="2" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 3 Место: 3"><input data-place="3" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 3 Место: 4"><input data-place="4" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 3 Место: 5"><input data-place="5" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 3 Место: 6"><input data-place="6" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 3 Место: 7"><input data-place="7" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 3 Место: 8"><input data-place="8" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 3 Место: 9"><input data-place="9" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 3 Место: 11"><input data-place="11" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 3 Место: 13"><input data-place="13" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 3 Место: 15"><input data-place="15" data-row="3" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td title="Ряд: 4 Место: 1"><input data-place="1" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 4 Место: 2"><input data-place="2" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 4 Место: 3"><input data-place="3" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 4 Место: 4"><input data-place="4" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 4 Место: 6"><input data-place="6" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 4 Место: 7"><input data-place="7" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 4 Место: 8"><input data-place="8" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 4 Место: 9"><input data-place="9" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 4 Место: 11"><input data-place="11" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 4 Место: 12"><input data-place="12" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td></td>
-                                <td title="Ряд: 4 Место: 15"><input data-place="15" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 4 Место: 16"><input data-place="16" data-row="4" data-price="750"
-                                        type="checkbox"><span></span></td>
-                            </tr>
-                            <tr>
-                                <td title="Ряд: 5 Место: 1"><input data-place="1" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 5 Место: 2"><input data-place="2" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 5 Место: 3"><input data-place="3" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 5 Место: 5"><input data-place="5" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 5 Место: 7"><input data-place="7" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 5 Место: 8"><input data-place="8" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 5 Место: 10"><input data-place="10" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 5 Место: 11"><input data-place="11" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 5 Место: 12"><input data-place="12" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 5 Место: 13"><input data-place="13" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 5 Место: 14"><input data-place="14" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 5 Место: 15"><input data-place="15" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 5 Место: 16"><input data-place="16" data-row="5" data-price="750"
-                                        type="checkbox"><span></span></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td title="Ряд: 6 Место: 2"><input data-place="2" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 6 Место: 3"><input data-place="3" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 6 Место: 4"><input data-place="4" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 6 Место: 5"><input data-place="5" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 6 Место: 6"><input data-place="6" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 6 Место: 8"><input data-place="8" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 6 Место: 9"><input data-place="9" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 6 Место: 11"><input data-place="11" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                                <td title="Ряд: 6 Место: 13"><input data-place="13" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 6 Место: 14"><input data-place="14" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td title="Ряд: 6 Место: 15"><input data-place="15" data-row="6" data-price="750"
-                                        type="checkbox"><span></span></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </fieldset>
+                {{#if request_params}}
+                 {{> buy_form/buy_form_tickets}}
+                {{/if}} 
             </div>
             <div class="buy_form_get_place_checked">
             </div>
