@@ -3,7 +3,9 @@
 {{/unless}}
 {{#if hours}}
 <select name="buy_form_select_time" id="buy_form_select_time">
-<option value="default" disabled="">Время</option>
-<option value="20:00">20:00 - 750 рублей</option>
+<option value="default" disabled selected>Время</option>
+ {{#each hours}}
+<option value="{{{this.session_time}}}">{{{this.session_time}}}</option>
+ {{/each}}
 </select>
 {{/if}}

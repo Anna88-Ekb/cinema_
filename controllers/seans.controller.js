@@ -3,7 +3,7 @@ import db from "../db_connect.js";
 class seansHallContoller {
 async getPlacesOfHall(req, res) {
 
-const request_hall = await db.query(`select p.hall_hall_id, p.place_row, p.place_col, t.place_place_row, t.place_place_col, cs.session_date, cs.session_time, c.cinema_name from place p
+const request_hall = await db.query(`select p.hall_hall_id, p.place_row, p.place_col, t.place_place_row, t.place_place_col, cs.session_date, cs.session_time, c.cinema_name, t.sale_status from place p
 left join cinema_session cs on p.hall_hall_id = cs.hall_hall_id
 and cs.session_date = $3 
 and cs.session_time = $4
@@ -26,7 +26,7 @@ rows.forEach(row => {
 
 request_hall.rows.forEach((element, ind) => {
 const row = arr[0].places.findIndex(el => el.place_row === element.place_row);
-arr[0].places[row].place_col.push({col_num: element.place_col, col_status: element.place_place_col === +element.place_place_col ? true:false});
+arr[0].places[row].place_col.push({col_num: element.place_col, col_status: element.place_place_col === +element.place_place_col && element.sale_status === true ? true:false});
 }); 
 /* arr[0].places.forEach(el=> el.place_col.forEach(e=>console.log(e.col_status))); */
 res.json(arr[0]);

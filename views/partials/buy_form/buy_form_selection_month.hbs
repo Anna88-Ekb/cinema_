@@ -1,5 +1,5 @@
 <select name="buy_form_select_month" id="buy_form_select_month">
-  <option value="default">Месяц</option>
+  <option value="default" disabled selected> Месяц</option>
   {{#each months}}
   <option value="{{{this.month}}}" data-month="{{{this.month}}}" data-year="{{{this.year}}}">{{capitalize this.month_name}}</option>
   {{/each}}

@@ -1,3 +1,4 @@
+import { query } from "express";
 import db from "../db_connect.js";
 
 class movieSelection {
@@ -63,14 +64,14 @@ class movieSelection {
   }
 
   async getMoviesMonthByMovieName(req, res) {
-  const movie_name = req.query.name;
-  const req_months = await db.query(`select  extract (month from session_date) as month, to_char(session_date, 'TMmonth') as month_name, extract (year from session_date)  as year from cinema_session cs
+    const movie_name = req.query.name;
+    const req_months = await db.query(`select  extract (month from session_date) as month, to_char(session_date, 'TMmonth') as month_name, extract (year from session_date)  as year from cinema_session cs
   join cinema c on cs.cinema_cinema_id =  c.cinema_id
   where (lower(c.cinema_name) = $1 or c.cinema_name = $1)
   and cs.session_date >= current_date
   group by 1, 2, 3
   order by 3, 1;`, [movie_name]);
-  res.json(req_months.rows)
+    res.json(req_months.rows)
   }
 
   async getDaysByMovieNameAndMonth(req, res) {
@@ -81,9 +82,34 @@ class movieSelection {
   and extract (year from cs.session_date) = $3
   and cs.session_date >= current_date
   group by 1;`, [req.query.name, req.query.month_num, req.query.year]);
-  console.log(request_movies.rows);
   res.json(request_movies.rows);
   }
+
+  async getTimeByMovieNameAndDay(req, res) {
+  try{
+    const request_prices = await db.query(`
+    select to_char(session_time, 'HH24:MI') as session_time from cinema_session cs
+    join cinema c on cs.cinema_cinema_id =  c.cinema_id
+    where ( lower(c.cinema_name) = $1 or c.cinema_name = $1 )
+    and cs.session_date = $2 and cs.session_date >= current_date
+    group by 1;`, [req.query.name, req.query.date]);
+    console.log(request_prices.rows);
+    res.json(request_prices.rows);
+    }catch(error) {
+    res.status(500).json({'Ошибка': error.message})
+    }
+  } 
+
+  async getHallByMovieNameAndDatetime(req, res){
+  const req_halls = await db.query(`select hall_hall_id as hall_id from cinema_session cs
+  join cinema c on cs.cinema_cinema_id =  c.cinema_id
+  where ( lower(c.cinema_name) = $1 or c.cinema_name = $1 )
+  and cs.session_date = $2
+  and cs.session_date >= current_date 
+  and to_char(session_time, 'HH24:MI') = $3;`, [req.query.movie_name, req.query.movie_date, req.query.movie_time]);
+  res.json(req_halls.rows);
+  }
+
 };
 
 export const movieFilterSelection = new movieSelection();

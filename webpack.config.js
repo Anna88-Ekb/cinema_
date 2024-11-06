@@ -11,19 +11,30 @@ export default {
   entry: {
     home: './index.js',  // Точка входа для index.js
     schedule: './schedule.js',  // Точка входа для schedule.js
+    cinema_panel: './cinema-panel.js'
   },
 
   // Настройки для выходных файлов
   output: {
     // Используем функцию для динамического формирования пути в зависимости от точки входа
     filename: (pathData) => {
-      return pathData.chunk && pathData.chunk.name === 'schedule'
-        ? 'schedule/[name].[contenthash].js'  // Все файлы schedule будут в папке dist/schedule
-        : '[name].[contenthash].js'; // Для остальных файлов стандартная структура
+      if(pathData.chunk && pathData.chunk.name === 'schedule') {
+        return 'schedule/[name].[contenthash].js'; // Все файлы schedule будут в папке dist/schedule
+      } else if(pathData.chunk && pathData.chunk.name === 'cinema-panel') {
+        return 'cinema-panel/[name].[contenthash].js';
+      } else {
+        return '[name].[contenthash].js'; // Для остальных файлов стандартная структура
+      }
     },
     path: path.resolve(__dirname, 'dist'), // Общая папка для выходных файлов
     publicPath: (pathData) => {
-      return pathData.chunk && pathData.chunk.name === 'schedule' ? '/schedule/' : '/';
+      if(pathData.chunk && pathData.chunk.name === 'schedule') {
+        return '/schedule/';
+      } else if(pathData.chunk && pathData.chunk.name === 'cinema-panel') {
+        return '/cinema-panel/';
+      } else {
+        return '/';
+      }
     },
     clean: true, // Очищаем dist перед каждой сборкой
   },
@@ -38,9 +49,13 @@ export default {
     new MiniCssExtractPlugin({
       // Динамическое имя для CSS файлов
       filename: (pathData) => {
-        return pathData.chunk && pathData.chunk.name === 'schedule'
-          ? 'schedule/[name].[contenthash].css' // CSS для schedule.js будет в папке dist/schedule
-          : '[name].[contenthash].css'; // CSS для остальных точек входа
+        if(pathData.chunk && pathData.chunk.name === 'schedule') {
+          return 'schedule/[name].[contenthash].css';
+        } else if (pathData.chunk && pathData.chunk.name === 'cinema-panel') {
+          return 'cinema-panel/[name].[contenthash].css';
+        } else {
+          return '[name].[contenthash].css';
+        }
       },
     }),
     new WebpackManifestPlugin({
@@ -71,9 +86,11 @@ export default {
           filename: (pathData) => {
             // Проверка доступности pathData.module и resource
             if (pathData.module && pathData.module.resource) {
-              return pathData.module.resource.includes('schedule')
-                ? 'schedule/font/[name][ext]'  // Шрифты для schedule.js в dist/schedule/font
-                : 'font/[name][ext]'; // Шрифты для других точек входа в dist/font
+              if(pathData.module.resource.includes('schedule')) {
+                return 'schedule/font/[name][ext]';  // Шрифты для schedule.js в dist/schedule/font
+              } else if (pathData.module.resource.includes('cinema-panel')) {
+                return 'cinema-panel/font/[name][ext]';
+              }
             }
             return 'font/[name][ext]'; // Резервный вариант
           },
@@ -86,9 +103,11 @@ export default {
           filename: (pathData) => {
             // Проверка доступности pathData.module и resource
             if (pathData.module && pathData.module.resource) {
-              return pathData.module.resource.includes('schedule')
-                ? 'schedule/images/[name][ext]'  // Изображения для schedule.js в dist/schedule/images
-                : 'images/[name][ext]'; // Изображения для других точек входа в dist/images
+              if(pathData.module.resource.includes('schedule')) {
+                return 'schedule/images/[name][ext]'; // Изображения для schedule.js в dist/schedule/images
+              } else if(pathData.module.resource.includes('cinema-panel')) {
+                return 'cinema-panel/images/[name][ext]';
+              }
             }
             return 'images/[name][ext]'; // Резервный вариант
           },

@@ -1,3 +1,27 @@
+@font-face {
+  font-family: "Rubik";
+  font-style: normal;
+  src: url(/font/Rubik.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Сapitellum";
+  font-style: normal;
+  src: url(/font/Capitellum_Tough.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "THRONE-SVG";
+  font-style: normal;
+  src: url(/font/THRONE-SVG.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Poppins-Medium";
+  font-style: normal;
+  src: url(/font/Poppins-Medium.ttf) format("truetype");
+}
+
 :root {
   --dark_violet: #484079;
   --violet: #646093;
@@ -206,7 +230,7 @@ section {
 }
 
 .checkbox_style input[type="checkbox"]:checked+span {
-  background: var(--dark_violet) url(../images/icons/check-mark.svg) no-repeat;
+  background: var(--dark_violet) url(/images/check-mark.svg) no-repeat;
   background-size: contain;
 }
 
@@ -347,15 +371,15 @@ section {
 }
 
 form div:has(.login)::after {
-  background-image: url(../images/icons/ticket.svg);
+  background-image: url(/images/ticket.svg);
 }
 
 form div:has(.phone)::after {
-  background-image: url(../images/icons/phone-signal.svg);
+  background-image: url(/images/phone-signal.svg);
 }
 
 form div:has(.email)::after {
-  background-image: url(../images/icons/mail-free.svg);
+  background-image: url(/images/mail-free.svg);
 }
 
 
@@ -448,7 +472,7 @@ form input[type='button'] {
 
 .entrance_form_close,
 .buy_form_close {
-  background: var(--dark_violet) url(../images/icons/close-bold-svgrepo-com.svg) no-repeat;
+  background: var(--dark_violet) url(/images/close-bold-svgrepo-com.svg) no-repeat;
   background-size: contain;
   width: 4rem;
   height: 4rem;
@@ -642,7 +666,7 @@ form input[type='button'] {
   padding: 0;
   width: 2.5rem;
   height: 2.5rem;
-  background: rgba(225, 66, 52, .5) url(../images/icons/armchair.png) no-repeat center;
+  background: rgba(225, 66, 52, .5) url(/images/armchair.png) no-repeat center;
   background-repeat: no-repeat;
   background-size: contain;
 }
@@ -834,3 +858,204 @@ form input[type='button'] {
   flex-direction: column;
   width: max-content;
   margin: 0 auto;}
+.logo img {
+  width: 3rem;
+  height: 3rem;
+  align-self: center;
+}
+.logo_name {
+  margin-left: 1.3rem;
+  font-size: 3rem;
+}
+
+.logo {
+  display: flex;
+}
+
+.age_restrictions {
+  color: var(--red);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.6rem;
+  margin-top: 1rem;
+}
+
+.age_restrictions span {
+  font-size: initial;
+  font-weight: 400;
+}
+
+.menu_main_list {
+  display: flex;
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+.menu_main_list>li {
+  position: relative;
+  width: 25rem;
+}
+
+.menu_main_list>li:last-child {
+  background-color: transparent;
+}
+
+.menu_main_list>li>ul {
+  width: inherit;
+  position: absolute;
+  background-color: inherit;
+  right: 0;
+  top: 100%;
+}
+
+.menu_main_list>li:not(li:last-child):hover {
+  background-color: var(--dark_violet);
+}
+
+.menu_main_list li {
+  padding: 1rem;
+}
+
+.menu_main_list li a {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.menu_main_list>li:last-child a {
+  width: initial;
+}
+
+.menu_main_list li a:hover, .ticket_back a:hover, .red_color{
+  color: var(--red);
+}
+
+.contacts a {
+  transition: 0.3s;
+}
+nav {
+  margin: 0 auto;
+  align-self: flex-end;
+}
+
+.menu {
+  position: fixed;
+  z-index: 10;
+  padding: 0 1rem;
+  max-width: 192rem;
+  width: 100%;
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+  display: flex;
+  align-items: center;
+  min-height: 95px;
+  height: auto;
+}
+
+.menu_container {
+  display: flex;
+  width: inherit;
+}
+
+.btn_main_style {
+  font-size: 2.4rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn_ordinary {
+  background-color: var(--red);
+  border-radius: 3rem;
+  color: var(--yellow);
+  padding: 1rem 2rem;
+}
+
+.btn_ordinary:hover {
+  background-color: var(--dark_violet);
+  border: 1px solid var(--dark_violet);
+}
+
+.btn_accent,
+.btn_accent:hover,
+.btn_ordinary {
+  border: 1px solid var(--black-blue);
+}
+
+.btn_accent {
+  background-color: var(--red);
+  padding: 1rem 2rem;
+}
+
+.btn_accent:hover {
+  box-shadow: inset -200px -4px 115px -84px #4895a7;
+}
+
+.btn_form {
+  font-size: 2rem;
+  border-radius: 40rem;
+  border: 1px solid var(--dark_violet);
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+}
+
+.btn_form:hover {
+  background-color: rgba(72, 64, 121, 0.8);
+}
+
+.entrance_form_btn, .account_form_btn, .exit_btn {
+  border: 0;
+  background-color: var(--dark_violet);
+  align-self: center;
+  height: max-content;
+  font-size: 2.4rem;
+  color: var(--red);
+  /* padding: 1rem 0 1rem 3.4rem; */
+  padding: 0 0 0 3.4rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.entrance_form_btn:hover, .account_form_btn:hover, .exit_btn:hover {
+  color: var(--light_violet);
+}
+
+.entrance_form_btn:hover .entrance_form_img path , .account_form_btn:hover .account_form_img path, .exit_btn:hover .exit_btn_img path{
+  fill: var(--light_violet);
+}
+
+.entrance_form_img path, .account_form_img path, .exit_btn_img path {
+  fill: var(--red);
+}
+
+.entrance_form_img, .account_form_img, .exit_btn_img {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+}
+
+.prev_form_btn {
+  font-size: initial;
+  text-transform: capitalize;
+  background-color: transparent;
+  border: 0;
+  color: var(--dark_violet);
+}
+
+.prev_form_btn::before {
+  content: "\00AB";
+  font-family: var(--h1_font);
+  width: 2.4rem;
+  height: 2.4rem;
+  padding-right: 1rem;
+}
+
+.prev_form_btn:hover {
+  color: rgba(72, 64, 121, 0.8);
+}
+
+.buy_form button {
+  width: 50%;
+  margin-top: 1rem;
+}

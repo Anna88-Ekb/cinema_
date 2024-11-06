@@ -7,5 +7,8 @@ router.get('/movies-age', movieFilterSelection.getCurrentMovieAge);
 router.get('/movies-calendar', movieFilterSelection.getMoviesCalendar);
 router.get('/movies-calendar-days', movieFilterSelection.getMoviesDate);
 router.get('/movie-months', movieFilterSelection.getMoviesMonthByMovieName);
-router.get('/movie-day_calendar', movieFilterSelection.getDaysByMovieNameAndMonth);
+router.get('/movie-day-calendar', movieFilterSelection.getDaysByMovieNameAndMonth);
+router.get('/movie-time-calendar', movieFilterSelection.getTimeByMovieNameAndDay);
+router.get('/movie-hall-calendar', movieFilterSelection.getHallByMovieNameAndDatetime);
+
 export default router;

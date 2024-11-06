@@ -1,0 +1,11 @@
+{{#if halls}}
+<fieldset class="buy_form_choiсe_filter_hall_add">
+  <legend>Выберите зал для просмотра<span>*</span></legend>
+  <ul class="send_ticket_type gorizontal checkbox_style">
+    {{#each halls}}
+    <li><label>Зал {{this.hall_id}}</label><span><input title="Нажмите для применения фильтра" type="checkbox"
+          name="buy_form_choiсe_list_hall" value="{{this.hall_id}}"><span></span></span></li>
+    {{/each}}      
+  </ul>
+</fieldset>
+{{/if}}

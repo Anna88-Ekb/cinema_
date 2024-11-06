@@ -231,6 +231,7 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
   res.json(date_path.rows);
   } 
 
+  
 }
 export const movieList = new movieListController();
 

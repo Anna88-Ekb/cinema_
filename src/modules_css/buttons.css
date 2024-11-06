@@ -44,31 +44,32 @@
   background-color: rgba(72, 64, 121, 0.8);
 }
 
-.entrance_form_btn, .account_form_btn {
+.entrance_form_btn, .account_form_btn, .exit_btn {
   border: 0;
   background-color: var(--dark_violet);
   align-self: center;
   height: max-content;
   font-size: 2.4rem;
   color: var(--red);
-  padding: 1rem 0 1rem 3.4rem;
+  /* padding: 1rem 0 1rem 3.4rem; */
+  padding: 0 0 0 3.4rem;
   cursor: pointer;
   position: relative;
 }
 
-.entrance_form_btn:hover, .account_form_btn:hover {
+.entrance_form_btn:hover, .account_form_btn:hover, .exit_btn:hover {
   color: var(--light_violet);
 }
 
-.entrance_form_btn:hover .entrance_form_img path , .account_form_btn:hover .account_form_img path {
+.entrance_form_btn:hover .entrance_form_img path , .account_form_btn:hover .account_form_img path, .exit_btn:hover .exit_btn_img path{
   fill: var(--light_violet);
 }
 
-.entrance_form_img path, .account_form_img path {
+.entrance_form_img path, .account_form_img path, .exit_btn_img path {
   fill: var(--red);
 }
 
-.entrance_form_img, .account_form_img {
+.entrance_form_img, .account_form_img, .exit_btn_img {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);

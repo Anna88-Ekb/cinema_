@@ -47,6 +47,8 @@ app.engine('hbs', engine({
     homeJsFile: manifest['home.js'],
     scheduleCssFile: manifest['schedule.css'],
     scheduleJsFile: manifest['schedule.js'],
+    cinemaPanelCssFile: manifest['cinema_panel.css'],
+    cinemaPanelJsFile: manifest['cinema_panel.js'],
     dateFormatRU: function (day) {
       return day.substring(8) + '.' + day.substring(5, 7) + '.' + day.substring(0, 4);
     },
@@ -59,19 +61,19 @@ app.engine('hbs', engine({
     or: function (a, b) {
       return a || b;
     },
-    and: function(a, b) {
+    and: function (a, b) {
       return a && b;
     },
-    not: function(a, b) {
+    not: function (a, b) {
       return !a && !b;
     },
-    true: function(a) {
+    true: function (a) {
       return a === true || Boolean(a) === true;
     },
-    invers: function(a) {
+    invers: function (a) {
       return !a;
     },
-    capitalize: function(el) {
+    capitalize: function (el) {
       return el.substring(0, 1).toUpperCase() + el.substring(1);
     }
   }
@@ -89,7 +91,7 @@ app.get('/', async (_, res) => {
     const halls = await response_movies_today.json();
     const response_min_price = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/min-price`);
     let min_price = await response_min_price.json();
-    
+
     res.render('home', {
       title: "Cinema-кинотеатр", movies, halls, min_price,
       helpers: {
@@ -215,7 +217,7 @@ app.post('/search-client-mail', async (req, res) => {
       res.status(200).json({ message: a_client_email.message });
     }
     else if (a_client_email.success) {
-      res.status(404).json({ success: a_client_email.success });
+      res.status(400).json({ success: a_client_email.success });
     }
 
   } catch (error) {
@@ -236,7 +238,7 @@ app.post('/search-client-phone', async (req, res) => {
       res.status(200).json({ message: a_client_phone.message });
     }
     else if (a_client_phone.success) {
-      res.status(404).json({ success: a_client_phone.success });
+      res.status(400).json({ success: a_client_phone.success });
     }
 
   } catch (error) {
@@ -257,7 +259,7 @@ app.post('/search-client-login', async (req, res) => {
       res.status(200).json({ message: a_client_login.message });
     }
     else if (a_client_login.success) {
-      res.status(404).json({ success: a_client_login.success });
+      res.status(400).json({ success: a_client_login.success });
     }
 
   } catch (error) {
@@ -277,7 +279,7 @@ app.post('/entrance-client', async (req, res) => {
     const a_client = await client.json();
 
     if (a_client.message) {
-      res.status(404).json({ message: a_client.message });
+      res.status(400).json({ message: a_client.message });
     }
     else if (a_client.entrance === true) {
 
@@ -285,12 +287,6 @@ app.post('/entrance-client', async (req, res) => {
         path: '/',
         encode: String
       });
-
-      /*         res.cookie('client_login', `${a_client.login}`, {
-                path: '/schedule-page',
-                encode: String 
-              });
-       */
 
       const login = a_client.login;
       res.render('partials/header/entrance', { login }, (err, html) => {
@@ -309,7 +305,6 @@ app.post('/entrance-client', async (req, res) => {
 app.get('/buy-ticket', async (req, res) => {
 
   let client_preference = false;
-
   if (req.cookies.client_login) {
     const request_client_preference = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/preference-client-contacts/?login=${req.cookies.client_login}`)
     client_preference = await request_client_preference.json();
@@ -322,38 +317,108 @@ app.get('/buy-ticket', async (req, res) => {
     const movie_name = movie_days[0].cinema_name;
     const response_movie_month = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-months/?name=${req.query.movie_name}`);
     const months = await response_movie_month.json();
-  /*   console.log(months); */
-    res.render('partials/buy_form/buy_form', { movie_name, client_preference: client_preference[0], months, days:false, hours:false });
+    /*   console.log(months); */
+    res.render('partials/buy_form/buy_form', { movie_name, client_preference: client_preference[0], months, days: false, hours: false });
   } else {
     const request_params = { ...req.query };
+    console.log(request_params);
     const request_hall_place = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/hall-tickets`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request_params)
     });
     const hall_place = await request_hall_place.json();
-/*     hall_place.places.forEach(element => {
-      element.place_col.forEach(el=> console.log(typeof el.col_status));
-    }); */
+    /*     hall_place.places.forEach(element => {
+          element.place_col.forEach(el=> console.log(typeof el.col_status));
+        }); */
     res.render('partials/buy_form/buy_form', { request_params, client_preference: client_preference[0], hall_place });
 
   }
 
 });
 
-
 app.get('/buy-ticket-dates', async (req, res) => {
-/* console.log(req.query); */
-const url = new URLSearchParams(req.query).toString();
-const request_dates = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-day_calendar/?${url}`);
-const dates = await request_dates.json();
-res.json(dates);
-
+  try {
+    const url = new URLSearchParams(req.query).toString();
+    const request_dates = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-day-calendar/?${url}`);
+    const days = await request_dates.json();
+    res.render('partials/buy_form/buy_form_selection_days', { days }, (e, html) => {
+      if (e) {
+        return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
+      }
+      res.send(html);
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
+app.get('/buy-ticket-times', async (req, res) => {
+  try {
+    const request_times = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-time-calendar/?name=${req.query.name}&date=${req.query.date}`);
+    let hours = await request_times.json();
+    if (hours.length === 0) {
+      hours = false;
+      return res.status(400).send('Выбирайте дату из предложенного списка');
+    }
+    res.render('partials/buy_form/buy_form_selection_hours', { hours }, (e, html) => {
+      if (e) {
+        return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
+      }
+      res.send(html);
+    });
 
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
+app.get('/buy-ticket-halls', async (req, res) => {
+  const request_halls = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-hall-calendar/?movie_name=${req.query.movie_name}&movie_date=${req.query.movie_date}&movie_time=${req.query.movie_time}`);
+  const halls = await request_halls.json();
+  console.log(halls);
+  /*   if (halls.length === 1) {
+      const request_params = new URLSearchParams({
+        movie_name: req.query.movie_name,
+        hall_num: halls[0].hall_id.toString(),
+        movie_date: req.query.movie_date,
+        movie_time: req.query.movie_time,
+      }).toString();
+    
+      res.redirect(process.env.SERV_HOST + process.env.PORT +`/buy-ticket?${request_params}`);
+    } */
 
+  if (halls.length > 1) {
+    res.render('partials/buy_form/buy_form_halls', { halls }, (e, html) => {
+      if (e) {
+        return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
+      }
+      res.send(html);
+    });
+  } else if (halls.length === 1) {
+    const request_params = {
+      movie_name: req.query.movie_name,
+      hall_num: halls[0].hall_id.toString(),
+      movie_date: req.query.movie_date.toString(),
+      movie_time: req.query.movie_time.toString(),
+    };
+
+    const request_hall_place = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/hall-tickets`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request_params)
+    });
+
+    const hall_place = await request_hall_place.json();
+    res.render('partials/buy_form/buy_form_tickets', { request_params, hall_place }, (e, html) => {
+      if (e) {
+        return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
+      }
+      res.send(html);
+    });
+  }
+
+});
 
 
 app.get('/cinema-panel-entrance', async (_, res) => {
