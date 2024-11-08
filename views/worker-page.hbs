@@ -1,0 +1,57 @@
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="{{cinemaPanelCssFile}}" />
+</head>
+
+<body>
+  {{#if worker_login}}
+  <div class="container">
+    <div class="account">
+      <div class="menu-top">
+        {{#if worker}}
+        <div>
+          <p>{{worker.worker_family_name}} {{worker.worker_name}} {{worker.worker_patronymic}}</p>
+          <button class="exit_btn">Выйти
+            <svg class="exit_btn_img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 10 10"
+              id="svg2">
+              <path
+                d="m 2.75,0 0,2.5 1.25,0 0,-1.25 4.75,0 0,7.5 L 4,8.75 4,7.5 2.75,7.5 2.75,10 10,10 10,0 z M 5,2.5 l 0,1.75 -4,0 0,1.5 4,0 L 5,7.5 8,5 z"
+                id="entrance"></path>
+            </svg>
+          </button>
+        </div>
+        {{/if}}
+      </div>
+      <div class="account-view">
+        <div class="menu-left">
+          <div class="menu-left__items">
+            <ul>
+              {{#each worker.worker_access}}
+              {{#if (eq this 1)}}
+              {{#if ../tables}}
+              <li>Таблицы<span class="arrow"></span>
+                <ul class="unblock">
+                  {{#each ../tables}}
+                  <li><a href="#" data-table-name="{{this.table_name}}">{{this.table_comment}}</a></li>
+                  {{/each}}
+                </ul>
+              </li>
+              {{/if}}
+              {{/if}}
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+        <div class="start_worker_page"><h1>Добро пожаловать!</h1></div>   
+      </div>
+    </div>
+  </div>
+  {{/if}}
+  <script src="{{cinemaPanelJsFile}}"></script>
+</body>
+
+</html>

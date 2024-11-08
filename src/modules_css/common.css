@@ -1,7 +1,7 @@
 :root {
   --dark_violet: #484079;
   --violet: #646093;
-  --grey_violet: #545056;
+  --grey_violet: #40404A;
   --bright_violet: #82aaff;
   --light_violet: #d2e2f9;
   --light_blue: #b6fafb;
@@ -295,7 +295,7 @@ section {
 
 .entrance_form div>input,
 .restore_password_form div>input,
-.entrance_form input[type="button"],
+.entrance_form input[type="button"], .entrance_form input[type="submit"],
 .restore_password_form input[type="button"],
 .entrance_form_container select {
   width: 100%;
@@ -386,6 +386,7 @@ option,
 }
 
 .entrance_form input[type="button"],
+.entrance_form input[type="submit"],
 .restore_password_form input[type="button"] {
   padding: 1rem;
 }
@@ -834,3 +835,5 @@ form input[type='button'] {
   flex-direction: column;
   width: max-content;
   margin: 0 auto;}
+
+

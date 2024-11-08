@@ -1,31 +1,31 @@
 @font-face {
   font-family: "Rubik";
   font-style: normal;
-  src: url(/font/Rubik.ttf) format("truetype");
+  src: url(..//font/Rubik.ttf) format("truetype");
 }
 
 @font-face {
   font-family: "Сapitellum";
   font-style: normal;
-  src: url(/font/Capitellum_Tough.ttf) format("truetype");
+  src: url(..//font/Capitellum_Tough.ttf) format("truetype");
 }
 
 @font-face {
   font-family: "THRONE-SVG";
   font-style: normal;
-  src: url(/font/THRONE-SVG.ttf) format("truetype");
+  src: url(..//font/THRONE-SVG.ttf) format("truetype");
 }
 
 @font-face {
   font-family: "Poppins-Medium";
   font-style: normal;
-  src: url(/font/Poppins-Medium.ttf) format("truetype");
+  src: url(..//font/Poppins-Medium.ttf) format("truetype");
 }
 
 :root {
   --dark_violet: #484079;
   --violet: #646093;
-  --grey_violet: #545056;
+  --grey_violet: #40404A;
   --bright_violet: #82aaff;
   --light_violet: #d2e2f9;
   --light_blue: #b6fafb;
@@ -230,7 +230,7 @@ section {
 }
 
 .checkbox_style input[type="checkbox"]:checked+span {
-  background: var(--dark_violet) url(/images/check-mark.svg) no-repeat;
+  background: var(--dark_violet) url(..//images/check-mark.svg) no-repeat;
   background-size: contain;
 }
 
@@ -319,7 +319,7 @@ section {
 
 .entrance_form div>input,
 .restore_password_form div>input,
-.entrance_form input[type="button"],
+.entrance_form input[type="button"], .entrance_form input[type="submit"],
 .restore_password_form input[type="button"],
 .entrance_form_container select {
   width: 100%;
@@ -371,15 +371,15 @@ section {
 }
 
 form div:has(.login)::after {
-  background-image: url(/images/ticket.svg);
+  background-image: url(..//images/ticket.svg);
 }
 
 form div:has(.phone)::after {
-  background-image: url(/images/phone-signal.svg);
+  background-image: url(..//images/phone-signal.svg);
 }
 
 form div:has(.email)::after {
-  background-image: url(/images/mail-free.svg);
+  background-image: url(..//images/mail-free.svg);
 }
 
 
@@ -410,6 +410,7 @@ option,
 }
 
 .entrance_form input[type="button"],
+.entrance_form input[type="submit"],
 .restore_password_form input[type="button"] {
   padding: 1rem;
 }
@@ -472,7 +473,7 @@ form input[type='button'] {
 
 .entrance_form_close,
 .buy_form_close {
-  background: var(--dark_violet) url(/images/close-bold-svgrepo-com.svg) no-repeat;
+  background: var(--dark_violet) url(..//images/close-bold-svgrepo-com.svg) no-repeat;
   background-size: contain;
   width: 4rem;
   height: 4rem;
@@ -666,7 +667,7 @@ form input[type='button'] {
   padding: 0;
   width: 2.5rem;
   height: 2.5rem;
-  background: rgba(225, 66, 52, .5) url(/images/armchair.png) no-repeat center;
+  background: rgba(225, 66, 52, .5) url(..//images/armchair.png) no-repeat center;
   background-repeat: no-repeat;
   background-size: contain;
 }
@@ -858,6 +859,9 @@ form input[type='button'] {
   flex-direction: column;
   width: max-content;
   margin: 0 auto;}
+
+
+
 .logo img {
   width: 3rem;
   height: 3rem;
@@ -991,18 +995,6 @@ nav {
   box-shadow: inset -200px -4px 115px -84px #4895a7;
 }
 
-.btn_form {
-  font-size: 2rem;
-  border-radius: 40rem;
-  border: 1px solid var(--dark_violet);
-  background-color: var(--dark_violet);
-  color: var(--light_violet);
-}
-
-.btn_form:hover {
-  background-color: rgba(72, 64, 121, 0.8);
-}
-
 .entrance_form_btn, .account_form_btn, .exit_btn {
   border: 0;
   background-color: var(--dark_violet);
@@ -1059,3 +1051,277 @@ nav {
   width: 50%;
   margin-top: 1rem;
 }
+
+.btn_form {
+  font-size: 2rem;
+  border-radius: 40rem;
+  border: 1px solid var(--dark_violet);
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+}
+
+.btn_form:hover, .cancellation:hover {
+  background-color: rgba(72, 64, 121, 0.8);
+}
+.account {
+  display: flex;
+  flex-direction: column;
+  height: max-content;
+  min-height: 108rem;
+}
+
+.menu-left {
+  display: flex;
+  flex-direction: column;
+  width: 15%;
+  padding: 1rem;
+  min-height: 108rem;
+  background-color: var(--grey_violet);
+
+}
+
+.menu-top {
+  height: 10rem;
+  background-color: var(--dark_violet);
+}
+
+.account-view {
+  display: flex;
+  height: max-content;
+  min-height: 108rem;
+  background-color: var(--light_violet);
+  width: 100%;
+}
+
+.menu-left__items {
+  color: var(--light_violet);
+}
+
+li {
+  list-style-type: none;
+  list-style-position: inside;
+}
+
+
+.arrow {
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  position: absolute;
+  right: .5rem;
+  cursor: pointer;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--dark_violet);
+}
+
+
+.cursor_pointer{
+  cursor: pointer;
+}
+
+
+.menu-top{
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+.menu-top>div{
+  margin-left: auto;
+  display: flex;
+}
+
+.menu-top>div>p {
+  align-self: center;
+  color: var(--light_violet);
+}
+.menu-top>div>button{
+  margin-left: 1rem;
+}
+
+
+.menu-left__items>ul li>a:hover, .violet {
+background-color: var(--dark_violet);
+}
+
+.menu-left__items>ul li>a {
+  padding: 1rem .5rem;
+  display: inline-block;
+  width: 100%;
+  transition: .3s;
+}
+
+.menu-left__items>ul li:has(:not(a)) {
+  padding: 1rem .5rem;
+}
+.menu-left__items>ul li {
+  margin-top: 1rem;
+  border: 1px dotted rgba(210, 226, 249, .3);
+}
+
+
+.menu-left__items>ul>li {
+  border: 1px solid rgba(210, 226, 249, .5);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.database_views {
+  display: flex;
+  width: 80%;
+}
+.database_view_left_toolbar {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  width: 4rem;
+  height: auto;
+  background-color: #484079;
+}
+.database_view {
+  width: calc(100% - 5rem);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  margin-left: 4rem;
+}
+.database_view_toolbar {
+display: flex;
+}
+
+.scroll-down {
+  transform: rotate(180deg);
+}
+
+
+.database_view_left_toolbar>ul>li>a>img, .database_view_left_toolbar>ul>li>a {
+  width: 3rem;
+  height: 3rem;
+  display: block;
+  margin: 1rem auto;
+}
+
+.database_view_left_toolbar>ul>li>a:active{
+  background-color: var(--grey_blue);
+}
+
+.database_view_toolbar input[type='search'] {
+  padding: 0.5rem 3rem 0.5rem 0.5rem;
+  font-size: initial;
+  min-height: 4rem;
+  min-width: 35rem;
+  border-radius: 2px;
+  outline-color: var(--dark_violet);
+  border-color: var(--dark_violet);
+  background-color: rgba(100, 96, 147, .1);
+  border-radius: 40rem;
+}
+
+.database_view_toolbar input[type='search'] + img {
+  position: absolute;
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  right: 0.5rem;
+  top: 0.5rem;
+  color: #484079;
+}
+.database_view_toolbar div{
+  position: relative;
+}
+
+.database_view_toolbar div>input[type="button"] {
+  padding: .5rem 5rem;
+  min-height: 4rem;
+  cursor: pointer;
+}
+
+
+.database_view_toolbar div + div {
+  margin-left: 1rem;
+}
+
+
+
+.database_view_table {
+  margin-top: 2rem;
+/*   align-self: center; */
+}
+.database_view_table table {
+  font-size: 12px;
+  border-collapse: collapse;
+  max-width: 100%; 
+  table-layout: fixed; 
+}
+
+.database_view_table table tbody tr{
+  position: relative;
+}
+
+
+.database_view_table table th,
+.database_view_table table td {
+  border: 1px dotted var(--grey_violet);
+  padding: 0.75rem;
+  position: relative;
+}
+
+.active, .change_entry {
+  background-color: rgba(72, 149, 167, .5);
+}
+
+.delete_entry {
+  background-color: rgba(225, 66, 52, .5);
+}
+
+.cursor_pointer{
+  cursor: pointer;
+}
+
+.database_view_table table td > textarea {
+position: absolute;
+top: 0;
+left: 0;
+height: 100%;
+width: 100%;
+overflow: visible;
+resize: none;
+border: none;
+outline: none;
+background-color: transparent;
+padding: .5rem;
+}
+
+.cancellation{
+content: 'Отменить';
+display: block;
+width: auto;
+height: auto;
+padding: .5rem;
+font-size: 1.4rem;
+cursor: pointer;
+color: var(--dark_violet);
+top: 50%;
+transform: translateY(-50%);
+position: absolute;
+z-index: 1000;
+background-color: var(--dark_violet);
+color: var(--light_violet);
+}
+
+.marked_account {
+  background-color: var(--violet);
+  color: var(--light_blue);
+  font-size: 2rem;
+}
+
+.start_worker_page {
+  padding: 1rem;
+}
+
+.start_worker_page h1 {
+  color: var(--dark_violet);
+}
+
+

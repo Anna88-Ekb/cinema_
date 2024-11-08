@@ -1,0 +1,159 @@
+
+.database_views {
+  display: flex;
+  width: 80%;
+}
+.database_view_left_toolbar {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  width: 4rem;
+  height: auto;
+  background-color: #484079;
+}
+.database_view {
+  width: calc(100% - 5rem);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  margin-left: 4rem;
+}
+.database_view_toolbar {
+display: flex;
+}
+
+.scroll-down {
+  transform: rotate(180deg);
+}
+
+
+.database_view_left_toolbar>ul>li>a>img, .database_view_left_toolbar>ul>li>a {
+  width: 3rem;
+  height: 3rem;
+  display: block;
+  margin: 1rem auto;
+}
+
+.database_view_left_toolbar>ul>li>a:active{
+  background-color: var(--grey_blue);
+}
+
+.database_view_toolbar input[type='search'] {
+  padding: 0.5rem 3rem 0.5rem 0.5rem;
+  font-size: initial;
+  min-height: 4rem;
+  min-width: 35rem;
+  border-radius: 2px;
+  outline-color: var(--dark_violet);
+  border-color: var(--dark_violet);
+  background-color: rgba(100, 96, 147, .1);
+  border-radius: 40rem;
+}
+
+.database_view_toolbar input[type='search'] + img {
+  position: absolute;
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  right: 0.5rem;
+  top: 0.5rem;
+  color: #484079;
+}
+.database_view_toolbar div{
+  position: relative;
+}
+
+.database_view_toolbar div>input[type="button"] {
+  padding: .5rem 5rem;
+  min-height: 4rem;
+  cursor: pointer;
+}
+
+
+.database_view_toolbar div + div {
+  margin-left: 1rem;
+}
+
+
+
+.database_view_table {
+  margin-top: 2rem;
+/*   align-self: center; */
+}
+.database_view_table table {
+  font-size: 12px;
+  border-collapse: collapse;
+  max-width: 100%; 
+  table-layout: fixed; 
+}
+
+.database_view_table table tbody tr{
+  position: relative;
+}
+
+
+.database_view_table table th,
+.database_view_table table td {
+  border: 1px dotted var(--grey_violet);
+  padding: 0.75rem;
+  position: relative;
+}
+
+.active, .change_entry {
+  background-color: rgba(72, 149, 167, .5);
+}
+
+.delete_entry {
+  background-color: rgba(225, 66, 52, .5);
+}
+
+.cursor_pointer{
+  cursor: pointer;
+}
+
+.database_view_table table td > textarea {
+position: absolute;
+top: 0;
+left: 0;
+height: 100%;
+width: 100%;
+overflow: visible;
+resize: none;
+border: none;
+outline: none;
+background-color: transparent;
+padding: .5rem;
+}
+
+.cancellation{
+content: 'Отменить';
+display: block;
+width: auto;
+height: auto;
+padding: .5rem;
+font-size: 1.4rem;
+cursor: pointer;
+color: var(--dark_violet);
+top: 50%;
+transform: translateY(-50%);
+position: absolute;
+z-index: 1000;
+background-color: var(--dark_violet);
+color: var(--light_violet);
+}
+
+.marked_account {
+  background-color: var(--violet);
+  color: var(--light_blue);
+  font-size: 2rem;
+}
+
+.start_worker_page {
+  padding: 1rem;
+}
+
+.start_worker_page h1 {
+  color: var(--dark_violet);
+}
+

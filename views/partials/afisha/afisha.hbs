@@ -7,7 +7,7 @@
         <ul class="vertical checkbox_style">
           {{#each type}}
           <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="{{{this.name}}}"
-                value="{{{this.type_desc}}}"><span></span></span><label>{{this.type_desc}}<span>{{this.type_count}}</span></label>
+                value="{{{this.type_name}}}"><span></span></span><label>{{this.type_name}}<span>{{this.type_count}}</span></label>
           </li>
           {{/each}}
         </ul>
@@ -23,11 +23,11 @@
         </ul>
       </div>
       <div class="filter_films">
-        <h4>Страна</h4>
+        <h4>Возрастные ограничения</h4>
         <ul class="vertical checkbox_style">
           {{#each age}}
           <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="{{{this.name}}}"
-                value="{{{this.age_desc}}}"><span></span></span><label>{{this.age_desc}}<span>{{this.age_count}}</span></label>
+                value="{{{this.age_name}}}"><span></span></span><label>{{this.age_name}}<span>{{this.age_count}}</span></label>
           </li>
           {{/each}}
         </ul>

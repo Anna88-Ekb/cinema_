@@ -15,24 +15,25 @@ class movieSelection {
 
   async getCurrentMovieType(req, res) {
     const result = await db.query(`
-    select 'type' as name, t.type_desc, count (distinct cs.cinema_cinema_id) as type_count from cinema_session cs
+    select 'type' as name, t.type_name, count (distinct cs.cinema_cinema_id) as type_count from cinema_session cs
     join cinema c on cs.cinema_cinema_id = c.cinema_id
     join type t on c.type_type_id = t.type_id
     where cs.session_date >= CURRENT_DATE
     group by 1, 2
     order by 2;
     `);
+    console.log(result.rows);
     res.json(result.rows);
   }
 
   async getCurrentMovieAge(req, res) {
     const result = await db.query(`
-    select 'age' as name, a.age_desc, count (distinct cs.cinema_cinema_id) as age_count from cinema_session cs
+    select 'age' as name, a.age_name, count (distinct cs.cinema_cinema_id) as age_count from cinema_session cs
     join cinema c on cs.cinema_cinema_id = c.cinema_id
     join age a on c.age_age_id = a.age_id
     where cs.session_date >= CURRENT_DATE
     group by 1, 2
-    order by LENGTH(a.age_desc), a.age_desc;
+    order by LENGTH(a.age_name), a.age_name;
     `);
     res.json(result.rows);
   }

@@ -20,7 +20,7 @@ export default {
     filename: (pathData) => {
       if(pathData.chunk && pathData.chunk.name === 'schedule') {
         return 'schedule/[name].[contenthash].js'; // Все файлы schedule будут в папке dist/schedule
-      } else if(pathData.chunk && pathData.chunk.name === 'cinema-panel') {
+      } else if(pathData.chunk && pathData.chunk.name === 'cinema_panel') {
         return 'cinema-panel/[name].[contenthash].js';
       } else {
         return '[name].[contenthash].js'; // Для остальных файлов стандартная структура
@@ -30,7 +30,7 @@ export default {
     publicPath: (pathData) => {
       if(pathData.chunk && pathData.chunk.name === 'schedule') {
         return '/schedule/';
-      } else if(pathData.chunk && pathData.chunk.name === 'cinema-panel') {
+      } else if(pathData.chunk && pathData.chunk.name === 'cinema_panel') {
         return '/cinema-panel/';
       } else {
         return '/';
@@ -51,7 +51,7 @@ export default {
       filename: (pathData) => {
         if(pathData.chunk && pathData.chunk.name === 'schedule') {
           return 'schedule/[name].[contenthash].css';
-        } else if (pathData.chunk && pathData.chunk.name === 'cinema-panel') {
+        } else if (pathData.chunk && pathData.chunk.name === 'cinema_panel') {
           return 'cinema-panel/[name].[contenthash].css';
         } else {
           return '[name].[contenthash].css';
@@ -63,6 +63,8 @@ export default {
     }),
     new CopyWebpackPlugin({
       patterns: [
+/*         { from: path.resolve(__dirname, 'src/images/schedule'), to: 'schedule/images' },
+        { from: path.resolve(__dirname, 'src/images/cinema-panel'), to: 'cinema-panel/images' }, */
         { from: path.resolve(__dirname, 'src/font'), to: 'font' },
         { from: path.resolve(__dirname, 'src/images'), to: 'images' },
         { from: path.resolve(__dirname, 'src/pages_info'), to: 'pages_info' },
@@ -88,7 +90,7 @@ export default {
             if (pathData.module && pathData.module.resource) {
               if(pathData.module.resource.includes('schedule')) {
                 return 'schedule/font/[name][ext]';  // Шрифты для schedule.js в dist/schedule/font
-              } else if (pathData.module.resource.includes('cinema-panel')) {
+              } else if (pathData.module.resource.includes('cinema_panel')) {
                 return 'cinema-panel/font/[name][ext]';
               }
             }
@@ -105,7 +107,7 @@ export default {
             if (pathData.module && pathData.module.resource) {
               if(pathData.module.resource.includes('schedule')) {
                 return 'schedule/images/[name][ext]'; // Изображения для schedule.js в dist/schedule/images
-              } else if(pathData.module.resource.includes('cinema-panel')) {
+              } else if(pathData.module.resource.includes('cinema_panel')) {
                 return 'cinema-panel/images/[name][ext]';
               }
             }

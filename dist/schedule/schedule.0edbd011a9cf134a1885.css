@@ -25,7 +25,7 @@
 :root {
   --dark_violet: #484079;
   --violet: #646093;
-  --grey_violet: #545056;
+  --grey_violet: #40404A;
   --bright_violet: #82aaff;
   --light_violet: #d2e2f9;
   --light_blue: #b6fafb;
@@ -319,7 +319,7 @@ section {
 
 .entrance_form div>input,
 .restore_password_form div>input,
-.entrance_form input[type="button"],
+.entrance_form input[type="button"], .entrance_form input[type="submit"],
 .restore_password_form input[type="button"],
 .entrance_form_container select {
   width: 100%;
@@ -410,6 +410,7 @@ option,
 }
 
 .entrance_form input[type="button"],
+.entrance_form input[type="submit"],
 .restore_password_form input[type="button"] {
   padding: 1rem;
 }
@@ -858,6 +859,9 @@ form input[type='button'] {
   flex-direction: column;
   width: max-content;
   margin: 0 auto;}
+
+
+
 .logo img {
   width: 3rem;
   height: 3rem;
@@ -991,18 +995,6 @@ nav {
   box-shadow: inset -200px -4px 115px -84px #4895a7;
 }
 
-.btn_form {
-  font-size: 2rem;
-  border-radius: 40rem;
-  border: 1px solid var(--dark_violet);
-  background-color: var(--dark_violet);
-  color: var(--light_violet);
-}
-
-.btn_form:hover {
-  background-color: rgba(72, 64, 121, 0.8);
-}
-
 .entrance_form_btn, .account_form_btn, .exit_btn {
   border: 0;
   background-color: var(--dark_violet);
@@ -1058,6 +1050,18 @@ nav {
 .buy_form button {
   width: 50%;
   margin-top: 1rem;
+}
+
+.btn_form {
+  font-size: 2rem;
+  border-radius: 40rem;
+  border: 1px solid var(--dark_violet);
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+}
+
+.btn_form:hover, .cancellation:hover {
+  background-color: rgba(72, 64, 121, 0.8);
 }
 
 .afisha {

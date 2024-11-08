@@ -10,7 +10,7 @@ class movieListController {
   sub.cinema_path,
   sub.cinema_duration,
   sub.country_desc,
-  a.age_desc,
+  a.age_name,
   to_char(sub.session_date, 'DD.MM.YYYY') as session_date,
   to_char(sub.session_time, 'HH24:MI') as session_time
 FROM (
@@ -61,7 +61,7 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
           cinema_path: row.cinema_path,
           cinema_duration: row.cinema_duration,
           cinema_country: row.country_desc,
-          age: row.age_desc,
+          age: row.age_name,
           sessions: [{ session_date: row.session_date, session_time: row.session_time }]
         });
       }
@@ -118,7 +118,7 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
       const queryParams = [];
 
       if (req.query.type && req.query.type !== 'false') {
-        filters.push(`t.type_desc = $${queryParams.length + 1}`);
+        filters.push(`t.type_name = $${queryParams.length + 1}`);
         queryParams.push(req.query.type);
       }
 
@@ -132,7 +132,7 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
       }
 
       if (req.query.age && req.query.age !== 'false') {
-        filters.push(`a.age_desc = $${queryParams.length + 1}`);
+        filters.push(`a.age_name = $${queryParams.length + 1}`);
         queryParams.push(req.query.age);
       }
 
@@ -148,8 +148,8 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
       (select country_country_id
       from production
       where c.cinema_id = cinema_cinema_id)) as country_desc,
-      a.age_desc,
-      t.type_desc,
+      a.age_name,
+      t.type_name,
       to_char(c.cinema_start_date, 'dd.mm.yyyy') as cinema_start_date,
       to_char(c.cinema_end_date, 'dd.mm.yyyy') as cinema_end_date
       from cinema c
@@ -181,8 +181,8 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
       SELECT country_country_id 
       FROM production 
       WHERE c.cinema_id = cinema_cinema_id)) as country_desc,
-      a.age_desc,
-      t.type_desc,
+      a.age_name,
+      t.type_name,
       to_char(c.cinema_start_date, 'DD.MM.YYYY') as cinema_start_date,
       to_char(c.cinema_end_date, 'DD.MM.YYYY') as cinema_end_date
       from cinema c
@@ -208,8 +208,8 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
     SELECT country_country_id 
     FROM production 
     WHERE c.cinema_id = cinema_cinema_id)) as country_desc,
-    a.age_desc,
-    t.type_desc,
+    a.age_name,
+    t.type_name,
     to_char(c.cinema_start_date, 'DD.MM.YYYY') as cinema_start_date,
     to_char(c.cinema_end_date, 'DD.MM.YYYY') as cinema_end_date
     from cinema c

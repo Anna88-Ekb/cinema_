@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { urlencoded } from 'express';
 import { engine } from 'express-handlebars';
 import path from 'path';
 import { __filename, __dirname } from './__dirname.js';
@@ -7,8 +7,8 @@ import moviesRoutes from './routes/movies.routes.js';
 import moviesFilterRoutes from './routes/movieFilter.routes.js';
 import clientRoutes from './routes/client.routes.js';
 import seansHall from './routes/seans.routes.js';
-
-
+import workerRotes from './routes/worker.routes.js';
+import workerDBRotes from './routes/dbWorker.router.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -22,18 +22,28 @@ app.use(express.static(path.join(__dirname, 'dist'), {
     }
   }
 }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE));
 app.use((req, res, next) => {
   res.locals.login = Boolean(req.cookies.client_login);
   next();
 });
-
+app.use((req, res, next) => {
+  res.locals.worker_login = Boolean(req.cookies.worker_login);
+  next();
+});
+app.use((req, res, next) => {
+  res.locals.worker_access = JSON.parse(req.cookies.worker_access || '[]');
+  next();
+});
 
 app.use('/posters', express.static(path.join(__dirname, 'posters')))
 app.use('/api', moviesRoutes);
 app.use('/api', moviesFilterRoutes);
 app.use('/api', seansHall);
 app.use('/server-api', clientRoutes);
+app.use('/server-api', workerRotes);
+app.use('/server-api', workerDBRotes);
 
 
 
@@ -422,12 +432,86 @@ app.get('/buy-ticket-halls', async (req, res) => {
 
 
 app.get('/cinema-panel-entrance', async (_, res) => {
-  res.render('entrance_worker', { title: 'Синема/Форма входа' });
+  res.render('entrance_worker', { title: 'Синема/Форма входа', worker: true });
 })
+
+app.post('/cinema-panel', async (req, res) => {
+  try {
+    const req_worker = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/worker-access`, {
+      method: 'POST', headers: { 'Content-type': 'application/json' }, body: JSON.stringify(req.body)
+    });
+
+    if (!req_worker.ok) {
+      throw new Error('Ошибка при обработке полученных данных, проверьте вводимые данные');
+    } else {
+      const worker = await req_worker.json();
+      /* console.log(worker); */
+      res.cookie('worker_login', `${worker[0].worker_login}`, {
+        path: '/cinema-panel',
+        encode: String
+      });
+      res.cookie('worker_access', `${JSON.stringify(worker[0].worker_access)}`, {
+        path: '/cinema-panel'
+      });
+
+      let tables = false;
+      try {
+        const request_tables_list = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/db-list`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+      
+        if (!request_tables_list.ok) {
+          throw new Error(`Ошибка запроса: ${request_tables_list.statusText}`);
+        }
+      
+        const tables_list = await request_tables_list.json();
+        tables = tables_list.length > 0 ? tables_list : false;
+      } catch (error) {
+        console.error("Ошибка при получении списка таблиц:", error.message);
+      }
+
+      res.render('worker-page', {worker: worker[0], tables : tables});
+/*       res.json(worker); */
+    }
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ 'Error': error.message });
+  }
+});
+
+
+app.get('/tables/:table', async(req, res) => {
+  try {
+    const table = req.params.table;
+    const req_table_colums = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`);
+    const table_colums = await req_table_colums.json();
+    const req_table_dates = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(table_colums)
+    });
+    const table_dates = await req_table_dates.json();
+    console.log(table_colums);
+    console.log(table_dates);
+    res.render('partials/tables/tables_container', {table_colums,  table_dates, table_name: table}, (err, html) => {
+      if (err) {
+        return res.status(500).send('Ошибка рендеринга кнопки');
+      }
+      res.status(200).send(html);
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Ошибка');
+  }
+});
+
 
 app.listen(process.env.PORT || 3000, () => console.log('Запуск!'));
 
 const date = new Date().toLocaleDateString('ru-RU', { timeZone: "Europe/Moscow" });
 const date_db_format = date.substring(6) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
+
 
 
