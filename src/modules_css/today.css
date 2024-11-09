@@ -48,6 +48,7 @@
 .halls table th {
   background-color: var(--dark_violet);
   color: var(--light_violet);
+  position: relative;
 }
 
 .halls img {

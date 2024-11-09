@@ -1,3 +1,5 @@
+import {addSortType} from './client_validate.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
 
   const menu_left = document.querySelector('.menu-left__items');
@@ -11,16 +13,17 @@ document.addEventListener('DOMContentLoaded', async () => {
           children_el.classList.toggle('unblock');
         }
       }
-      if (e.target.tagName === 'A') {
+
+      if (e.target.tagName === 'A' && e.target.parentElement.parentElement.parentElement.classList.contains('manager_tables')) {
+        getTableByName(e.target.dataset.tableName, menu_left)
+      }
+
+      if(e.target.tagName === 'A') {
         const all_links = menu_left.querySelectorAll('li a');
         all_links.forEach(a => a.classList.remove('violet'));
         e.target.classList.toggle('violet');
-        const req_table = await fetch(`${window.origin}/tables/${e.target.dataset.tableName}`);
-        const table_colums = await req_table.text();
-        menu_left.parentElement.parentElement.removeChild( menu_left.parentElement.parentElement.lastElementChild);
-        menu_left.parentElement.parentElement.insertAdjacentHTML('beforeend', table_colums);
-        afterAddTables();
       }
+
     })
   }
 
@@ -33,12 +36,14 @@ function afterAddTables() {
   const search_text_btn = document.querySelector('.search_text_btn');
   let database_table = document.querySelector('.database_view_table table tbody');
   const search_content = document.querySelectorAll('.database_view_table table th, .database_view_table table td');
+  const menu_left = document.querySelector('.menu-left__items');
 
+  database_table.parentElement.insertAdjacentHTML('afterend', `<p class = "total_rows">Итого: <span>${database_table.children.length} ${strIng(database_table.children.length)}</span></p>`);
 
+  
   // кнопка отмены
   const btn_remove = document.createElement('button');
   if (btn_remove) {
-    btn_remove.textContent = "Отменить";
     btn_remove.title = "Отменить внесение изменений";
     btn_remove.classList.add('cancellation');
   }
@@ -62,7 +67,7 @@ function afterAddTables() {
   }
 
   if (left_toolbar) {
-    // обработчики для кнопок боковой панели
+    // обработчики для кнопок боковой панели DB
     left_toolbar.addEventListener('click', (e) => {
       const targetParent = e.target.parentElement;
 
@@ -84,29 +89,32 @@ function afterAddTables() {
         window.scrollTo({ top: scrollHeight, left: 0, behavior: "smooth" });
       }
 
-      if (targetParent.classList.contains('change')) {
+      if (targetParent.classList.contains('change')) { 
+        clearActiveClass();
+        removeClassesToColumn();
         if (!e.target.parentElement.classList.contains('active')) {
-          clearActiveClass();
-          e.target.parentElement.classList.toggle('active');
           addChangeClassesToColumn({ shange: 'change-str', cursor: 'cursor_pointer' });
-        } else {
-          location.reload();
-        }
+        } 
+        e.target.parentElement.classList.toggle('active');
       }
 
       if (targetParent.classList.contains('delete')) {
+        clearActiveClass();
+        removeClassesToColumn();
         if (!e.target.parentElement.classList.contains('active')) {
-          clearActiveClass();
-          e.target.parentElement.classList.toggle('active');
           addChangeClassesToColumn({ cursor: 'cursor_pointer' });
-        } else {
-          location.reload();
-        }
+        } 
+        e.target.parentElement.classList.toggle('active');
       }
 
       if (targetParent.classList.contains('update')) {
-        location.reload();
+        getTableByName(database_table.parentElement.id, menu_left);
       }
+
+      if (targetParent.classList.contains('add')) {
+        createInsertForm(database_table.parentElement.id);
+      }
+
     });
 
   }
@@ -116,32 +124,41 @@ function afterAddTables() {
     let tds = database_table.querySelectorAll('td');
     let ths = database_table.previousElementSibling.querySelectorAll('th');
 
+    ths.forEach((el, i) =>  addSortType(database_table.parentElement.parentElement, i+1));
+
     database_table.addEventListener('click', function (e) {
       const changeActive = document.querySelector('.change.active');
       const deleteActive = document.querySelector('.delete.active');
 
       if (e.target.classList.contains('change-str') && changeActive) {
+
         const textarea = document.createElement('textarea');
         textarea.value = e.target.textContent;
         e.target.textContent = '';
+        e.target.classList.toggle('nopadding');
         e.target.append(textarea);
 
 
-        textarea.addEventListener('change', () => {
+        textarea.addEventListener('change', textareaChange);
+
+        function textareaChange() {
           if (!e.target.parentElement.classList.contains('change_entry')) {
-            e.target.parentElement.classList.add('change_entry');
+            e.target.parentElement.className = 'change_entry';
             const btn = btn_remove.cloneNode(true);
             e.target.parentElement.append(btn);
           }
           textarea.parentElement.classList.add(`${ths[e.target.cellIndex].id}`);
-        });
+        };
+
       }
 
       // удаление
       if (deleteActive && e.target.closest('tr')) {
         const tr = e.target.closest('tr');
-        tr.classList.toggle('delete_entry'); // класс  удаления
+        tr.classList.contains('delete_entry') ? tr.classList.remove('delete_entry') : tr.classList.add('delete_entry');
       }
+      
+
 
       //  кнопка отмены
       if (e.target.classList.contains('cancellation')) {
@@ -149,6 +166,7 @@ function afterAddTables() {
 
         // сброс изменений
         if (parent.classList.contains('change_entry')) {
+         
           parent.classList.remove('change_entry');
           parent.querySelectorAll('td').forEach(td => {
             td.className = 'change-str cursor_pointer';
@@ -158,11 +176,6 @@ function afterAddTables() {
           });
         }
 
-        // сброс удаления
-        if (parent.classList.contains('delete_entry')) {
-          parent.classList.remove('delete_entry');
-        }
-
         // Удаление кнопки отмены после сброса
         parent.removeChild(e.target);
       }
@@ -170,15 +183,48 @@ function afterAddTables() {
     });
   }
 
+
   function addChangeClassesToColumn(classes) {
     const tds = database_table.querySelectorAll('td');
     const class_line = Object.values(classes);
-    tds.forEach(td => td.classList.add(...class_line));
+    tds.forEach(td => td.className =  class_line.join(' '));
   }
   
+  function removeClassesToColumn() {
+    let trs = database_table.querySelectorAll('tr');
+    let tds = database_table.querySelectorAll('td');
+    const btns = database_table.querySelectorAll('.cancellation');
+    tds.forEach(td => td.className='');
+    trs.forEach(tr => tr.className='');
+    if(btns) {
+      btns.forEach(btn =>btn.parentElement.removeChild(btn));
+    }
+  }
 
 }
+async function getTableByName(tableName, parent) {
+  const req_table = await fetch(`${window.origin}/tables/${tableName}`);
+  const table_colums = await req_table.text();
+  parent.parentElement.parentElement.removeChild( parent.parentElement.parentElement.lastElementChild);
+  parent.parentElement.parentElement.insertAdjacentHTML('beforeend', table_colums);
+  afterAddTables();
+}
+
+async function createInsertForm(tableName) {
+  const req_table = await fetch(`${window.origin}/insert-to-table/${tableName}`);
+  const table_colums = await req_table.text();
+};
 
 
-
+function strIng(l) {
+  const length_str = String(l); 
+  const len = length_str.length;
+  if ( length_str[len- 1] === '1') {
+    return 'строкa';
+  }
+  if (length_str[len - 1] === '2' || length_str[len - 1] === '3' || length_str[len - 1] === '4') {
+    return 'строки';
+  }
+  return 'строк';
+}
 

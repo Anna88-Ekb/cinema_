@@ -90,6 +90,7 @@ display: flex;
 
 .database_view_table table tbody tr{
   position: relative;
+  min-height: 5rem;
 }
 
 
@@ -98,6 +99,19 @@ display: flex;
   border: 1px dotted var(--grey_violet);
   padding: 0.75rem;
   position: relative;
+  white-space: normal;        /* Разрешает перенос строк */
+  word-break: break-word;     /* Переносит длинные слова */
+  overflow-wrap: break-word;  /* Альтернативный перенос слов */
+  
+/*   min-height: 3rem; */
+}
+
+.database_view_table table th {
+  text-align: left;
+  position: relative;
+  padding-right: 3rem;
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
 }
 
 .active, .change_entry {
@@ -113,34 +127,36 @@ display: flex;
 }
 
 .database_view_table table td > textarea {
-position: absolute;
-top: 0;
-left: 0;
-height: 100%;
-width: 100%;
-overflow: visible;
+padding: 0.75rem;
+min-height: 5rem;
+overflow-y: visible;
 resize: none;
 border: none;
 outline: none;
 background-color: transparent;
-padding: .5rem;
+min-width: 5rem;
+width: 100%;
+white-space: pre-wrap;
+
 }
 
+
 .cancellation{
-content: 'Отменить';
 display: block;
-width: auto;
-height: auto;
-padding: .5rem;
+width: 3rem;
+height: 3rem;
 font-size: 1.4rem;
 cursor: pointer;
-color: var(--dark_violet);
 top: 50%;
 transform: translateY(-50%);
 position: absolute;
 z-index: 1000;
 background-color: var(--dark_violet);
-color: var(--light_violet);
+background-image: url(../images/icons/action-undo-svgrepo-com.svg);
+background-repeat: no-repeat;
+background-position: center center;
+background-size: contain;
+
 }
 
 .marked_account {
@@ -157,3 +173,19 @@ color: var(--light_violet);
   color: var(--dark_violet);
 }
 
+
+.nopadding {
+  padding: 0!important;
+}
+
+.total_rows {
+  margin-top: 1rem;
+  font-weight: bold;
+  color: var(--dark_violet);
+  font-size: 1.2rem;
+}
+
+.total_rows>span {
+  font-weight: normal;
+  color: initial;
+}

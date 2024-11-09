@@ -75,7 +75,7 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
   async getDayMoviesList(req, res) {
     const day = req.params.day;
     const result = await db.query(`
-    select h.hall_id, h.hall_name, c.cinema_name, to_char(session_date, 'YYYY-MM-DD') as session_day ,to_char(session_time, 'HH24:MI') as session_time, g.graphics_desc, cs.session_basic_price as basic_price  from cinema_session cs
+    select h.hall_id, h.hall_name, c.cinema_name, to_char(session_date, 'YYYY-MM-DD') as session_day ,to_char(session_time, 'HH24:MI') as session_time, g.graphics_name, cs.session_basic_price as basic_price  from cinema_session cs
     JOIN cinema c ON  cs.cinema_cinema_id = c.cinema_id
     JOIN hall h ON  cs.hall_hall_id = h.hall_id
     JOIN graphics g ON  cs.graphics_graphics_id=g.graphics_id
@@ -90,7 +90,7 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
           cinema_name: row.cinema_name,
           session_day: row.session_day,
           session_time: row.session_time,
-          graphics_desc: row.graphics_desc,
+          graphics_name: row.graphics_name,
           basic_price: row.basic_price
         });
       } else {
@@ -101,7 +101,7 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
             cinema_name: row.cinema_name,
             session_day: row.session_day,
             session_time: row.session_time,
-            graphics_desc: row.graphics_desc,
+            graphics_name: row.graphics_name,
             basic_price: row.basic_price
           }]
         });

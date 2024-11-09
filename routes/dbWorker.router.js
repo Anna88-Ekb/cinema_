@@ -4,4 +4,6 @@ const router = Router();
 router.get('/db-list', workerDb.getTablesListForWorker);
 router.get('/tables/:table', workerDb.getTableColumnName);
 router.post('/tables/:table', workerDb.getTableByColumnName);
+router.get('/insert-to-table/:table', workerDb.getTableParametrsForCreate);
+
 export default router;

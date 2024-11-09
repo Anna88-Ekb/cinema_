@@ -556,8 +556,13 @@ form input[type='button'] {
 .down::after,
 .up::after {
   content: ' ';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-block;
   margin-left: 1rem;
+  margin-right: 1rem;
   width: 1rem;
   height: 1rem;
   background-color: var(--light_violet);
@@ -1296,6 +1301,7 @@ nav {
 .halls table th {
   background-color: var(--dark_violet);
   color: var(--light_violet);
+  position: relative;
 }
 
 .halls img {

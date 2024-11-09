@@ -218,3 +218,63 @@ export function validatePasswordLength(input) {
 export function getNumOfPhone(str) {
   return [...str].filter(el => !isNaN(+el)).join('');
 }
+
+export function addSortType(hall, td_num) {
+  const table = hall.querySelector('table');
+  const trs_length = table.querySelectorAll('tbody tr').length;
+  const tds_last = table.querySelectorAll(`tbody tr td:nth-child(${td_num})`);
+  const check = [...tds_last].every(el => el.textContent === tds_last[0].textContent);
+  const th_title = table.querySelector(`th:nth-child(${td_num})`);
+
+  if (trs_length > 1 && !check) {
+    th_title.title = 'Сортировать';
+    th_title.className = 'down';
+    th_title.addEventListener('click', () => {
+      sortingTable(table, th_title, td_num);
+    });
+  }
+}
+
+export function sortingTableAlg(trs, name_class, td_num) {
+  const trs_sorted = Array.from(trs).sort((a, b) => {
+    let A = a.children[td_num - 1].textContent.trim();
+    let B = b.children[td_num - 1].textContent.trim();
+
+    const numA = parseFloat(A);
+    const numB = parseFloat(B);
+    const isNumA = !isNaN(numA);
+    const isNumB = !isNaN(numB);
+
+    if (isNumA && isNumB) {
+      A = numA;
+      B = numB;
+    }
+
+    if (name_class === 'down') {
+      if (A > B) return -1;
+      if (A < B) return 1;
+      return 0;
+    }
+
+    if (name_class === 'up') {
+      if (A > B) return 1;
+      if (A < B) return -1;
+      return 0;
+    }
+
+    return 0;
+  });
+
+  return trs_sorted;
+}
+
+export function sortingTable(table, th_title, td_num) {
+  const tbody = table.querySelector('tbody');
+  const new_tbody = document.createElement('tbody');
+  const trs = Array.from(tbody.querySelectorAll('tr'));
+  const sortedTrs = sortingTableAlg(trs, th_title.className, td_num);
+
+  new_tbody.append(...sortedTrs);
+  table.replaceChild(new_tbody, tbody);
+  th_title.className = th_title.className === 'down' ? 'up' : 'down';
+}

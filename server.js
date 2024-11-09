@@ -331,7 +331,7 @@ app.get('/buy-ticket', async (req, res) => {
     res.render('partials/buy_form/buy_form', { movie_name, client_preference: client_preference[0], months, days: false, hours: false });
   } else {
     const request_params = { ...req.query };
-    console.log(request_params);
+    /*   console.log(request_params); */
     const request_hall_place = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/hall-tickets`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -386,7 +386,7 @@ app.get('/buy-ticket-times', async (req, res) => {
 app.get('/buy-ticket-halls', async (req, res) => {
   const request_halls = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-hall-calendar/?movie_name=${req.query.movie_name}&movie_date=${req.query.movie_date}&movie_time=${req.query.movie_time}`);
   const halls = await request_halls.json();
-  console.log(halls);
+  /*   console.log(halls); */
   /*   if (halls.length === 1) {
       const request_params = new URLSearchParams({
         movie_name: req.query.movie_name,
@@ -445,14 +445,6 @@ app.post('/cinema-panel', async (req, res) => {
       throw new Error('Ошибка при обработке полученных данных, проверьте вводимые данные');
     } else {
       const worker = await req_worker.json();
-      /* console.log(worker); */
-      res.cookie('worker_login', `${worker[0].worker_login}`, {
-        path: '/cinema-panel',
-        encode: String
-      });
-      res.cookie('worker_access', `${JSON.stringify(worker[0].worker_access)}`, {
-        path: '/cinema-panel'
-      });
 
       let tables = false;
       try {
@@ -460,21 +452,31 @@ app.post('/cinema-panel', async (req, res) => {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
-      
+
         if (!request_tables_list.ok) {
           throw new Error(`Ошибка запроса: ${request_tables_list.statusText}`);
         }
-      
+
         const tables_list = await request_tables_list.json();
         tables = tables_list.length > 0 ? tables_list : false;
+
       } catch (error) {
         console.error("Ошибка при получении списка таблиц:", error.message);
+      } finally {
+        // Установка кук перед рендерингом страницы
+        res.cookie('worker_login', `${worker[0].worker_login}`, {
+          path: '/cinema-panel',
+          encode: String
+        });
+        res.cookie('worker_access', `${JSON.stringify(worker[0].worker_access)}`, {
+          path: '/cinema-panel'
+        });
+
+        // После установки кук рендеринг страницы
+        res.render('worker-page', { worker: worker[0], tables: tables });
       }
 
-      res.render('worker-page', {worker: worker[0], tables : tables});
-/*       res.json(worker); */
     }
-
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ 'Error': error.message });
@@ -482,7 +484,7 @@ app.post('/cinema-panel', async (req, res) => {
 });
 
 
-app.get('/tables/:table', async(req, res) => {
+app.get('/tables/:table', async (req, res) => {
   try {
     const table = req.params.table;
     const req_table_colums = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`);
@@ -493,9 +495,9 @@ app.get('/tables/:table', async(req, res) => {
       body: JSON.stringify(table_colums)
     });
     const table_dates = await req_table_dates.json();
-    console.log(table_colums);
-    console.log(table_dates);
-    res.render('partials/tables/tables_container', {table_colums,  table_dates, table_name: table}, (err, html) => {
+/*   console.log(table_colums); 
+  console.log(table_dates);  */
+    res.render('partials/tables/tables_container', { table_colums, table_dates, table_name: table }, (err, html) => {
       if (err) {
         return res.status(500).send('Ошибка рендеринга кнопки');
       }
@@ -506,6 +508,27 @@ app.get('/tables/:table', async(req, res) => {
     res.status(500).send('Ошибка');
   }
 });
+
+app.get('/insert-to-table/:table', async (req, res) => {
+  try {
+    const table = req.params.table;
+    const req_table_colums = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/insert-to-table/${table}`);
+    const obj = {};
+    if(table === 'cinema') {
+      const req_ages = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-all-age`);
+      const req_type = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-all-type`);
+      const ages = await req_ages.json();
+      const types = await req_type.json();
+      obj['age'] = ages;
+      obj['type'] = types;
+      console.log(obj);
+    }
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Ошибка');
+  }
+}) 
 
 
 app.listen(process.env.PORT || 3000, () => console.log('Запуск!'));

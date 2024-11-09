@@ -88,6 +88,16 @@ background-color: var(--dark_violet);
 .menu-left__items>ul li:has(:not(a)) {
   padding: 1rem .5rem;
 }
+
+/* .menu-left__items>ul li:has(:not(a)) + li{
+  padding: 1rem .5rem;
+  cursor: pointer;
+}
+
+.menu-left__items>ul li:has(:not(a)) + li:hover{
+  background-color: var(--dark_violet);
+} */
+
 .menu-left__items>ul li {
   margin-top: 1rem;
   border: 1px dotted rgba(210, 226, 249, .3);

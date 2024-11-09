@@ -1,6 +1,3 @@
-function makeSingleCheckbox() {
-  
-}
 
 document.addEventListener('DOMContentLoaded', async () => {
 const filter_films_container = document.querySelector('.filter_films_container');

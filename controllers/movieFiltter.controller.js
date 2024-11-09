@@ -13,6 +13,11 @@ class movieSelection {
     res.json(result.rows);
   }
 
+  async getALLMovieCountry(_, res) {
+    const request_country = await db.query(`select * from country`);
+    res.json(request_country.rows);
+  }
+
   async getCurrentMovieType(req, res) {
     const result = await db.query(`
     select 'type' as name, t.type_name, count (distinct cs.cinema_cinema_id) as type_count from cinema_session cs
@@ -26,6 +31,11 @@ class movieSelection {
     res.json(result.rows);
   }
 
+  async getALLMovieType(_, res) {
+    const request_type = await db.query(`select * from type`);
+    res.json(request_type.rows);
+  }
+
   async getCurrentMovieAge(req, res) {
     const result = await db.query(`
     select 'age' as name, a.age_name, count (distinct cs.cinema_cinema_id) as age_count from cinema_session cs
@@ -36,6 +46,11 @@ class movieSelection {
     order by LENGTH(a.age_name), a.age_name;
     `);
     res.json(result.rows);
+  }
+
+  async getALLMovieAge(_, res) {
+    const request_age = await db.query(`select * from age`);
+    res.json(request_age.rows);
   }
 
   async getMoviesCalendar(req, res) {
@@ -76,41 +91,45 @@ class movieSelection {
   }
 
   async getDaysByMovieNameAndMonth(req, res) {
-  const request_movies = await db.query(`select to_char(cs.session_date, 'YYYY-MM-DD') as session_date from cinema_session cs
+    const request_movies = await db.query(`select to_char(cs.session_date, 'YYYY-MM-DD') as session_date from cinema_session cs
   join cinema c on cs.cinema_cinema_id =  c.cinema_id
   where ( lower(c.cinema_name) = $1 or c.cinema_name = $1 )
   and extract (month from cs.session_date) = $2
   and extract (year from cs.session_date) = $3
   and cs.session_date >= current_date
   group by 1;`, [req.query.name, req.query.month_num, req.query.year]);
-  res.json(request_movies.rows);
+    res.json(request_movies.rows);
   }
 
   async getTimeByMovieNameAndDay(req, res) {
-  try{
-    const request_prices = await db.query(`
+    try {
+      const request_prices = await db.query(`
     select to_char(session_time, 'HH24:MI') as session_time from cinema_session cs
     join cinema c on cs.cinema_cinema_id =  c.cinema_id
     where ( lower(c.cinema_name) = $1 or c.cinema_name = $1 )
     and cs.session_date = $2 and cs.session_date >= current_date
     group by 1;`, [req.query.name, req.query.date]);
-    console.log(request_prices.rows);
-    res.json(request_prices.rows);
-    }catch(error) {
-    res.status(500).json({'Ошибка': error.message})
+      console.log(request_prices.rows);
+      res.json(request_prices.rows);
+    } catch (error) {
+      res.status(500).json({ 'Ошибка': error.message })
     }
-  } 
+  }
 
-  async getHallByMovieNameAndDatetime(req, res){
-  const req_halls = await db.query(`select hall_hall_id as hall_id from cinema_session cs
+  async getHallByMovieNameAndDatetime(req, res) {
+    const req_halls = await db.query(`select hall_hall_id as hall_id from cinema_session cs
   join cinema c on cs.cinema_cinema_id =  c.cinema_id
   where ( lower(c.cinema_name) = $1 or c.cinema_name = $1 )
   and cs.session_date = $2
   and cs.session_date >= current_date 
   and to_char(session_time, 'HH24:MI') = $3;`, [req.query.movie_name, req.query.movie_date, req.query.movie_time]);
-  res.json(req_halls.rows);
+    res.json(req_halls.rows);
   }
 
+  async getALLHall(_, res) {
+    const request_hall = await db.query(`select * from hall`);
+    res.json(request_hall.rows);
+  }
 };
 
 export const movieFilterSelection = new movieSelection();

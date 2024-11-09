@@ -222,6 +222,66 @@ function validatePasswordLength(input) {
 function getNumOfPhone(str) {
   return [...str].filter(el => !isNaN(+el)).join('');
 }
+
+function addSortType(hall, td_num) {
+  const table = hall.querySelector('table');
+  const trs_length = table.querySelectorAll('tbody tr').length;
+  const tds_last = table.querySelectorAll(`tbody tr td:nth-child(${td_num})`);
+  const check = [...tds_last].every(el => el.textContent === tds_last[0].textContent);
+  const th_title = table.querySelector(`th:nth-child(${td_num})`);
+
+  if (trs_length > 1 && !check) {
+    th_title.title = 'Сортировать';
+    th_title.className = 'down';
+    th_title.addEventListener('click', () => {
+      sortingTable(table, th_title, td_num);
+    });
+  }
+}
+
+function sortingTableAlg(trs, name_class, td_num) {
+  const trs_sorted = Array.from(trs).sort((a, b) => {
+    let A = a.children[td_num - 1].textContent.trim();
+    let B = b.children[td_num - 1].textContent.trim();
+
+    const numA = parseFloat(A);
+    const numB = parseFloat(B);
+    const isNumA = !isNaN(numA);
+    const isNumB = !isNaN(numB);
+
+    if (isNumA && isNumB) {
+      A = numA;
+      B = numB;
+    }
+
+    if (name_class === 'down') {
+      if (A > B) return -1;
+      if (A < B) return 1;
+      return 0;
+    }
+
+    if (name_class === 'up') {
+      if (A > B) return 1;
+      if (A < B) return -1;
+      return 0;
+    }
+
+    return 0;
+  });
+
+  return trs_sorted;
+}
+
+function sortingTable(table, th_title, td_num) {
+  const tbody = table.querySelector('tbody');
+  const new_tbody = document.createElement('tbody');
+  const trs = Array.from(tbody.querySelectorAll('tr'));
+  const sortedTrs = sortingTableAlg(trs, th_title.className, td_num);
+
+  new_tbody.append(...sortedTrs);
+  table.replaceChild(new_tbody, tbody);
+  th_title.className = th_title.className === 'down' ? 'up' : 'down';
+}
 ;// ./modules_js/header.js
 
 
@@ -756,180 +816,305 @@ async function openBuyForm(params) {
 
 
 
-;// ./modules_js/premiere.js
+;// ./modules_js/cinema_session.js
 
 
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-const premiere_slider = document.querySelector('.premiere_slider');
-if(premiere_slider) getSliderVisible(premiere_slider.children);
+const cinema_sessions_filter = document.querySelector('.cinema_sessions_filter');
+const cinema_sessions_halls = document.querySelector('.cinema_sessions_halls');
 
-function getSliderVisible(obj) {
-const premiere_slider_prev = premiere_slider.nextElementSibling.querySelector('.premiere_slider_prev');
-const premiere_slider_next = premiere_slider.nextElementSibling.querySelector('.premiere_slider_next');
-  let i = 0;
-  let j = null;
-  let pauseSlider = false;
+if (cinema_sessions_filter) {
+  cinema_sessions_filter.addEventListener('click', async function (e) {
+    const input = cinema_sessions_filter.querySelector('input[type="text"]');
+    input.addEventListener('input', findTextOverlap);
 
-  function installPauseOnSlider() {
-    if (!pauseSlider) {
-      pauseSlider = true;
-      const elems = document.querySelectorAll('.centered');
-      elems.forEach((el) => el.classList.remove('centered'));
-      this.classList.add('centered');
+    if (e.target.classList.contains('movie_list_btn') || (e.target.tagName === 'SPAN' &&  e.target.parentElement.classList.contains('movie_list_btn')) ) {
+      cinema_sessions_filter.children[1].classList.contains('block') ?
+        (cinema_sessions_filter.children[1].classList.remove('block'),
+          cinema_sessions_filter.children[1].classList.add('unblock'),
+          cinema_sessions_filter.classList.remove('gradient')) :
+        (cinema_sessions_filter.children[1].classList.remove('unblock'),
+          cinema_sessions_filter.children[1].classList.add('block'),
+          cinema_sessions_filter.classList.add('gradient'));
     }
-  }
 
-  function unInstallPauseOnSlider() {
-    if (pauseSlider) {
-      this.classList.remove('centered');
-      pauseSlider = false;
-      showSlides();
+    if (e.target === input) {
+      if (!cinema_sessions_filter.children[1].classList.contains('block')) {
+        cinema_sessions_filter.children[1].classList.add('block');
+        cinema_sessions_filter.children[1].classList.remove('unblock');
+        cinema_sessions_filter.classList.add('gradient');
+      }
     }
-  }
 
-  function showSlides() {
-    if (j !== null) obj[j].classList.remove('centered');
-    let arr = Array.from(obj).slice(i, i + 3);
-    arr.forEach(el => {
-      el.classList.remove("unblock");
-      el.addEventListener('mouseenter', installPauseOnSlider);
-      el.addEventListener('mouseleave', unInstallPauseOnSlider);
-    });
-    let centerIndex = Math.floor(arr.length / 2);
-    arr[centerIndex].classList.add('centered');
-  }
+    if (e.target.tagName === "LI") {
+      input.value = e.target.textContent;
+    }
 
-  function hideSlides(arr, next_el_visible = true) {
-    arr.forEach(el => {
-      el.classList.add("unblock");
-      el.removeEventListener('mouseenter', installPauseOnSlider);
-      el.removeEventListener('mouseleave', unInstallPauseOnSlider);
-    });
-    j = i + 1;
-    if (next_el_visible) {
-      ((i + 1) % (obj.length - 1) <= obj.length - 3) ? (i = (i + 1) % (obj.length - 1)) : (i = 0);
+    if(e.target.classList.contains('search_list_btn') || (e.target.tagName == 'SPAN' && e.target.parentElement.classList.contains('search_list_btn'))) {
+      if(input.value.trim()!='') {
+        const tables = document.querySelectorAll('.cinema_sessions_calendar_slider_container table');
+        const response = await fetch(`${window.origin}/api/movie-days/${input.value.toLowerCase()}`, {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'} 
+        });
+        const days = await response.json();
+        if(tables) {
+          tables.forEach(table=> {
+            const a = table.querySelectorAll('a');
+            a.forEach(el=> el.style='');
+          });
+  
+          tables.forEach((table) => {;
+            let table_month = table.dataset.monthNum;
+            table_month = table_month.length==1 ? '0'+ table_month:table_month;
+            const table_year = table.dataset.year;
+            const start_date = new Date(+table_year, +table_month - 1, 1).getDay();
+            const start_index = start_date == 0 ? 6 : start_date - 1;
+            const filtered_days = [...days].filter(el => {
+              if(el.session.substring(0, 4) === table_year && el.session.substring(5, 7) === table_month) {
+                return el;
+              };
+            });
+    
+            if(filtered_days.length>0) {
+              const tds = table.querySelectorAll('tbody td');
+              filtered_days.forEach(el => {
+                tds[+el.session.substring(8) - 1 + start_index].children[0].style.backgroundImage = `url(/posters/${el.cinema_path})`;
+              });}
+          });
+        }
+      }
+    }
+  })
+}
+
+function findTextOverlap() {
+  const search_value = this.value.toLowerCase();
+  const list = document.querySelectorAll('.cinema_sessions_filter ul li');
+  const list_text = [...list].map(el => el.textContent.toLowerCase());
+  const marks = document.querySelectorAll('.cinema_sessions_filter ul li mark');
+  if (marks) { marks.forEach(el => el.parentElement.textContent = el.parentElement.textContent) }
+
+  if (search_value.length > 1) {
+    const check = list_text.some(el => el.includes(search_value));
+    if (check) {
+      list_text.forEach((el, i) => {
+        if (el.includes(search_value)) {
+          const index = el.indexOf(search_value);
+          const before = list[i].textContent.substring(0, index);
+          const match = list[i].textContent.substring(index, index + search_value.length);
+          const after = list[i].textContent.substring(index + search_value.length);
+          list[i].innerHTML = before + '<mark class="marked"><b>' + match + '</b></mark>' + after;
+          this.setAttribute('maxlength', `${search_value.length + 1}`);
+        }
+        list[i].scrollIntoView({
+          behavior: 'instant',
+          block: 'nearest'
+        });
+      })
     } else {
-      if (i > 0) { i-- }
-      else { i = obj.length - 3; }
+      this.setAttribute('maxlength', '2')
     }
-    showSlides();
   }
 
-  setInterval(function () {
-    if (!pauseSlider) hideSlides(Array.from(obj).slice(i, i + 3));
-  }, 8000);
-  showSlides();
-
-  function getNextSlider() {
-    pauseSlider = true;
-    hideSlides(Array.from(obj).slice(i, i + 3));
-  }
-
-  function getPrevSlider() {
-    pauseSlider = true;
-    if (i > 0) {
-      i--;
-      let view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
-      view.forEach((el) => el.classList.remove('centered'));
-      view[0].previousElementSibling.classList.remove('unblock');
-      view[2].classList.add('unblock');
-      view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
-      view[1].classList.add('centered');
-    }
-    hideSlides(Array.from(obj).slice(i, i + 3), false);
-  }
-  premiere_slider_next.addEventListener('click', getNextSlider);
-  premiere_slider_prev.addEventListener('click', getPrevSlider);
 }
 
-if(premiere_slider) {
-  premiere_slider.addEventListener('click', async function(e) {
-    if(e.target.classList.contains('premiere_slider_item_btn')) {
-      const movie_name = e.target.parentElement.parentElement.querySelector('.premiere_slider_item_name');
-      openBuyForm({movie_name: movie_name})
+createTableSlider('cinema_sessions_calendar_slider_container', 'cinema_sessions_calendar_prev', 'cinema_sessions_calendar_next');
+
+function createTableSlider(parent_class, class_prev, class_next) {
+  const prev = document.querySelector(`.${class_prev}`);
+  const next = document.querySelector(`.${class_next}`);
+  let tables = document.querySelectorAll(`.${parent_class} table`);
+  prev.style.display = 'none';
+  let i = 0;
+  next.addEventListener('click', function () {
+    if (i < tables.length) {
+      tables = document.querySelectorAll(`.${parent_class} table`);
+      tables[0].parentElement.insertAdjacentElement('beforeend', tables[0]);
+      prev.style.display = 'block';
+      i++;
+    }
+    if (i === tables.length - 1) {
+      this.style.display = 'none';
     }
   });
+  prev.addEventListener('click', function () {
+    if (i < tables.length) {
+      tables = document.querySelectorAll(`.${parent_class} table`);
+      tables[tables.length - 1].parentElement.insertAdjacentElement('afterbegin', tables[tables.length - 1]);
+      next.style.display = 'block';
+      i--;
+    }
+    if (i === 0) {
+      this.style.display = 'none';
+    }
+  });
+};
 
-}
-
-
-});
-
-
-
-;// ./modules_js/today.js
-document.addEventListener('DOMContentLoaded', async () => {
-
-const today_buy_btn = document.querySelector('.today_buy_btn');
-
-today_buy_btn.addEventListener('click', function() {
-  window.location.assign('/schedule-page');
-});
-
-const halls = document.querySelectorAll('.hall');
-
-if(halls) {
-  for (let i = 1; i < halls.length; i++) {
-    let childs = Array.from(halls[i].children).some(el => el.tagName === 'TABLE');
-    if (childs) { addSortType(halls[i], 3)};
-  }
-}
-
-function addSortType(hall, td_num) {
-  const table = hall.querySelector('table');
-  const trs_length = table.querySelectorAll('tbody tr').length;
-  const tds_last = table.querySelectorAll(`tbody tr td:nth-child(${td_num})`);
-  const check = [...tds_last].every(el => el.textContent === tds_last[0].textContent);
-  const th_title = table.querySelector(`th:nth-child(${td_num})`);
-
-  if (trs_length > 1 && !check) {
-    th_title.title = 'Сортировать';
-    th_title.className = 'down';
-    th_title.addEventListener('click', () => {
-      sortingTable(table, th_title, td_num);
+const tables = document.querySelectorAll('.cinema_sessions_calendar_slider_container table');
+if (tables) {
+  const response = await fetch(`${window.origin}/api/movies-calendar-days`, {
+    method: 'GET',
+    headers: {'Content-Type': 'application/json'}
+  });
+  const sessions = await response.json();
+  const date = new Date();
+  tables.forEach(table => {
+    const all_td = table.querySelectorAll('tbody td');
+    const table_month = table.dataset.monthNum;
+    const table_year = table.dataset.year;
+    const start_date = new Date(+table_year, +table_month - 1, 1).getDay();
+    const start_index = start_date == 0 ? 6 : start_date - 1;
+    const filtered_response = sessions.filter(el => el.month === table_month);
+    filtered_response.forEach((el, i) => {
+      all_td[el.day - 1 + start_index].innerHTML = `<a title="Расписание"><span>${el.day}</span></a>`;
+    });
+    table.addEventListener('click', async (e) => {
+      if (e.target.tagName === 'A' || e.target.tagName === 'SPAN' && e.target.parentElement.tagName === 'A') {
+        const day = e.target.textContent.trim() || e.target.children[0].textContent.trim();
+        if (+day >= 1 && +day <= 31 && cinema_sessions_halls) {
+          const params = {
+            'year': e.currentTarget.dataset.year || '', 
+            'month': e.currentTarget.dataset.monthNum || '', 
+            'day': day || ''
+          };
+          const param = new URLSearchParams(params).toString();
+          const response = await fetch(`${window.origin}/schedule-day/?${param}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const halls = await response.text();
+        cinema_sessions_halls.innerHTML = halls;
+        [...cinema_sessions_halls.children].forEach(hall => addSortType(hall, 4));
+        }
+      }
+    });
+  })
+  if(cinema_sessions_halls) {
+    cinema_sessions_halls.addEventListener('click', async function(e) {
+      if(e.target.tagName === 'A' && e.target.textContent==='Купить'){
+        const parent = e.target.parentElement;
+        const params = {
+          movie_name: parent.dataset.movieName,
+          hall_num: parent.dataset.hall,
+          movie_date: parent.dataset.date,
+          movie_time: parent.dataset.time,
+        };
+        openBuyForm(params);
+      };
     });
   }
 }
 
-function sortingTableAlg(trs, name_class, td_num) {
-  let trs_sorted = Array.from(trs).sort((a, b) => {
-    const A = a.children[td_num - 1].textContent.trim();
-    const B = b.children[td_num - 1].textContent.trim();
+});
+;// ./modules_js/afisha.js
 
-    if (name_class === 'down') {
-      if (A > B) return 1;
-      if (A < B) return -1;
-      return 0;
-    }
+document.addEventListener('DOMContentLoaded', async () => {
+const filter_films_container = document.querySelector('.filter_films_container');
+const filtered_films_container = document.querySelector('.filtered_films_container');
 
-    if (name_class === 'up') {
-      if (A > B) return -1;
-      if (A < B) return 1;
-      return 0;
+if (filter_films_container) {
+  filter_films_container.addEventListener('click', (e) => {
+    if (e.target.tagName === 'INPUT') {
+      const filter_films = e.currentTarget.querySelectorAll(`input[name="${e.target.name}"]`);
+      const all_filter_films = filter_films_container.querySelectorAll('input[type="checkbox"]:checked');
+      filter_films.forEach(element => {
+        if (element !== e.target && e.target.checked) {
+          element.disabled = true;
+          element.style.cursor = 'auto';
+          element.nextElementSibling.style.backgroundColor = '#e14234';
+          element.title = 'Можно применить только один фильтр';
+        }
+        if (!e.target.checked) {
+          element.disabled = false;
+          element.style.cursor = 'pointer';
+          element.nextElementSibling.style.backgroundColor = '';
+          element.title = 'Нажмите для применения фильтра';
+        }
+      });
+
+      let type, country, age;
+      all_filter_films.forEach((el) => {
+        if (el.name === 'type') type = el.value;
+        if (el.name === 'country') country = el.value;
+        if (el.name === 'age') age = el.value;
+      });
+
+      const params = {
+        type: type || false,
+        country: country || false,
+        age: age || false
+      }
+      createdListofFilters(params);
     }
   });
-
-  return trs_sorted;
 }
 
-function sortingTable(table, th_title, td_num) {
-  const tbody = table.querySelector('tbody');
-  const new_tbody = document.createElement('tbody');
-  const trs = Array.from(tbody.querySelectorAll('tr'));
-  const sortedTrs = sortingTableAlg(trs, th_title.className, td_num);
+if (filtered_films_container) {
+  filtered_films_container.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('filtered_films_resize_toBig')) {
+      const name = e.target.parentElement.dataset.movieName;
+      const filtered_films_cards = e.currentTarget.querySelectorAll('.filtered_films_cards');
+      filtered_films_cards.forEach(el => {
+        el.parentElement.removeChild(el);
+      });
 
-  new_tbody.append(...sortedTrs);
-  table.replaceChild(new_tbody, tbody);
-  th_title.className = th_title.className === 'down' ? 'up' : 'down';
+      const response = await fetch(`${window.origin}/api/movie/${name}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+        filtered_films_container.innerHTML = '<p style = "color: var(--light_violet)">Произошла ошибка при загрузке</p>';
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      } else {
+        const movie = await response.json();
+        const filtered_films = document.createElement('div');
+        filtered_films.className = 'filtered_films filtered_films_full_screen';
+        filtered_films.style.backgroundImage = `url('/posters/${movie.cinema_path}')`;
+        filtered_films.innerHTML = `
+        <button class="filtered_films_resize filtered_films_resize_toSmall" title="Свернуть"></button>
+        <div class="filtered_films_descr">
+        <h4>${movie.cinema_name}</h4>
+        <div>
+        <p>${movie.cinema_desc}</p>  
+        <p>Страна:<span>${movie.country_desc}</span></p>
+        <p>Возрастные ограничения:<span>${movie.age_desc}</span></p>
+        <p>Длительность:<span>${movie.cinema_duration} мин.</span></p>
+        </div><button class="btn_main_style btn_ordinary afisha_btn">Приобрести билет</button></div>`
+        filtered_films_container.append(filtered_films);
+        const filtered_films_resize_toSmall = filtered_films.querySelector('.filtered_films_resize_toSmall');
+        filtered_films_resize_toSmall.addEventListener('click', async () => {
+          const resize_films = filtered_films_container.querySelector('.filtered_films_full_screen');
+          const result = await fetch('/filtered-movie');
+          const new_content = await result.text();
+          filtered_films_container.removeChild(resize_films);
+          filtered_films_container.innerHTML = new_content;
+        }, { once: true });
+      }
+    }
+  })
+};
+
+async function createdListofFilters(params) {
+  const query_str = new URLSearchParams(params).toString();
+     const response = await fetch(`/filtered-movie?${query_str}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+});
+const filtered_films_container = document.querySelector('.filtered_films_container');
+const new_content = await response.text();
+filtered_films_container.innerHTML = new_content;
 }
-
 });
 
-;// ./index.js
 
 
+;// ./schedule.js
 
 
 

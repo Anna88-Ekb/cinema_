@@ -33,13 +33,14 @@
               {{#each worker.worker_access}}
               {{#if (eq this 1)}}
               {{#if ../tables}}
-              <li>Таблицы<span class="arrow"></span>
+              <li class="manager_tables">Таблицы<span class="arrow"></span>
                 <ul class="unblock">
                   {{#each ../tables}}
                   <li><a href="#" data-table-name="{{this.table_name}}">{{this.table_comment}}</a></li>
                   {{/each}}
                 </ul>
               </li>
+              <li><a href="#">Загрузка</a></li>
               {{/if}}
               {{/if}}
               {{/each}}

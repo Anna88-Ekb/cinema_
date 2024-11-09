@@ -56,6 +56,7 @@
 .cinema_sessions_hall table thead th:last-child {
   background-color: var(--dark_violet);
   color: var(--light_violet);
+  position: relative;
 }
 
 .cinema_sessions_calendar_slider {

@@ -14,5 +14,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
     })
   }
  
+  const entrance_form = document.querySelector('.entrance_form');
+  if(entrance_form ) {
+    entrance_form.action = `${window.origin}/cinema-panel`;
+  }
+  
 });
   
