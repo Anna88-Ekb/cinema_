@@ -14,5 +14,7 @@ router.get('/movie-all-country', movieFilterSelection.getALLMovieCountry);
 router.get('/movie-all-type', movieFilterSelection.getALLMovieType);
 router.get('/movie-all-age', movieFilterSelection.getALLMovieAge);
 router.get('/movie-all-hall', movieFilterSelection.getALLHall);
-
+router.get('/movie-all-cinema-session', movieFilterSelection.getALLSession);
+router.get('/movie-all-movie', movieFilterSelection.getALLMovie);
+router.get('/movie-all-graphics', movieFilterSelection.getALLGraphics);
 export default router;

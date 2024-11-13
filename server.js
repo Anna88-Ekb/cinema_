@@ -1,15 +1,20 @@
 import express, { urlencoded } from 'express';
 import { engine } from 'express-handlebars';
 import path from 'path';
+import fs from 'fs/promises';
 import { __filename, __dirname } from './__dirname.js';
 import { manifest } from './manifest.js';
 import moviesRoutes from './routes/movies.routes.js';
 import moviesFilterRoutes from './routes/movieFilter.routes.js';
 import clientRoutes from './routes/client.routes.js';
 import seansHall from './routes/seans.routes.js';
-import workerRotes from './routes/worker.routes.js';
+import workerRoutes from './routes/worker.routes.js';
 import workerDBRotes from './routes/dbWorker.router.js';
 import cookieParser from 'cookie-parser';
+import multer from 'multer';
+
+const date = new Date().toLocaleDateString('ru-RU', { timeZone: "Europe/Moscow" });
+const date_db_format = date.substring(6) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
 
 const app = express();
 
@@ -22,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'dist'), {
     }
   }
 }));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE));
 app.use((req, res, next) => {
@@ -37,16 +43,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/posters', express.static(path.join(__dirname, 'posters')))
+app.use('/posters', express.static(path.join(__dirname, 'images/posters')));
+app.use('/icons', express.static(path.join(__dirname, 'images/icons')));
 app.use('/api', moviesRoutes);
 app.use('/api', moviesFilterRoutes);
 app.use('/api', seansHall);
 app.use('/server-api', clientRoutes);
-app.use('/server-api', workerRotes);
+app.use('/server-api', workerRoutes);
 app.use('/server-api', workerDBRotes);
-
-
-
 
 app.engine('hbs', engine({
   extname: 'hbs',
@@ -85,12 +89,95 @@ app.engine('hbs', engine({
     },
     capitalize: function (el) {
       return el.substring(0, 1).toUpperCase() + el.substring(1);
+    },
+    createInput: function (table_columns, obj) {
+      const required = table_columns.not_null ? 'required' : '';
+      // Если нет внешнего ключа
+      if (table_columns.constraint_name === null) {
+        const inp_type = table_columns.udt_name;
+
+        if (inp_type.startsWith('int')) {
+          return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" type="number" min="1" step="1" maxlength="${table_columns.max_length}" ${required}></input>`;
+        }
+        if(inp_type === 'numeric') {
+          return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" type="number" min="0.1" step="0.1" max="1" maxlength="${table_columns.max_length}" ${required}></input>`;
+        }
+        if (inp_type === 'date') {
+          return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" type="date" min="${date_db_format}" ${required}></input>`;
+        }
+        if (inp_type === 'varchar') {
+          return `<textarea id="${table_columns.column_name}" name="${table_columns.column_name}" maxlength="${table_columns.max_length}" ${required}></textarea>`;
+        }
+        if (inp_type === 'timestamp') {
+          return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" type="datetime-local" min="${date_db_format}T00:00" ${required}></input>`;
+        }
+        if (inp_type === 'time') {
+          return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" type="time" ${required}></input>`;
+        }
+        if (inp_type === 'bool') {
+          return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" min="0" max="1" type="range" ${required}></input>`;
+        }
+
+      }
+      else {
+        let option_str = '';
+        obj[table_columns.column_name].forEach(element => {
+          const keys = Object.keys(element);
+          const values = Object.values(element);
+          if (keys.length === 1) {
+            option_str += `<option value="${values[0]}">${values[0]}</option>`;
+          }
+          else if (keys.length >= 2) {
+            option_str += `<option value="${values[0]}">${values[1]}</option>`;
+          }
+        });
+
+        return `<select ${required} data-table="${table_columns.foreign_table_name}" data-column="${table_columns.foreign_column_name}" name="${table_columns.column_name}">${option_str}</select>`;
+      }
     }
   }
 }));
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
+
+
+
+// Конфигурация хранилища с проверкой на существование файла
+const storageConfig = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, 'images/posters/')); 
+  },
+  filename: async function (req, file, cb) {
+    const filePath = path.join(__dirname, 'images/posters', file.originalname);
+    try {
+      // Асинхронная проверка существования файла
+      await fs.access(filePath);
+      cb(new Error('Файл с таким именем уже существует'));
+    } catch (err) {
+      cb(null, file.originalname);
+    }
+  }
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === 'Файл с таким именем уже существует') {
+    return res.status(409).json({ error: err.message });
+  }
+  res.status(500).json({ error: "Произошла ошибка на сервере" });
+});
+
+// Настройка фильтра типов файлов
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
+    cb(null, true);
+  } else {
+    cb(null, false); 
+  }
+};
+
+// Настройка multer с фильтром и хранилищем
+const upload = multer({ storage: storageConfig, fileFilter: fileFilter });
 
 
 app.get('/', async (_, res) => {
@@ -442,47 +529,48 @@ app.post('/cinema-panel', async (req, res) => {
     });
 
     if (!req_worker.ok) {
-      throw new Error('Ошибка при обработке полученных данных, проверьте вводимые данные');
-    } else {
-      const worker = await req_worker.json();
-
-      let tables = false;
-      try {
-        const request_tables_list = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/db-list`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!request_tables_list.ok) {
-          throw new Error(`Ошибка запроса: ${request_tables_list.statusText}`);
-        }
-
-        const tables_list = await request_tables_list.json();
-        tables = tables_list.length > 0 ? tables_list : false;
-
-      } catch (error) {
-        console.error("Ошибка при получении списка таблиц:", error.message);
-      } finally {
-        // Установка кук перед рендерингом страницы
-        res.cookie('worker_login', `${worker[0].worker_login}`, {
-          path: '/cinema-panel',
-          encode: String
-        });
-        res.cookie('worker_access', `${JSON.stringify(worker[0].worker_access)}`, {
-          path: '/cinema-panel'
-        });
-
-        // После установки кук рендеринг страницы
-        res.render('worker-page', { worker: worker[0], tables: tables });
-      }
-
+      throw new Error('Ошибка при обработке данных, проверьте вводимые данные');
     }
+
+    const worker = await req_worker.json();
+
+    res.cookie('worker_login', `${worker[0].worker_login}`, { path: '/cinema-panel', encode: String });
+    res.cookie('worker_access', `${JSON.stringify(worker[0].worker_access)}`, { path: '/cinema-panel' });
+
+    res.redirect('/cinema-panel');
+
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ 'Error': error.message });
   }
 });
 
+app.get('/cinema-panel', async (req, res) => {
+  try {
+    const request_tables_list = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/db-list`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+
+    if (!request_tables_list.ok) {
+      throw new Error(`Ошибка запроса: ${request_tables_list.statusText}`);
+    }
+
+    const req_worker = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/worker-name/?login=${req.cookies.worker_login}`);
+    const worker_name = await req_worker.json();
+    const tables_list = await request_tables_list.json();
+    const tables = tables_list.length > 0 ? tables_list : false;
+
+    /* 
+     */
+    res.render('worker-page', { worker_access: JSON.parse(req.cookies.worker_access), worker_name: worker_name[0], worker_login: req.cookies.worker_login, tables });
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Ошибка загрузки данных');
+  }
+});
 
 app.get('/tables/:table', async (req, res) => {
   try {
@@ -495,8 +583,8 @@ app.get('/tables/:table', async (req, res) => {
       body: JSON.stringify(table_colums)
     });
     const table_dates = await req_table_dates.json();
-/*   console.log(table_colums); 
-  console.log(table_dates);  */
+    /*   console.log(table_colums); 
+      console.log(table_dates);  */
     res.render('partials/tables/tables_container', { table_colums, table_dates, table_name: table }, (err, html) => {
       if (err) {
         return res.status(500).send('Ошибка рендеринга кнопки');
@@ -512,29 +600,145 @@ app.get('/tables/:table', async (req, res) => {
 app.get('/insert-to-table/:table', async (req, res) => {
   try {
     const table = req.params.table;
-    const req_table_colums = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/insert-to-table/${table}`);
-    const obj = {};
-    if(table === 'cinema') {
-      const req_ages = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-all-age`);
-      const req_type = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-all-type`);
-      const ages = await req_ages.json();
-      const types = await req_type.json();
-      obj['age'] = ages;
-      obj['type'] = types;
-      console.log(obj);
+    const foreign_columns = {};
+    let req_table_columns;
+    if (table !== 'ticket') {
+      req_table_columns = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/insert-to-table/${table}`);
+    } else {
+      req_table_columns = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/insert-to-table/${table}/sale_time,client_client_id,worker_worker_id,unreg_user_user_id`);
     }
+
+    const table_columns = await req_table_columns.json();
+
+    if (table === 'cinema') {
+      const [req_ages, req_type] = await Promise.all([
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-age`),
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-type`)
+      ]);
+      foreign_columns['age_age_id'] = await req_ages.json();
+      foreign_columns['type_type_id'] = await req_type.json();
+    }
+
+    if (table === 'current_prom') {
+      const [promotion_promotion_id, cinema_session_cinema_session_name] = await Promise.all([
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/movie-all-promotion`),
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-cinema-session`)
+      ]);
+      foreign_columns['promotion_promotion_id'] = await promotion_promotion_id.json();
+      foreign_columns['cinema_session_cinema_session_name'] = await cinema_session_cinema_session_name.json();
+    }
+
+    if (table === 'place') {
+      const hall_hall_id = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-hall`);
+      foreign_columns['hall_hall_id'] = await hall_hall_id.json();
+    }
+
+    if (table === 'production') {
+      const [cinema_cinema_id, country_country_id] = await Promise.all([
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-movie`),
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-country`)
+      ]);
+      foreign_columns['cinema_cinema_id'] = await cinema_cinema_id.json();
+      foreign_columns['country_country_id'] = await country_country_id.json();
+    }
+
+    if (table === 'cinema_session') {
+      const [cinema_cinema_id, hall_hall_id, graphics_graphics_id] = await Promise.all([
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-movie`),
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-hall`),
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-graphics`)
+      ]);
+      foreign_columns['cinema_cinema_id'] = await cinema_cinema_id.json();
+      foreign_columns['hall_hall_id'] = await hall_hall_id.json();
+      foreign_columns['graphics_graphics_id'] = await graphics_graphics_id.json();
+    }
+
+    if (table === 'cinema_graphics') {
+      const [graphics_graphics_id, cinema_cinema_id] = await Promise.all([
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-graphics`),
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-movie`)
+      ]);
+      foreign_columns['graphics_graphics_id'] = await graphics_graphics_id.json();
+      foreign_columns['cinema_cinema_id'] = await cinema_cinema_id.json();
+    }
+
+    if (table === 'hall_graphics') {
+      const [graphics_graphics_id, hall_hall_id] = await Promise.all([
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-graphics`),
+        fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/movie-all-hall`)
+      ]);
+      foreign_columns['graphics_graphics_id'] = await graphics_graphics_id.json();
+      foreign_columns['hall_hall_id'] = await hall_hall_id.json();
+    }
+
+    /* console.log(table_columns, foreign_columns); */
+
+    res.render('partials/tables/insert_container', { table_name: table, table_columns, foreign_columns }, (err, html) => {
+      if (err) {
+        return res.status(500).send(`Ошибка рендеринга: ${err.message}`);
+      }
+      res.send(html);
+    });
 
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Ошибка');
   }
+});
+
+app.post('/insert-to-table/:table', async (req, res) => {
+  console.log(req.body);
 }) 
+
+app.get('/posters', async (_, res) => {
+  const request_posters = await fs.readdir(path.join(__dirname, 'images/posters/'));
+  const posters = [...request_posters];
+  res.render('partials/panel_employee/posters', {posters: posters});
+});
+
+
+app.post('/posters', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'Файл не был загружен или тип файла не поддерживается' });
+  }
+  res.json({ message: 'Файл загружен успешно', filename: req.file.filename });
+});
+
+app.delete('/posters/:name', async(req, res) => {
+  try{
+  await  fs.unlink(path.join(__dirname, `images/posters/${req.params.name}`));
+  res.status(200).json({ message: `Файл ${req.params.name} удален` });
+  } catch {
+  res.status(500).json({ message: `Ошибка удаления ${req.params.name}` });
+  }
+});
+
+
+app.patch('/posters/:oldname', async (req, res) => {
+  const old_name = req.params.oldname; 
+  const new_name = req.body.newName;
+  const oldPath = path.join(__dirname, `images/posters/${old_name}`);
+  const newPath = path.join(__dirname, `images/posters/${new_name}`);
+
+  try {
+    if (new_name !== old_name) {
+      await fs.rename(oldPath, newPath); 
+      return res.status(200).json({ message: 'Файл успешно переименован!' });
+    } else {
+      return res.status(200).json({ message: 'Файл имеет одинаковое название' });
+    }
+  } catch (err) {
+    console.error('Ошибка при переименовании файла:', err);
+    return res.status(500).json({ message: 'Ошибка при переименовании файла.' });
+  }
+
+});
+  
 
 
 app.listen(process.env.PORT || 3000, () => console.log('Запуск!'));
 
-const date = new Date().toLocaleDateString('ru-RU', { timeZone: "Europe/Moscow" });
-const date_db_format = date.substring(6) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
 
 
+console.log(date_db_format);
 

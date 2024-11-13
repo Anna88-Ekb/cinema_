@@ -14,7 +14,7 @@ class movieSelection {
   }
 
   async getALLMovieCountry(_, res) {
-    const request_country = await db.query(`select * from country`);
+    const request_country = await db.query(`select country_id, country_name from country;`);
     res.json(request_country.rows);
   }
 
@@ -32,7 +32,7 @@ class movieSelection {
   }
 
   async getALLMovieType(_, res) {
-    const request_type = await db.query(`select * from type`);
+    const request_type = await db.query(`select type_id, type_name from type;`);
     res.json(request_type.rows);
   }
 
@@ -49,7 +49,7 @@ class movieSelection {
   }
 
   async getALLMovieAge(_, res) {
-    const request_age = await db.query(`select * from age`);
+    const request_age = await db.query(`select age_id, age_name from age;`);
     res.json(request_age.rows);
   }
 
@@ -127,9 +127,25 @@ class movieSelection {
   }
 
   async getALLHall(_, res) {
-    const request_hall = await db.query(`select * from hall`);
+    const request_hall = await db.query(`select hall_id, hall_name from hall;`);
     res.json(request_hall.rows);
   }
+
+  async getALLMovie(_, res) {
+    const request_movies = await db.query(`select cinema_id, cinema_name from cinema where current_date < cinema_end_date;`);
+    res.json(request_movies.rows);
+  }
+
+  async getALLSession(_, res) {
+    const request_session = await db.query(`select cinema_session_name from cinema_session;`);
+    res.json(request_session.rows);
+  }
+
+  async getALLGraphics(_, res) {
+    const request_graphics = await db.query(`select graphics_id, graphics_name from graphics;`);
+    res.json(request_graphics.rows);
+  }
+
 };
 
 export const movieFilterSelection = new movieSelection();

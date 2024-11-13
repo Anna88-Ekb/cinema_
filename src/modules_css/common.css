@@ -8,6 +8,7 @@
   --yellow: #ffffca;
   --brown: #9e7b3b;
   --red: #e14234;
+  --green: #256528;
   --grey_blue: #4895a7;
   --black-blue: #1d1b1c;
   --h2_size: 7.2rem;
@@ -212,7 +213,7 @@ section {
 
 /* ФОРМЫ */
 .entrance_form_big_container,
-.buy_form_big_container {
+.buy_form_big_container, .form_big_container {
   top: 0;
   left: 0;
   z-index: 11;
@@ -224,7 +225,7 @@ section {
 }
 
 .entrance_form_container,
-.buy_form_container {
+.buy_form_container, .form_container {
   position: relative;
   top: 50%;
   left: 50%;
@@ -233,6 +234,17 @@ section {
   background-color: var(--light_violet);
   border: 1px solid var(--dark_violet);
   min-height: 30rem;
+}
+
+.confirmation_form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 3rem;
+  border-radius: 1rem;
+  color: var(--light_violet);
+  background-color: var(--red);
 }
 
 .entrance_form_container::before {
@@ -398,7 +410,7 @@ option,
   text-align: center;
 }
 
-.registration_form input[type="button"] {
+.registration_form input[type="button"]{
   display: block;
   width: 50%;
   margin: 2rem auto 0 auto;
@@ -841,4 +853,6 @@ form input[type='button'] {
   width: max-content;
   margin: 0 auto;}
 
-
+.success {
+color: var(--green);
+}

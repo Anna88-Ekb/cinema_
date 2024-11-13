@@ -222,7 +222,6 @@ ORDER BY sub.cinema_id, sub.session_date, sub.session_time;
 
   async getDaysByMovieName(req, res) {
   const name = req.params.name;
-
   const date_path = await db.query(`select distinct to_char(cs.session_date, 'YYYY-MM-DD') as session, c.cinema_path, c.cinema_name from cinema_session cs
   join cinema c on c.cinema_id = cs.cinema_cinema_id 
   where cs.session_date >= current_date

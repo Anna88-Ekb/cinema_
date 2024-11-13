@@ -85,8 +85,10 @@
 }
 
 .buy_form button {
+  display: block;
   width: 50%;
-  margin-top: 1rem;
+  margin: 2rem auto 0 auto;
+  padding: 1rem;
 }
 
 .btn_form {
@@ -95,8 +97,30 @@
   border: 1px solid var(--dark_violet);
   background-color: var(--dark_violet);
   color: var(--light_violet);
+  cursor: pointer;
+}
+
+.btn_form_accent {
+  font-size: 2rem;
+  border-radius: 40rem;
+  border: 1px solid var(--red);
+  background-color: var(--red);
+  color: var(--light_violet);
+  cursor: pointer;
+}
+.btn_form_accent:hover{
+  background-color: rgba(225, 66, 52, .8);
 }
 
 .btn_form:hover, .cancellation:hover {
   background-color: rgba(72, 64, 121, 0.8);
 }
+.insert_form button {
+  text-align: left;
+}
+
+/* .registration_form input[type="button"] {
+  display: block;
+  width: 50%;
+  margin: 2rem auto 0 auto;
+  padding: 1rem;} */

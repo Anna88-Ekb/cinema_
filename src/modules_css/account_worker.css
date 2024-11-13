@@ -1,8 +1,8 @@
-
 .database_views {
   display: flex;
   width: 80%;
 }
+
 .database_view_left_toolbar {
   position: fixed;
   display: flex;
@@ -12,30 +12,42 @@
   height: auto;
   background-color: #484079;
 }
+
 .database_view {
   width: calc(100% - 5rem);
   display: flex;
   flex-direction: column;
-  padding: 1rem;
   margin-left: 4rem;
 }
+
+.database_view,
+.start_worker_page,
+.insert_form, .posters {
+  padding: 1rem;
+}
+
+.database_view_left_toolbar_error {
+  margin: 1rem;
+  color: var(--red);
+}
+
 .database_view_toolbar {
-display: flex;
+  display: flex;
 }
 
 .scroll-down {
   transform: rotate(180deg);
 }
 
-
-.database_view_left_toolbar>ul>li>a>img, .database_view_left_toolbar>ul>li>a {
+.database_view_left_toolbar>ul>li>a>img,
+.database_view_left_toolbar>ul>li>a {
   width: 3rem;
   height: 3rem;
   display: block;
   margin: 1rem auto;
 }
 
-.database_view_left_toolbar>ul>li>a:active{
+.database_view_left_toolbar>ul>li>a:active {
   background-color: var(--grey_blue);
 }
 
@@ -51,7 +63,7 @@ display: flex;
   border-radius: 40rem;
 }
 
-.database_view_toolbar input[type='search'] + img {
+.database_view_toolbar input[type='search']+img {
   position: absolute;
   display: block;
   width: 3rem;
@@ -60,35 +72,33 @@ display: flex;
   top: 0.5rem;
   color: #484079;
 }
-.database_view_toolbar div{
+
+.database_view_toolbar div {
   position: relative;
 }
 
 .database_view_toolbar div>input[type="button"] {
   padding: .5rem 5rem;
   min-height: 4rem;
-  cursor: pointer;
 }
 
 
-.database_view_toolbar div + div {
+.database_view_toolbar div+div {
   margin-left: 1rem;
 }
 
-
-
 .database_view_table {
   margin-top: 2rem;
-/*   align-self: center; */
 }
+
 .database_view_table table {
   font-size: 12px;
   border-collapse: collapse;
-  max-width: 100%; 
-  table-layout: fixed; 
+  max-width: 100%;
+  table-layout: fixed;
 }
 
-.database_view_table table tbody tr{
+.database_view_table table tbody tr {
   position: relative;
   min-height: 5rem;
 }
@@ -97,24 +107,28 @@ display: flex;
 .database_view_table table th,
 .database_view_table table td {
   border: 1px dotted var(--grey_violet);
-  padding: 0.75rem;
   position: relative;
-  white-space: normal;        /* Разрешает перенос строк */
-  word-break: break-word;     /* Переносит длинные слова */
-  overflow-wrap: break-word;  /* Альтернативный перенос слов */
-  
-/*   min-height: 3rem; */
+  white-space: normal;
+  /* Разрешает перенос строк */
+  word-break: break-word;
+  /* Переносит длинные слова */
+  overflow-wrap: break-word;
+  /* Альтернативный перенос слов */
 }
 
+.database_view_table table td:not(:has(textarea)) {
+  padding: 0.75rem;
+}
 .database_view_table table th {
+  padding: 0.75rem 3rem 0.75rem 0.75rem ;
   text-align: left;
   position: relative;
-  padding-right: 3rem;
   background-color: var(--dark_violet);
   color: var(--light_violet);
 }
 
-.active, .change_entry {
+.active,
+.change_entry {
   background-color: rgba(72, 149, 167, .5);
 }
 
@@ -122,40 +136,38 @@ display: flex;
   background-color: rgba(225, 66, 52, .5);
 }
 
-.cursor_pointer{
+.cursor_pointer {
   cursor: pointer;
 }
 
-.database_view_table table td > textarea {
-padding: 0.75rem;
-min-height: 5rem;
-overflow-y: visible;
-resize: none;
-border: none;
-outline: none;
-background-color: transparent;
-min-width: 5rem;
-width: 100%;
-white-space: pre-wrap;
-
+.database_view_table table td>textarea {
+  padding: 0.75rem;
+  min-height: 5rem;
+  overflow-y: visible;
+  resize: none;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  min-width: 5rem;
+  width: 100%;
+  white-space: pre-wrap;
 }
 
-
-.cancellation{
-display: block;
-width: 3rem;
-height: 3rem;
-font-size: 1.4rem;
-cursor: pointer;
-top: 50%;
-transform: translateY(-50%);
-position: absolute;
-z-index: 1000;
-background-color: var(--dark_violet);
-background-image: url(../images/icons/action-undo-svgrepo-com.svg);
-background-repeat: no-repeat;
-background-position: center center;
-background-size: contain;
+.cancellation {
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+  top: 50%;
+  transform: translateY(-50%);
+  position: absolute;
+  z-index: 1000;
+  background-color: var(--dark_violet);
+  background-image: url(/images/icons/action-undo-svgrepo-com.svg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
 
 }
 
@@ -165,14 +177,9 @@ background-size: contain;
   font-size: 2rem;
 }
 
-.start_worker_page {
-  padding: 1rem;
-}
-
-.start_worker_page h1 {
+.account-view h1 {
   color: var(--dark_violet);
 }
-
 
 .nopadding {
   padding: 0!important;
@@ -188,4 +195,227 @@ background-size: contain;
 .total_rows>span {
   font-weight: normal;
   color: initial;
+}
+
+.insert_form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.insert_form>div {
+  margin-top: 2rem;
+  align-self: center;
+  width: 80rem;
+}
+
+.insert_form form {
+  width: 100%;
+}
+
+.insert_form form>div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.insert_form form>div>div,
+.insert_form form>div>div+div {
+  width: 50%;
+}
+
+.insert_form form label span {
+  color: var(--red);
+}
+
+/* .insert_form form>div label {
+  align-self: center;
+} */
+.insert_form form>div+div {
+  margin-top: 2rem;
+}
+
+.insert_form form input:not([type='submit']),
+.insert_form form select,
+.insert_form form textarea {
+  width: 100%;
+  outline-color: var(--dark_violet);
+  border-radius: 2px;
+  padding: 0.5rem;
+}
+
+.insert_form form input:not([type='submit']),
+.insert_form form select {
+  font-size: initial;
+  min-height: 4rem;
+}
+
+.insert_form form textarea {
+  resize: none;
+  overflow-y: visible;
+  white-space: pre-wrap;
+  min-height: 7rem;
+}
+
+.insert_form form input[type='submit'] {
+  display: block;
+  cursor: pointer;
+  width: 30%;
+  margin: 4rem auto 0 auto;
+  padding: 1rem;
+  text-transform: uppercase;
+}
+
+.posters {
+  width: 85%;
+}
+.posters_container {
+  display: flex;
+}
+.posters_add {
+  justify-content: space-between;
+}
+.posters_views {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+}
+.poster_view {
+ max-width: 20rem;
+ max-height: 20rem;
+ margin: 1rem;
+ display: flex;
+ flex-direction: column;
+ justify-content: space-between;
+}
+
+.poster_view_name, .poster_changes_container {
+  font-size: 1.2rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+.poster_view_name {
+  white-space: normal; /* разрешает перенос текста на новую строку */
+  word-wrap: break-word; /* позволяет переносить длинные слова */
+  overflow-wrap: break-word; /* работает аналогично, рекомендуется для совместимости */
+}
+.poster_changes_container input[type='text'] {
+  height: 100%;
+}
+
+.poster_changes_container input {
+  outline-color: var(--dark_violet);
+}
+.poster_view>img {
+  width: 100%;
+  height: 60%;
+}
+
+.posters_add {
+  margin-top: 1rem;
+}
+
+.posters_add_name {
+margin: 1rem 0;
+min-height: 2rem;
+}
+.posters_add_preview {
+  width: 798px;
+  height: 398px;
+  background-color: rgba(64, 64, 74, .1);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size:contain;
+}
+
+.posters_container input, .posters_container button {
+font-size: 1.4rem;
+text-transform: uppercase;
+}
+.input-file{
+  position: relative;
+	display: inline-block;
+}
+.input-file span, .reset_btn_form, .poster_save {
+  text-transform: uppercase;
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	outline: none;
+	text-decoration: none;
+	font-size: 14px;
+	vertical-align: middle;
+	color: var(--light_violet);
+	text-align: center;
+	border-radius: 4px;
+	line-height: 22px;
+	height: 40px;
+	padding: 10px 20px;
+	box-sizing: border-box;
+	border: none;
+	margin: 0;
+	transition: background-color 0.2s;
+}
+.input-file span {
+  background-color: var(--dark_violet);
+}
+.reset_btn_form {
+  background-color: var(--red);
+}
+.reset_btn_form:hover {
+  background-color: rgba(225, 66, 52, .8);
+} 
+
+.input-file input[type=file] {
+	position: absolute;
+	z-index: -1;
+	opacity: 0;
+	display: block;
+	width: 0;
+	height: 0;
+}
+
+.input-file input[type=file]:focus + span {
+	box-shadow: 0 0 0 0.2rem rgba(64, 64, 74, .2);
+}
+ 
+.input-file:hover span {
+	background-color: rgba(72, 64, 121, .8);
+}
+.input-file:active span {
+	background-color: rgba(72, 64, 121, .8);
+}
+ 
+.posters_views button, .posters_views input[type="button"] {
+  padding: 0.5rem 1rem;
+}
+
+.posters_views_bottons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.poster_change_name_btn {
+  background-color: var(--dark_violet);
+  background-image: url('/images/icons/download-2-svgrepo-com.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  cursor: pointer;
+}
+
+.confirmation_form p+p, .confirmation_form>div {
+margin-top: 3rem;
+}
+
+.confirmation_form>div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.confirmation_form input {
+  height: 4rem;
+  width: 8rem;
+}
+.confirmation_form .btn_form_accent {
+  border-color: var(--light_violet);
 }

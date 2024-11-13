@@ -1,0 +1,26 @@
+<div class="posters">
+  <h1>Постеры</h1>
+  <div class="posters_container">
+    <form action="#" class="posters_add">
+      <div class="posters_add_preview"></div>
+      <p class="posters_add_name"></p>
+      <label class="input-file">
+        <input type="file" class="my" id="myfile" name="myfile" accept=".png, .jpg, .jpeg, .webr">
+        <span>Добавить</span>
+      </label>
+      <input type="reset" value="Отменить" class="reset_btn_form">
+      <input type="button" value="Сохранить" class="btn_form poster_save unblock">
+    </form>
+    <div class="posters_views">
+      {{#each posters}}
+      <div class="poster_view" data-name="{{this}}"><img src="/posters/{{{this}}}" alt="#">
+        <div>
+          <p class="poster_view_name">{{this}}</p>
+          <div class="posters_views_bottons"><button class="btn_form poster_change_name">Изменить</button><button
+              class="btn_form_accent poster_delete">Удалить</button></div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
