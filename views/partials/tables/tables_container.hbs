@@ -36,7 +36,7 @@
           {{#each table_dates}}
           <tr>
             {{#each this}}
-            <td>{{.}}</td>
+            <td data-row="{{@key}}" data-value="{{.}}">{{.}}</td>
             {{/each }}
           </tr>
           {{/each}}

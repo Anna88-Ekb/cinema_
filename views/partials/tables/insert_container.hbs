@@ -1,7 +1,7 @@
 <div class="insert_form">
   <button class="prev_form_btn btn_main_style">Назад</button>
   <div>
-      <form action="/insert-to-table/:{{table_name}}" method="POST" enctype="application/x-www-form-urlencoded">
+      <form action="/insert-to-table/:{{table_name}}" method="POST" enctype="application/x-www-form-urlencoded" data-table="{{table_name}}">
     {{#each table_columns}}
     <div>
       <label for="{{this.column_name}}"> {{this.column_comment}}

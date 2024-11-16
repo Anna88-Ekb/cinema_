@@ -1244,11 +1244,27 @@ background-color: var(--dark_violet);
 .start_worker_page,
 .insert_form, .posters {
   padding: 1rem;
+  position: relative;
+}
+
+.database_view_left_toolbar_error_conteiner {
+  display: flex;
+  flex-direction: column;
 }
 
 .database_view_left_toolbar_error {
-  margin: 1rem;
+  margin: 1rem 0;
+  padding: 2rem;
+  background-color: rgba(225, 66, 52, .5);
+  border: 1px solid var(--red);
   color: var(--red);
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.database_view_left_toolbar_error + .database_view_left_toolbar_error {
+  top: 8rem;
 }
 
 .database_view_toolbar {

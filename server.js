@@ -12,6 +12,7 @@ import workerRoutes from './routes/worker.routes.js';
 import workerDBRotes from './routes/dbWorker.router.js';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
+import { error } from 'console';
 
 const date = new Date().toLocaleDateString('ru-RU', { timeZone: "Europe/Moscow" });
 const date_db_format = date.substring(6) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
@@ -99,7 +100,7 @@ app.engine('hbs', engine({
         if (inp_type.startsWith('int')) {
           return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" type="number" min="1" step="1" maxlength="${table_columns.max_length}" ${required}></input>`;
         }
-        if(inp_type === 'numeric') {
+        if (inp_type === 'numeric') {
           return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" type="number" min="0.1" step="0.1" max="1" maxlength="${table_columns.max_length}" ${required}></input>`;
         }
         if (inp_type === 'date') {
@@ -146,7 +147,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Конфигурация хранилища с проверкой на существование файла
 const storageConfig = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'images/posters/')); 
+    cb(null, path.join(__dirname, 'images/posters/'));
   },
   filename: async function (req, file, cb) {
     const filePath = path.join(__dirname, 'images/posters', file.originalname);
@@ -172,7 +173,7 @@ const fileFilter = (req, file, cb) => {
   if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
     cb(null, true);
   } else {
-    cb(null, false); 
+    cb(null, false);
   }
 };
 
@@ -577,14 +578,16 @@ app.get('/tables/:table', async (req, res) => {
     const table = req.params.table;
     const req_table_colums = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`);
     const table_colums = await req_table_colums.json();
+    const req_table_columns_for_query = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`, {method: 'PATCH'});
+    const table_columns_for_query = await req_table_columns_for_query.json();
     const req_table_dates = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(table_colums)
+      body: JSON.stringify(table_columns_for_query)
     });
     const table_dates = await req_table_dates.json();
-    /*   console.log(table_colums); 
-      console.log(table_dates);  */
+          // console.log(table_colums); 
+          // console.log(table_dates);  
     res.render('partials/tables/tables_container', { table_colums, table_dates, table_name: table }, (err, html) => {
       if (err) {
         return res.status(500).send('Ошибка рендеринга кнопки');
@@ -671,8 +674,6 @@ app.get('/insert-to-table/:table', async (req, res) => {
       foreign_columns['hall_hall_id'] = await hall_hall_id.json();
     }
 
-    /* console.log(table_columns, foreign_columns); */
-
     res.render('partials/tables/insert_container', { table_name: table, table_columns, foreign_columns }, (err, html) => {
       if (err) {
         return res.status(500).send(`Ошибка рендеринга: ${err.message}`);
@@ -687,15 +688,61 @@ app.get('/insert-to-table/:table', async (req, res) => {
 });
 
 app.post('/insert-to-table/:table', async (req, res) => {
-  console.log(req.body);
-}) 
+  try {
+    const request_insert = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/insert-to-table/${req.params.table}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cols: req.body })
+    });
+
+    if (!request_insert.ok) {
+      return res.status(request_insert.status).json({ message: `Ошибка при вставке данных` });
+    }
+    const insert = await request_insert.json();
+    return res.status(200).json({ message: `Запись создана` });
+
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
+  }
+});
+
+app.patch('/insert-to-table/:table', async (req, res) => {
+  try {
+    const req_change = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/insert-to-table/${req.params.table}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+    const changed = await req_change.json();
+    res.status(200).json(changed);
+
+  } catch (e) {
+    console.error(e.message);
+    res.status(400).json({message: e.message});
+  }
+})
+
+app.delete('/insert-to-table/:table', async (req, res) => {
+  try {
+    const req_delete = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/insert-to-table/${req.params.table}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+    const deleted = await req_delete.json();
+    res.status(200).json(deleted);
+
+  } catch (e) {
+    console.error(e.message);
+    res.status(400).json({message: e.message});
+  }
+})
 
 app.get('/posters', async (_, res) => {
   const request_posters = await fs.readdir(path.join(__dirname, 'images/posters/'));
   const posters = [...request_posters];
-  res.render('partials/panel_employee/posters', {posters: posters});
+  res.render('partials/panel_employee/posters', { posters: posters });
 });
-
 
 app.post('/posters', upload.single('file'), async (req, res) => {
   if (!req.file) {
@@ -704,25 +751,24 @@ app.post('/posters', upload.single('file'), async (req, res) => {
   res.json({ message: 'Файл загружен успешно', filename: req.file.filename });
 });
 
-app.delete('/posters/:name', async(req, res) => {
-  try{
-  await  fs.unlink(path.join(__dirname, `images/posters/${req.params.name}`));
-  res.status(200).json({ message: `Файл ${req.params.name} удален` });
+app.delete('/posters/:name', async (req, res) => {
+  try {
+    await fs.unlink(path.join(__dirname, `images/posters/${req.params.name}`));
+    res.status(200).json({ message: `Файл ${req.params.name} удален` });
   } catch {
-  res.status(500).json({ message: `Ошибка удаления ${req.params.name}` });
+    res.status(500).json({ message: `Ошибка удаления ${req.params.name}` });
   }
 });
 
-
 app.patch('/posters/:oldname', async (req, res) => {
-  const old_name = req.params.oldname; 
+  const old_name = req.params.oldname;
   const new_name = req.body.newName;
   const oldPath = path.join(__dirname, `images/posters/${old_name}`);
   const newPath = path.join(__dirname, `images/posters/${new_name}`);
 
   try {
     if (new_name !== old_name) {
-      await fs.rename(oldPath, newPath); 
+      await fs.rename(oldPath, newPath);
       return res.status(200).json({ message: 'Файл успешно переименован!' });
     } else {
       return res.status(200).json({ message: 'Файл имеет одинаковое название' });
@@ -733,12 +779,10 @@ app.patch('/posters/:oldname', async (req, res) => {
   }
 
 });
-  
+
 
 
 app.listen(process.env.PORT || 3000, () => console.log('Запуск!'));
 
 
-
-console.log(date_db_format);
 

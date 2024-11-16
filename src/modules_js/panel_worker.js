@@ -1,3 +1,4 @@
+
 import { addSortType } from './client_validate.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -32,7 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
 });
-
 
 function afterAddTables() {
   const left_toolbar = document.querySelector('.database_view_left_toolbar');
@@ -71,7 +71,6 @@ function afterAddTables() {
   if (left_toolbar) {
     // обработчики для кнопок боковой панели DB
     left_toolbar.addEventListener('click', leftToolbar);
-
   }
 
   function leftToolbar(e) {
@@ -119,13 +118,15 @@ function afterAddTables() {
     }
 
     if (targetParent.classList.contains('save')) {
-      const change_str = database_table.querySelectorAll('.change-str');
+      database_table = document.querySelector('.database_view_table table tbody');
+      const change_entry = database_table.querySelectorAll('.change_entry');
       const delete_entry = database_table.querySelectorAll('.delete_entry');
       const errorMessage = database_table.parentElement.parentElement.querySelector('.database_view_left_toolbar_error');
-    
+      const ths = document.querySelectorAll('table th');
+
       //  функция показа сообщения об ошибке
       function showError(message) {
-        if (!errorMessage) { 
+        if (!errorMessage) {
           const p = document.createElement('p');
           p.className = 'database_view_left_toolbar_error';
           p.textContent = message;
@@ -135,19 +136,90 @@ function afterAddTables() {
           }, 5000);
         }
       }
-    
-      if (change_str.length > 0 && delete_entry.length > 0) {
+
+      if (change_entry.length > 0 && delete_entry.length > 0) {
         showError('Обновите страницу и попробуйте снова');
-      } else if (change_str.length > 0 || delete_entry.length > 0) {
+      } else if (change_entry.length > 0 || delete_entry.length > 0) {
         const container = document.querySelector('.container');
-        if(delete_entry.length > 0) {
-        container.append(openConfirmationForm('удалить', delete_entry.length + ' шт.'));
+        if (delete_entry.length > 0) {
+          container.append(openConfirmationForm('удалить', delete_entry.length + ' шт.'));
+          container.addEventListener('click', async function (e) {
+            const form_big_container = container.querySelector('.form_big_container');
+            if (e.target.id == 'confirm_false' && form_big_container) {
+              form_big_container.remove();
+            }
+            if (e.target.id == 'confirm_true' && form_big_container) {
+              const arr = [];
+              delete_entry.forEach(element => {
+                const obj = {};
+                const tds = element.querySelectorAll('td');
+                tds.forEach(elem => obj[ths[elem.cellIndex].id] = elem.textContent);
+                arr.push(obj);
+              });
+              if (arr.length > 0) {
+                try {
+                  const req_delete = await fetch(`${window.origin}/insert-to-table/${database_table.parentElement.id}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(arr)
+                  });
+                  const res_del = await req_delete.json();
+                  showError(res_del.message);
+                } catch (err) {
+                  showError(err.message);
+                }
+                form_big_container.remove();
+
+              }
+            }
+          });
         }
+
+        if (change_entry.length > 0) {
+          container.append(openConfirmationForm('изменить', change_entry.length + ' шт.'));
+          container.addEventListener('click', async function (e) {
+            const form_big_container = container.querySelector('.form_big_container');
+            if (e.target.id == 'confirm_false' && form_big_container) {
+              form_big_container.remove();
+            }
+            if (e.target.id == 'confirm_true' && form_big_container) {
+              const arr = [];
+              change_entry.forEach(tr => {
+                const tds = tr.querySelectorAll('td');
+                if (tds) {
+                  const obj = { old: {}, new: {} };
+                  tds.forEach(td => {
+                    const textarea = td.querySelector('textarea');
+                    if (textarea) {
+                      obj.new[ths[td.cellIndex].id] = textarea.value.trim();
+                    }
+                    obj.old[ths[td.cellIndex].id] = td.dataset.value;
+                   /*  [td.dataset.row] */
+                  })
+                  arr.push(obj);  
+                }
+              });
+              try {
+                const req_change = await fetch(`${window.origin}/insert-to-table/${database_table.parentElement.id}`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(arr)
+                });
+                const res_change = await req_change.json();
+                showError(res_change.message);
+              } catch (err) {
+                showError(err.message);
+              }
+              form_big_container.remove();
+            }
+          });
+          
+        }
+
       } else {
         showError('Выберите записи');
       }
     }
-   /*  console.log(targetParent); */
 
   }
 
@@ -175,7 +247,6 @@ function afterAddTables() {
           textarea.value = e.target.textContent;
           e.target.textContent = '';
           e.target.classList.add('nopadding');
-          e.target.style.padding = '0';
           e.target.append(textarea);
 
 
@@ -212,8 +283,11 @@ function afterAddTables() {
           parent.classList.remove('change_entry');
           parent.querySelectorAll('td').forEach(td => {
             td.className = 'change-str cursor_pointer';
-            if (td.querySelector('textarea')) {
-              td.textContent = td.querySelector('textarea').value;
+            const textarea = td.querySelector('textarea');
+            if (textarea) {
+              td.textContent = td.dataset.value;
+              textarea.remove();
+              td.classList.remove('nopadding');
             }
           });
         }
@@ -259,22 +333,48 @@ async function createInsertForm(tableName, parent) {
   parent.parentElement.parentElement.removeChild(parent.parentElement.parentElement.lastElementChild);
   parent.parentElement.parentElement.insertAdjacentHTML('beforeend', table_colums);
   const back = document.querySelector('.prev_form_btn');
-  const btn_form = document.querySelector('.insert_form .btn_form');
+  const insert_form = document.querySelector('.insert_form form');
+  insert_form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    // Преобразование FormData в объект
+    const formData = new FormData(insert_form);
+    const jsonObject = {};
+    formData.forEach((value, key) => {
+      jsonObject[key] = value;
+    });
+
+    // Отправка JSON-запроса
+    fetch(`/insert-to-table/${insert_form.dataset.table}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(jsonObject) // преобразование в JSON-строку
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        insert_form.reset();
+        if (data.message) {
+          const p = document.createElement('p');
+          p.textContent = data.message;
+          p.className = 'database_view_left_toolbar_error';
+          insert_form.parentElement.insertAdjacentElement('afterbegin', p);
+          setTimeout(() => {
+            insert_form.parentElement.removeChild(p);
+          }, 5000);
+        } else {
+          throw new Error('Ошибка');
+        }
+      })
+      .catch(error => {
+        console.error(error.message);
+      });
+  });
   if (back) {
     back.addEventListener('click', function () {
       getTableByName(tableName, parent);
     }, { once: true })
   }
-  if(btn_form) {
-    btn_form.addEventListener('click', async function() {
-      const obj = {};
-      document.forms[0].querySelectorAll('[name]').forEach(el => {
-        if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-          console.log(el.value);
-        }
-      });
-    })
-  }
+
 };
 
 function strIng(l) {
@@ -433,18 +533,18 @@ function managementPosterDownloaded() {
             newName: e.target.previousElementSibling.value + e.target.parentElement.parentElement.parentElement.dataset.name.substring(e.target.parentElement.parentElement.parentElement.dataset.name.lastIndexOf('.'))
           })
         })
-        .then(async (response) => {
-          if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-          }
-          const data = await response.json();
-          if(data.message) {
-            e.target.parentElement.textContent = data.message; 
-          }
-        })
-        .catch((error) => {
-          console.error('Ошибка:', error.message);
-        });
+          .then(async (response) => {
+            if (!response.ok) {
+              throw new Error(`Server error: ${response.status}`);
+            }
+            const data = await response.json();
+            if (data.message) {
+              e.target.parentElement.textContent = data.message;
+            }
+          })
+          .catch((error) => {
+            console.error('Ошибка:', error.message);
+          });
       }
     });
   }
