@@ -235,7 +235,19 @@ section {
   border: 1px solid var(--dark_violet);
   min-height: 30rem;
 }
-
+.buy_form_about {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.buy_form_about p + p {
+  margin-left: 2rem;
+}
+.buy_form_about span {
+  font-weight: bold;
+  color: var(--dark_violet);
+  font-size: 1.6rem;
+}
 .confirmation_form {
   position: absolute;
   top: 50%;
@@ -855,4 +867,13 @@ form input[type='button'] {
 
 .success {
 color: var(--green);
+}
+
+.total_price_sale {
+  font-family: var(--h2_font);
+  font-size: 4.8rem;
+  color: var(--red);
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
 }

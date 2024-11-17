@@ -647,474 +647,416 @@ function createMessage(parent, className, message, close) {
 });
 ;// ./modules_js/buy_ticket.js
 async function openBuyForm(params) {
-  console.log(params);
   if ('movie_name' in params && !('movie_date' in params) && !('hall_num' in params) && !('movie_time' in params)) {
     console.log(params.movie_name.textContent.toLowerCase());
-    const request_params = await fetch(`/buy-ticket/?movie_name=${params.movie_name.textContent.toLowerCase()}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
+    const request_params = await fetch(`/buy-ticket/?movie_name=${params.movie_name.textContent.toLowerCase()}`);
     const buy_form = await request_params.text();
     document.body.children[0].insertAdjacentHTML('afterbegin', buy_form);
-
-    const form = document.querySelector('.buy_form');
-    if (form) {
-      //закрытие формы
-      form.previousElementSibling.addEventListener('click', function () {
-        const buy_form_big_container = document.querySelector('.buy_form_big_container');
-        document.body.children[0].removeChild(buy_form_big_container);
-      })
-    }
-
-    const select_month = form.querySelector('#buy_form_select_month');
-
-
-    if (select_month) {
-      select_month.addEventListener('change', async function () {
-        let buy_form_get = form.querySelector('.buy_form_get');
-        if (buy_form_get.lastElementChild.classList.contains('buy_form_get_place')) {
-          buy_form_get.removeChild(buy_form_get.lastElementChild);
-        };
-        let buy_form_choiсe_filter_hall_add = document.querySelector('.buy_form_choiсe_filter_hall_add');
-        if (buy_form_choiсe_filter_hall_add) {
-          buy_form_choiсe_filter_hall_add.parentElement.removeChild(buy_form_choiсe_filter_hall_add);
-        }
-        let date_input = form.querySelector('input[type="date"]');
-        let select_time = form.querySelector('#buy_form_select_time');
-        select_time.disabled = true;
-        const req_params = {
-          name: params.movie_name.textContent.toLowerCase(),
-          month_num: select_month[select_month.selectedIndex].dataset.month,
-          year: select_month[select_month.selectedIndex].dataset.year,
-        }
-
-        const req_params_url = new URLSearchParams(req_params).toString();
-        const request = await fetch(`${window.origin}/buy-ticket-dates/?${req_params_url}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-
-        const dates = await request.text();
-
-        if (dates && date_input) {
-          date_input.remove();
-          select_month.insertAdjacentHTML('afterend', dates);
-          date_input = form.querySelector('input[type="date"]');
-          date_input.addEventListener('change', async function (e) {
-            buy_form_get = form.querySelector('.buy_form_get');
-            if (buy_form_get.lastElementChild.classList.contains('buy_form_get_place')) {
-              buy_form_get.removeChild(buy_form_get.lastElementChild);
-            };
-            buy_form_choiсe_filter_hall_add = document.querySelector('.buy_form_choiсe_filter_hall_add');
-            if (buy_form_choiсe_filter_hall_add) {
-              buy_form_choiсe_filter_hall_add.parentElement.removeChild(buy_form_choiсe_filter_hall_add);
-            }
-            e.preventDefault();
-            const request = await fetch(`${window.origin}/buy-ticket-times/?name=${params.movie_name.textContent.toLowerCase()}&date=${date_input.value}`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-            });
-            const times = await request.text();
-            if (times) {
-              buy_form_get = form.querySelector('.buy_form_get');
-              if (buy_form_get.lastElementChild.classList.contains('buy_form_get_place')) {
-                buy_form_get.removeChild(buy_form_get.lastElementChild);
-              }
-              buy_form_choiсe_filter_hall_add = document.querySelector('.buy_form_choiсe_filter_hall_add');
-              if (buy_form_choiсe_filter_hall_add) {
-                buy_form_choiсe_filter_hall_add.parentElement.removeChild(buy_form_choiсe_filter_hall_add);
-              }
-              select_time = form.querySelector('#buy_form_select_time');
-              if (times === 'Выбирайте дату из предложенного списка') {
-                const buy_form_choiсe_error = document.querySelector('.buy_form_choiсe_error');
-                buy_form_choiсe_error.textContent = times;
-                setTimeout(() => {
-                  buy_form_choiсe_error.textContent = '';
-                }, 8000);
-              } else {
-                select_time.remove();
-                date_input.insertAdjacentHTML('afterend', times);
-                select_time = form.querySelector('#buy_form_select_time');
-                select_time.addEventListener('change', async function () {
-
-                  const req_halls = await fetch(`${window.origin}/buy-ticket-halls/?movie_name=${params.movie_name.textContent.toLowerCase()}&movie_date=${date_input.value}&movie_time=${select_time[select_time.selectedIndex].textContent}`, {
-                    method: 'GET',
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                  });
-                  const halls = await req_halls.text();
-                  if (halls.startsWith('<fieldset class="buy_form_get_place">')) {
-                    buy_form_get = form.querySelector('.buy_form_get');
-                    if (buy_form_get.lastElementChild.classList.contains('buy_form_get_place')) {
-                      buy_form_get.removeChild(buy_form_get.lastElementChild);
-                    }
-                    buy_form_get.insertAdjacentHTML("beforeend", halls);
-                  }
-                  if (halls.startsWith('<fieldset class="buy_form_choiсe_filter_hall_add">')) {
-                    buy_form_choiсe_filter_hall_add = document.querySelector('.buy_form_choiсe_filter_hall_add');
-                    if (buy_form_choiсe_filter_hall_add) {
-                      buy_form_choiсe_filter_hall_add.parentElement.removeChild(buy_form_choiсe_filter_hall_add);
-                    }
-                    buy_form_get.insertAdjacentHTML("beforebegin", halls);
-                    buy_form_choiсe_filter_hall_add = document.querySelector('.buy_form_choiсe_filter_hall_add');
-                  }
-
-                  //////////////
-                });
-              }
-            }
-          })
-        }
-
-
-
-        /*       const req_months = await fetch(window.origin + '/buy-ticket/dates');   */
-
-        /*   const request_days_of_month = await fetch() */
-      })
-    }
-
-
-
-
-
+    afterFormAdded(params);
   }
 
   if ('movie_name' in params && 'movie_date' in params && 'hall_num' in params && 'movie_time' in params) {
     const request_params = new URLSearchParams(params).toString();
-    const request = await fetch(`/buy-ticket/?${request_params}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
+    const request = await fetch(`/buy-ticket/?${request_params}`);
     const buy_form = await request.text();
     document.body.children[0].insertAdjacentHTML('afterbegin', buy_form);
-
-    const form = document.querySelector('.buy_form');
-    if (form) {
-      //закрытие формы
-      form.previousElementSibling.addEventListener('click', function () {
-        const buy_form_big_container = document.querySelector('.buy_form_big_container');
-        document.body.children[0].removeChild(buy_form_big_container);
-      })
-
-    }
-
-
+    afterFormAdded(params);
   }
 }
 
+async function afterFormAdded(params) {
+  const form = document.querySelector('.buy_form');
+  if (form) {
+    //закрытие формы
+    form.previousElementSibling.addEventListener('click', function () {
+      const buy_form_big_container = document.querySelector('.buy_form_big_container');
+      document.body.children[0].removeChild(buy_form_big_container);
+    });
 
+    const choice_filter = form.querySelector('.buy_form_choiсe_filter_time_add');
+    if (choice_filter) {
+      choice_filter.addEventListener('change', async function (e) {
+        let buy_form_get_place = form.querySelector('.buy_form_get_place');
+        if (buy_form_get_place) { buy_form_get_place.remove(); }
+        let filter_hall_add = form.querySelector('.buy_form_choиce_filter_hall_add');
+        if (filter_hall_add) { filter_hall_add.remove(); }
+        resetForm(form);
 
+        let month = form.querySelector('#buy_form_select_month');
+        let days = form.querySelector('input[type="date"]');
+        let times = form.querySelector('#buy_form_select_time');
 
+        if (e.target == month) {
+          if (times.disabled == false) { times.disabled = true; }
+          try {
+            const req_params = {
+              name: params.movie_name.textContent.toLowerCase(),
+              month: month[month.selectedIndex].dataset.month,
+              year: month[month.selectedIndex].dataset.year
+            };
+            const req_dates = await fetch(`${window.origin}/buy-ticket-halls/${req_params.name}/${req_params.year}/${req_params.month}`);
+            const dates = await req_dates.text();
+            days.remove();
+            month.insertAdjacentHTML('afterend', dates);
+          } catch (error) {
+            console.error('Ошибка при получении дат:', error);
+          }
+        }
 
-;// ./modules_js/cinema_session.js
+        if (e.target == days) {
+          try {
+            const req_params = {
+              name: params.movie_name.textContent.toLowerCase(),
+              month: month[month.selectedIndex].dataset.month,
+              year: month[month.selectedIndex].dataset.year,
+              day: days.value.substring(8)
+            };
+            const req_times = await fetch(`${window.origin}/buy-ticket-halls/${req_params.name}/${req_params.year}/${req_params.month}/${req_params.day}`);
+            const res_times = await req_times.text();
+
+            if (!res_times.startsWith('<')) {
+              const buy_form_choiсe_error = form.querySelector('.buy_form_choiсe_error');
+              buy_form_choiсe_error.textContent = res_times;
+              times.disabled = true;
+              setTimeout(() => {
+                buy_form_choiсe_error.textContent = '';
+              }, 8000);
+            } else {
+              times.remove();
+              days.insertAdjacentHTML('afterend', res_times);
+            }
+          } catch (error) {
+            console.error('Ошибка при получении времени:', error);
+          }
+        }
+
+        if (e.target == times) {
+          try {
+            const req_params = {
+              name: params.movie_name.textContent.toLowerCase(),
+              month: month[month.selectedIndex].dataset.month,
+              year: month[month.selectedIndex].dataset.year,
+              day: days.value.substring(8),
+              time: times[times.selectedIndex].value
+            };
+            const req_halls = await fetch(`${window.origin}/buy-ticket-halls/${req_params.name}/${req_params.year}/${req_params.month}/${req_params.day}/${req_params.time}`);
+            const res_halls = await req_halls.text();
+
+            const buy_form_get = form.querySelector('.buy_form_get');
+            if (res_halls.startsWith('<fieldset class="buy_form_get_place">')) {
+              buy_form_get.insertAdjacentHTML('beforeend', res_halls);
+              countSumm();
+            }
+            if (res_halls.startsWith('<fieldset class="buy_form_choiсe_filter_hall_add">')) {
+              buy_form_get.insertAdjacentHTML('beforebegin', res_halls);
+              filter_hall_add = form.querySelector('.buy_form_choiсe_filter_hall_add');
+              if (filter_hall_add) {
+                filter_hall_add.addEventListener('change', async function (event) {
+                  const inputs = form.querySelectorAll('input[type="checkbox"]');
+                  const inputs_checked = form.querySelector('input[type="checkbox"]:checked');
+                  if (event.target.tagName === 'INPUT') {
+                    buy_form_get_place = form.querySelector('.buy_form_get_place');
+                    if (buy_form_get_place) { buy_form_get_place.remove(); }
+                    resetForm(form);
+
+                    inputs.forEach(element => {
+                      if (element !== event.target && event.target.checked) {
+                        element.disabled = true;
+                        element.style.cursor = 'auto';
+                        element.nextElementSibling.style.backgroundColor = '#e14234';
+                        element.title = 'Можно применить только один фильтр';
+                      }
+                      if (!event.target.checked) {
+                        element.disabled = false;
+                        element.style.cursor = 'pointer';
+                        element.nextElementSibling.style.backgroundColor = '';
+                        element.title = 'Нажмите для применения фильтра';
+                      }
+                    });
+                  }
+                  if (inputs_checked) {
+                    try {
+                      req_params['hall'] = inputs_checked.value;
+                      const req_halls = await fetch(`${window.origin}/buy-ticket-halls/${req_params.name}/${req_params.year}/${req_params.month}/${req_params.day}/${req_params.time}/${req_params.hall}`);
+                      const res_halls = await req_halls.text();
+                      buy_form_get.insertAdjacentHTML('beforeend', res_halls);
+                      countSumm();
+                    } catch (error) {
+                      console.error('Ошибка при получении залов:', error);
+                    }
+                  }
+                });
+              }
+            }
+          } catch (error) {
+            console.error('Ошибка при получении залов:', error);
+          }
+        }
+      });
+    }
+  }
+  countSumm();
+}
+
+async function countSumm() {
+  const buy_form_get_place = document.querySelector('.buy_form_get_place');
+  const table = document.querySelector('.buy_form_get_place table');
+  const buy_form_get_place_checked = document.querySelector('.buy_form_get_place_checked');
+  const total_price = document.querySelector('.total_price span');
+  let basic_price = document.querySelector('.price_value');
+  if (basic_price) {
+    basic_price = parseFloat(basic_price.textContent) || 0; 
+  }
+
+  let sale = null;
+  if (table) {
+    try {
+      const promotion_seans = await fetch(`${window.origin}/seance-promotion`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hall: table.dataset.hall,
+          movie: table.dataset.movie,
+          day: table.dataset.day,
+          time: table.dataset.time,
+          price: table.dataset.price,
+          type: table.dataset.type
+        })
+      });
+      sale = await promotion_seans.json();
+    } catch (error) {
+      console.error('Ошибка при запросе промоакции:', error);
+    }
+  }
+
+  if (buy_form_get_place && table) {
+    buy_form_get_place.addEventListener('change', function (e) {
+      if (e.target.tagName === "INPUT") {
+        const input = e.target;
+        let count = document.querySelectorAll('.buy_form_get_place_checked ul');
+        //добавление/удаление из списка
+        if (input.checked) {
+          const ul = document.createElement('ul');
+          ul.className = `${input.dataset.row}-${input.dataset.place}`;
+          ul.append(...createListAboutPlace(input, table));
+          buy_form_get_place_checked.append(ul);
+
+          count = document.querySelectorAll('.buy_form_get_place_checked ul');
+          updateTotalPrice(count, basic_price, sale, total_price, buy_form_get_place);
+        } else {
+          const buy_form_get_place_checked_uls = document.querySelectorAll('.buy_form_get_place_checked ul');
+          buy_form_get_place_checked_uls.forEach(el => {
+            if (el.className === `${input.dataset.row}-${input.dataset.place}`) {
+              el.remove();
+              count = document.querySelectorAll('.buy_form_get_place_checked ul');
+              updateTotalPrice(count, basic_price, sale, total_price, buy_form_get_place);
+            }
+          });
+        }
+      }
+    });
+  }
+}
+
+// обновление стоимости
+function updateTotalPrice(count, basic_price, sale, total_price, buy_form_get_place) {
+  if (!sale || !sale.promotion_count || !sale.promotion_discount) {
+    total_price.textContent = (count.length * basic_price).toFixed(2);
+    const total_price_sale = document.querySelector('.total_price_sale');
+    if (total_price_sale) total_price_sale.remove();
+    return;
+  }
+
+  if (count.length < sale.promotion_count) {
+    total_price.textContent = (count.length * basic_price).toFixed(2);
+    const total_price_sale = document.querySelector('.total_price_sale');
+    if (total_price_sale) total_price_sale.remove();
+  } else {
+    total_price.textContent = (count.length * basic_price * sale.promotion_discount).toFixed(2);
+    if (!buy_form_get_place.parentElement.parentElement.querySelector('.total_price_sale')) {
+      const p = document.createElement('p');
+      p.textContent = `Скидка ${(100 - sale.promotion_discount * 100).toFixed(2)}%`;
+      p.className = 'total_price_sale';
+      buy_form_get_place.parentElement.parentElement.append(p);
+    }
+  }
+}
+
+//генерация li
+function createListAboutPlace(input, table) {
+  let li1 = document.createElement('li');
+  let span1 = document.createElement('span');
+  li1.innerText = `Дата: `;
+  span1.innerText = table.dataset.day;
+  li1.append(span1);
+
+  let li2 = document.createElement('li');
+  let span2 = document.createElement('span');
+  li2.innerText = `Время: `;
+  span2.innerText = table.dataset.time;
+  li2.append(span2);
+
+  let li3 = document.createElement('li');
+  let span3 = document.createElement('span');
+  li3.innerText = `Ряд: `;
+  span3.innerText = input.dataset.row;
+  li3.append(span3);
+
+  let li4 = document.createElement('li');
+  let span4 = document.createElement('span');
+  li4.innerText = `Место: `;
+  span4.innerText = input.dataset.place;
+  li4.append(span4);
+
+  let li5 = document.createElement('li');
+  let span5 = document.createElement('span');
+  li5.innerText = `Цена: `;
+  span5.innerText = table.previousElementSibling.querySelector('.price_value').textContent;
+  li5.append(span5);
+  return [li1, li2, li3, li4, li5];
+}
+
+//при смене чекбокса
+function resetForm(form){
+  let total_price_sale = form.querySelector('.total_price_sale');
+  if(total_price_sale) {total_price_sale.remove()};
+  let buy_form_get_place_checked = form.querySelectorAll('.buy_form_get_place_checked ul');
+  if(buy_form_get_place_checked) {buy_form_get_place_checked.forEach(el=>el.remove())};
+  let total_price = form.querySelector('.total_price span');
+  if(total_price && total_price.textContent !== '0') {
+    total_price.textContent = '0';
+  }
+}
+;// ./modules_js/premiere.js
 
 
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-const cinema_sessions_filter = document.querySelector('.cinema_sessions_filter');
-const cinema_sessions_halls = document.querySelector('.cinema_sessions_halls');
+const premiere_slider = document.querySelector('.premiere_slider');
+if(premiere_slider) getSliderVisible(premiere_slider.children);
 
-if (cinema_sessions_filter) {
-  cinema_sessions_filter.addEventListener('click', async function (e) {
-    const input = cinema_sessions_filter.querySelector('input[type="text"]');
-    input.addEventListener('input', findTextOverlap);
-
-    if (e.target.classList.contains('movie_list_btn') || (e.target.tagName === 'SPAN' &&  e.target.parentElement.classList.contains('movie_list_btn')) ) {
-      cinema_sessions_filter.children[1].classList.contains('block') ?
-        (cinema_sessions_filter.children[1].classList.remove('block'),
-          cinema_sessions_filter.children[1].classList.add('unblock'),
-          cinema_sessions_filter.classList.remove('gradient')) :
-        (cinema_sessions_filter.children[1].classList.remove('unblock'),
-          cinema_sessions_filter.children[1].classList.add('block'),
-          cinema_sessions_filter.classList.add('gradient'));
-    }
-
-    if (e.target === input) {
-      if (!cinema_sessions_filter.children[1].classList.contains('block')) {
-        cinema_sessions_filter.children[1].classList.add('block');
-        cinema_sessions_filter.children[1].classList.remove('unblock');
-        cinema_sessions_filter.classList.add('gradient');
-      }
-    }
-
-    if (e.target.tagName === "LI") {
-      input.value = e.target.textContent;
-    }
-
-    if(e.target.classList.contains('search_list_btn') || (e.target.tagName == 'SPAN' && e.target.parentElement.classList.contains('search_list_btn'))) {
-      if(input.value.trim()!='') {
-        const tables = document.querySelectorAll('.cinema_sessions_calendar_slider_container table');
-        const response = await fetch(`${window.origin}/api/movie-days/${input.value.toLowerCase()}`, {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'} 
-        });
-        const days = await response.json();
-        if(tables) {
-          tables.forEach(table=> {
-            const a = table.querySelectorAll('a');
-            a.forEach(el=> el.style='');
-          });
-  
-          tables.forEach((table) => {;
-            let table_month = table.dataset.monthNum;
-            table_month = table_month.length==1 ? '0'+ table_month:table_month;
-            const table_year = table.dataset.year;
-            const start_date = new Date(+table_year, +table_month - 1, 1).getDay();
-            const start_index = start_date == 0 ? 6 : start_date - 1;
-            const filtered_days = [...days].filter(el => {
-              if(el.session.substring(0, 4) === table_year && el.session.substring(5, 7) === table_month) {
-                return el;
-              };
-            });
-    
-            if(filtered_days.length>0) {
-              const tds = table.querySelectorAll('tbody td');
-              filtered_days.forEach(el => {
-                tds[+el.session.substring(8) - 1 + start_index].children[0].style.backgroundImage = `url(/posters/${el.cinema_path})`;
-              });}
-          });
-        }
-      }
-    }
-  })
-}
-
-function findTextOverlap() {
-  const search_value = this.value.toLowerCase();
-  const list = document.querySelectorAll('.cinema_sessions_filter ul li');
-  const list_text = [...list].map(el => el.textContent.toLowerCase());
-  const marks = document.querySelectorAll('.cinema_sessions_filter ul li mark');
-  if (marks) { marks.forEach(el => el.parentElement.textContent = el.parentElement.textContent) }
-
-  if (search_value.length > 1) {
-    const check = list_text.some(el => el.includes(search_value));
-    if (check) {
-      list_text.forEach((el, i) => {
-        if (el.includes(search_value)) {
-          const index = el.indexOf(search_value);
-          const before = list[i].textContent.substring(0, index);
-          const match = list[i].textContent.substring(index, index + search_value.length);
-          const after = list[i].textContent.substring(index + search_value.length);
-          list[i].innerHTML = before + '<mark class="marked"><b>' + match + '</b></mark>' + after;
-          this.setAttribute('maxlength', `${search_value.length + 1}`);
-        }
-        list[i].scrollIntoView({
-          behavior: 'instant',
-          block: 'nearest'
-        });
-      })
-    } else {
-      this.setAttribute('maxlength', '2')
-    }
-  }
-
-}
-
-createTableSlider('cinema_sessions_calendar_slider_container', 'cinema_sessions_calendar_prev', 'cinema_sessions_calendar_next');
-
-function createTableSlider(parent_class, class_prev, class_next) {
-  const prev = document.querySelector(`.${class_prev}`);
-  const next = document.querySelector(`.${class_next}`);
-  let tables = document.querySelectorAll(`.${parent_class} table`);
-  prev.style.display = 'none';
+function getSliderVisible(obj) {
+const premiere_slider_prev = premiere_slider.nextElementSibling.querySelector('.premiere_slider_prev');
+const premiere_slider_next = premiere_slider.nextElementSibling.querySelector('.premiere_slider_next');
   let i = 0;
-  next.addEventListener('click', function () {
-    if (i < tables.length) {
-      tables = document.querySelectorAll(`.${parent_class} table`);
-      tables[0].parentElement.insertAdjacentElement('beforeend', tables[0]);
-      prev.style.display = 'block';
-      i++;
-    }
-    if (i === tables.length - 1) {
-      this.style.display = 'none';
-    }
-  });
-  prev.addEventListener('click', function () {
-    if (i < tables.length) {
-      tables = document.querySelectorAll(`.${parent_class} table`);
-      tables[tables.length - 1].parentElement.insertAdjacentElement('afterbegin', tables[tables.length - 1]);
-      next.style.display = 'block';
-      i--;
-    }
-    if (i === 0) {
-      this.style.display = 'none';
-    }
-  });
-};
+  let j = null;
+  let pauseSlider = false;
 
-const tables = document.querySelectorAll('.cinema_sessions_calendar_slider_container table');
-if (tables) {
-  const response = await fetch(`${window.origin}/api/movies-calendar-days`, {
-    method: 'GET',
-    headers: {'Content-Type': 'application/json'}
+  function installPauseOnSlider() {
+    if (!pauseSlider) {
+      pauseSlider = true;
+      const elems = document.querySelectorAll('.centered');
+      elems.forEach((el) => el.classList.remove('centered'));
+      this.classList.add('centered');
+    }
+  }
+
+  function unInstallPauseOnSlider() {
+    if (pauseSlider) {
+      this.classList.remove('centered');
+      pauseSlider = false;
+      showSlides();
+    }
+  }
+
+  function showSlides() {
+    if (j !== null) obj[j].classList.remove('centered');
+    let arr = Array.from(obj).slice(i, i + 3);
+    arr.forEach(el => {
+      el.classList.remove("unblock");
+      el.addEventListener('mouseenter', installPauseOnSlider);
+      el.addEventListener('mouseleave', unInstallPauseOnSlider);
+    });
+    let centerIndex = Math.floor(arr.length / 2);
+    arr[centerIndex].classList.add('centered');
+  }
+
+  function hideSlides(arr, next_el_visible = true) {
+    arr.forEach(el => {
+      el.classList.add("unblock");
+      el.removeEventListener('mouseenter', installPauseOnSlider);
+      el.removeEventListener('mouseleave', unInstallPauseOnSlider);
+    });
+    j = i + 1;
+    if (next_el_visible) {
+      ((i + 1) % (obj.length - 1) <= obj.length - 3) ? (i = (i + 1) % (obj.length - 1)) : (i = 0);
+    } else {
+      if (i > 0) { i-- }
+      else { i = obj.length - 3; }
+    }
+    showSlides();
+  }
+
+  setInterval(function () {
+    if (!pauseSlider) hideSlides(Array.from(obj).slice(i, i + 3));
+  }, 8000);
+  showSlides();
+
+  function getNextSlider() {
+    pauseSlider = true;
+    hideSlides(Array.from(obj).slice(i, i + 3));
+  }
+
+  function getPrevSlider() {
+    pauseSlider = true;
+    if (i > 0) {
+      i--;
+      let view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+      view.forEach((el) => el.classList.remove('centered'));
+      view[0].previousElementSibling.classList.remove('unblock');
+      view[2].classList.add('unblock');
+      view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+      view[1].classList.add('centered');
+    }
+    hideSlides(Array.from(obj).slice(i, i + 3), false);
+  }
+  premiere_slider_next.addEventListener('click', getNextSlider);
+  premiere_slider_prev.addEventListener('click', getPrevSlider);
+}
+
+if(premiere_slider) {
+  premiere_slider.addEventListener('click', async function(e) {
+    if(e.target.classList.contains('premiere_slider_item_btn')) {
+      const movie_name = e.target.parentElement.parentElement.querySelector('.premiere_slider_item_name');
+      openBuyForm({movie_name: movie_name})
+    }
   });
-  const sessions = await response.json();
-  const date = new Date();
-  tables.forEach(table => {
-    const all_td = table.querySelectorAll('tbody td');
-    const table_month = table.dataset.monthNum;
-    const table_year = table.dataset.year;
-    const start_date = new Date(+table_year, +table_month - 1, 1).getDay();
-    const start_index = start_date == 0 ? 6 : start_date - 1;
-    const filtered_response = sessions.filter(el => el.month === table_month);
-    filtered_response.forEach((el, i) => {
-      all_td[el.day - 1 + start_index].innerHTML = `<a title="Расписание"><span>${el.day}</span></a>`;
-    });
-    table.addEventListener('click', async (e) => {
-      if (e.target.tagName === 'A' || e.target.tagName === 'SPAN' && e.target.parentElement.tagName === 'A') {
-        const day = e.target.textContent.trim() || e.target.children[0].textContent.trim();
-        if (+day >= 1 && +day <= 31 && cinema_sessions_halls) {
-          const params = {
-            'year': e.currentTarget.dataset.year || '', 
-            'month': e.currentTarget.dataset.monthNum || '', 
-            'day': day || ''
-          };
-          const param = new URLSearchParams(params).toString();
-          const response = await fetch(`${window.origin}/schedule-day/?${param}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        const halls = await response.text();
-        cinema_sessions_halls.innerHTML = halls;
-        [...cinema_sessions_halls.children].forEach(hall => addSortType(hall, 4));
-        }
-      }
-    });
-  })
-  if(cinema_sessions_halls) {
-    cinema_sessions_halls.addEventListener('click', async function(e) {
-      if(e.target.tagName === 'A' && e.target.textContent==='Купить'){
-        const parent = e.target.parentElement;
-        const params = {
-          movie_name: parent.dataset.movieName,
-          hall_num: parent.dataset.hall,
-          movie_date: parent.dataset.date,
-          movie_time: parent.dataset.time,
-        };
-        openBuyForm(params);
-      };
-    });
+
+}
+
+
+});
+
+
+
+;// ./modules_js/today.js
+
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+const today_buy_btn = document.querySelector('.today_buy_btn');
+
+today_buy_btn.addEventListener('click', function() {
+  window.location.assign('/schedule-page');
+});
+
+const halls = document.querySelectorAll('.hall');
+
+if(halls) {
+  for (let i = 1; i < halls.length; i++) {
+    let childs = Array.from(halls[i].children).some(el => el.tagName === 'TABLE');
+    if (childs) { addSortType(halls[i], 3)};
   }
 }
 
-});
-;// ./modules_js/afisha.js
 
-document.addEventListener('DOMContentLoaded', async () => {
-const filter_films_container = document.querySelector('.filter_films_container');
-const filtered_films_container = document.querySelector('.filtered_films_container');
-
-if (filter_films_container) {
-  filter_films_container.addEventListener('click', (e) => {
-    if (e.target.tagName === 'INPUT') {
-      const filter_films = e.currentTarget.querySelectorAll(`input[name="${e.target.name}"]`);
-      const all_filter_films = filter_films_container.querySelectorAll('input[type="checkbox"]:checked');
-      filter_films.forEach(element => {
-        if (element !== e.target && e.target.checked) {
-          element.disabled = true;
-          element.style.cursor = 'auto';
-          element.nextElementSibling.style.backgroundColor = '#e14234';
-          element.title = 'Можно применить только один фильтр';
-        }
-        if (!e.target.checked) {
-          element.disabled = false;
-          element.style.cursor = 'pointer';
-          element.nextElementSibling.style.backgroundColor = '';
-          element.title = 'Нажмите для применения фильтра';
-        }
-      });
-
-      let type, country, age;
-      all_filter_films.forEach((el) => {
-        if (el.name === 'type') type = el.value;
-        if (el.name === 'country') country = el.value;
-        if (el.name === 'age') age = el.value;
-      });
-
-      const params = {
-        type: type || false,
-        country: country || false,
-        age: age || false
-      }
-      createdListofFilters(params);
-    }
-  });
-}
-
-if (filtered_films_container) {
-  filtered_films_container.addEventListener('click', async (e) => {
-    if (e.target.classList.contains('filtered_films_resize_toBig')) {
-      const name = e.target.parentElement.dataset.movieName;
-      const filtered_films_cards = e.currentTarget.querySelectorAll('.filtered_films_cards');
-      filtered_films_cards.forEach(el => {
-        el.parentElement.removeChild(el);
-      });
-
-      const response = await fetch(`${window.origin}/api/movie/${name}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (!response.ok) {
-        filtered_films_container.innerHTML = '<p style = "color: var(--light_violet)">Произошла ошибка при загрузке</p>';
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      } else {
-        const movie = await response.json();
-        const filtered_films = document.createElement('div');
-        filtered_films.className = 'filtered_films filtered_films_full_screen';
-        filtered_films.style.backgroundImage = `url('/posters/${movie.cinema_path}')`;
-        filtered_films.innerHTML = `
-        <button class="filtered_films_resize filtered_films_resize_toSmall" title="Свернуть"></button>
-        <div class="filtered_films_descr">
-        <h4>${movie.cinema_name}</h4>
-        <div>
-        <p>${movie.cinema_desc}</p>  
-        <p>Страна:<span>${movie.country_desc}</span></p>
-        <p>Возрастные ограничения:<span>${movie.age_desc}</span></p>
-        <p>Длительность:<span>${movie.cinema_duration} мин.</span></p>
-        </div><button class="btn_main_style btn_ordinary afisha_btn">Приобрести билет</button></div>`
-        filtered_films_container.append(filtered_films);
-        const filtered_films_resize_toSmall = filtered_films.querySelector('.filtered_films_resize_toSmall');
-        filtered_films_resize_toSmall.addEventListener('click', async () => {
-          const resize_films = filtered_films_container.querySelector('.filtered_films_full_screen');
-          const result = await fetch('/filtered-movie');
-          const new_content = await result.text();
-          filtered_films_container.removeChild(resize_films);
-          filtered_films_container.innerHTML = new_content;
-        }, { once: true });
-      }
-    }
-  })
-};
-
-async function createdListofFilters(params) {
-  const query_str = new URLSearchParams(params).toString();
-     const response = await fetch(`/filtered-movie?${query_str}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-});
-const filtered_films_container = document.querySelector('.filtered_films_container');
-const new_content = await response.text();
-filtered_films_container.innerHTML = new_content;
-}
 });
 
+;// ./index.js
 
 
-;// ./schedule.js
 
 
 

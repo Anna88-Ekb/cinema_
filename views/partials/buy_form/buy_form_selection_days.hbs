@@ -4,10 +4,9 @@
 {{/unless}}
 {{#if days}}
 <input type="date" list="days_list">
-
-</select><datalist id="days_list">
-  {{#each  days}}
+<datalist id="days_list">
+  {{#each days}}
   <option value="{{{this.session_date}}}"></option>
-   {{/each}}
+  {{/each}}
 </datalist>
 {{/if}}

@@ -27,7 +27,6 @@ class movieSelection {
     group by 1, 2
     order by 2;
     `);
-    console.log(result.rows);
     res.json(result.rows);
   }
 
@@ -97,33 +96,34 @@ class movieSelection {
   and extract (month from cs.session_date) = $2
   and extract (year from cs.session_date) = $3
   and cs.session_date >= current_date
-  group by 1;`, [req.query.name, req.query.month_num, req.query.year]);
+  group by 1;`, [req.query.name, req.query.month, req.query.year]);
     res.json(request_movies.rows);
   }
 
   async getTimeByMovieNameAndDay(req, res) {
+    const date = req.query.year + '-' + req.query.month + '-' + req.query.day;
     try {
-      const request_prices = await db.query(`
+    const request_prices = await db.query(`
     select to_char(session_time, 'HH24:MI') as session_time from cinema_session cs
     join cinema c on cs.cinema_cinema_id =  c.cinema_id
     where ( lower(c.cinema_name) = $1 or c.cinema_name = $1 )
     and cs.session_date = $2 and cs.session_date >= current_date
-    group by 1;`, [req.query.name, req.query.date]);
-      console.log(request_prices.rows);
-      res.json(request_prices.rows);
+    group by 1;`, [req.query.name, date]);
+    res.json(request_prices.rows);
     } catch (error) {
-      res.status(500).json({ 'Ошибка': error.message })
+    res.status(500).json({ 'Ошибка': error.message })
     }
   }
 
   async getHallByMovieNameAndDatetime(req, res) {
-    const req_halls = await db.query(`select hall_hall_id as hall_id from cinema_session cs
+  const date = req.query.year + '-' + req.query.month + '-' + req.query.day;
+  const req_halls = await db.query(`select hall_hall_id as hall_id from cinema_session cs
   join cinema c on cs.cinema_cinema_id =  c.cinema_id
   where ( lower(c.cinema_name) = $1 or c.cinema_name = $1 )
   and cs.session_date = $2
   and cs.session_date >= current_date 
-  and to_char(session_time, 'HH24:MI') = $3;`, [req.query.movie_name, req.query.movie_date, req.query.movie_time]);
-    res.json(req_halls.rows);
+  and to_char(session_time, 'HH24:MI') = $3;`, [req.query.name, date, req.query.time]);
+  res.json(req_halls.rows);
   }
 
   async getALLHall(_, res) {

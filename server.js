@@ -1,4 +1,4 @@
-import express, { urlencoded } from 'express';
+import express, { json, response }/* , { urlencoded } */ from 'express';
 import { engine } from 'express-handlebars';
 import path from 'path';
 import fs from 'fs/promises';
@@ -13,6 +13,7 @@ import workerDBRotes from './routes/dbWorker.router.js';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import { error } from 'console';
+import cors from 'cors';
 
 const date = new Date().toLocaleDateString('ru-RU', { timeZone: "Europe/Moscow" });
 const date_db_format = date.substring(6) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
@@ -44,11 +45,15 @@ app.use((req, res, next) => {
   next();
 });
 
+
 app.use('/posters', express.static(path.join(__dirname, 'images/posters')));
 app.use('/icons', express.static(path.join(__dirname, 'images/icons')));
 app.use('/api', moviesRoutes);
 app.use('/api', moviesFilterRoutes);
 app.use('/api', seansHall);
+app.use('/server-api', cors({
+  origin: `${process.env.SERV_HOST}:${process.env.DB_PORT}`
+}));
 app.use('/server-api', clientRoutes);
 app.use('/server-api', workerRoutes);
 app.use('/server-api', workerDBRotes);
@@ -415,11 +420,9 @@ app.get('/buy-ticket', async (req, res) => {
     const movie_name = movie_days[0].cinema_name;
     const response_movie_month = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-months/?name=${req.query.movie_name}`);
     const months = await response_movie_month.json();
-    /*   console.log(months); */
     res.render('partials/buy_form/buy_form', { movie_name, client_preference: client_preference[0], months, days: false, hours: false });
   } else {
     const request_params = { ...req.query };
-    /*   console.log(request_params); */
     const request_hall_place = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/hall-tickets`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -435,87 +438,149 @@ app.get('/buy-ticket', async (req, res) => {
 
 });
 
-app.get('/buy-ticket-dates', async (req, res) => {
-  try {
-    const url = new URLSearchParams(req.query).toString();
-    const request_dates = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-day-calendar/?${url}`);
-    const days = await request_dates.json();
-    res.render('partials/buy_form/buy_form_selection_days', { days }, (e, html) => {
-      if (e) {
-        return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
-      }
-      res.send(html);
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+app.get('/buy-ticket-halls/:name/:year/:month/:day?/:time?/:hall?/', async (req, res) => {
+  let params = Object.fromEntries(
+    Object.entries(req.params).filter(([key, value]) => value !== undefined && value !== 'undefined')
+  );
 
-app.get('/buy-ticket-times', async (req, res) => {
-  try {
-    const request_times = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-time-calendar/?name=${req.query.name}&date=${req.query.date}`);
-    let hours = await request_times.json();
-    if (hours.length === 0) {
-      hours = false;
-      return res.status(400).send('Выбирайте дату из предложенного списка');
+  if(params.month && params.month.length ==1) {
+    params.month = `0${params.month}`;
+  }
+  if(params.day && params.day.length ==1) {
+    params.day = `0${params.day}`;
+  }
+
+  if (params.name && params.year && params.month && !params.day && !params.time & !params.hall) {
+    try {
+      const url = new URLSearchParams(params).toString();
+      const request_dates = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-day-calendar/?${url}`);
+      const days = await request_dates.json();
+      res.render('partials/buy_form/buy_form_selection_days', { days }, (e, html) => {
+        if (e) {
+          return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
+        }
+        res.send(html);
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-    res.render('partials/buy_form/buy_form_selection_hours', { hours }, (e, html) => {
-      if (e) {
-        return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
-      }
-      res.send(html);
-    });
-
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
-});
 
-app.get('/buy-ticket-halls', async (req, res) => {
-  const request_halls = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-hall-calendar/?movie_name=${req.query.movie_name}&movie_date=${req.query.movie_date}&movie_time=${req.query.movie_time}`);
-  const halls = await request_halls.json();
-  /*   console.log(halls); */
-  /*   if (halls.length === 1) {
-      const request_params = new URLSearchParams({
-        movie_name: req.query.movie_name,
-        hall_num: halls[0].hall_id.toString(),
-        movie_date: req.query.movie_date,
-        movie_time: req.query.movie_time,
-      }).toString();
-    
-      res.redirect(process.env.SERV_HOST + process.env.PORT +`/buy-ticket?${request_params}`);
-    } */
-
-  if (halls.length > 1) {
-    res.render('partials/buy_form/buy_form_halls', { halls }, (e, html) => {
-      if (e) {
-        return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
+  if (params.name && params.year && params.month && params.day && !params.time && !params.hall) {
+    try {
+      const url = new URLSearchParams(params).toString();
+      const request_times = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-time-calendar/?${url}`);
+      let hours = await request_times.json();
+      if (hours.length === 0) {
+        hours = false;
+        return res.status(400).send('Выбирайте дату из предложенного списка');
       }
-      res.send(html);
-    });
-  } else if (halls.length === 1) {
-    const request_params = {
-      movie_name: req.query.movie_name,
-      hall_num: halls[0].hall_id.toString(),
-      movie_date: req.query.movie_date.toString(),
-      movie_time: req.query.movie_time.toString(),
-    };
+      res.render('partials/buy_form/buy_form_selection_hours', { hours }, (e, html) => {
+        if (e) {
+          return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
+        }
+        res.send(html);
+      });
 
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  if (params.name && params.year && params.month && params.day && params.time && !params.hall) {
+    const url = new URLSearchParams(params).toString();
+    const request_halls = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movie-hall-calendar/?${url}`);
+    const halls = await request_halls.json();
+    if (halls.length > 1) {
+      res.render('partials/buy_form/buy_form_halls', { halls }, (e, html) => {
+        if (e) {
+          return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
+        }
+        res.send(html);
+      });
+    } else if (halls.length === 1) {
+      const request_params = {
+        movie_name: params.name,
+        hall_num: halls[0].hall_id.toString(),
+        movie_date: params.year + '-' + params.month + '-' + params.day,
+        movie_time: params.time
+      };
+
+      const request_hall_place = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/hall-tickets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request_params)
+      });
+
+      const hall_place = await request_hall_place.json();
+
+      res.render('partials/buy_form/buy_form_tickets', { request_params, hall_place }, (e, html) => {
+        if (e) {
+          return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
+        }
+        res.send(html);
+      });
+    }
+  }
+
+  if (params.name && params.year && params.month && params.day && params.time && params.hall) {
+    const request_params = {
+      movie_name: params.name,
+      hall_num: params.hall,
+      movie_date: params.year + '-' + params.month + '-' + params.day,
+      movie_time: params.time
+    };
     const request_hall_place = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/hall-tickets`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request_params)
     });
-
     const hall_place = await request_hall_place.json();
+    
     res.render('partials/buy_form/buy_form_tickets', { request_params, hall_place }, (e, html) => {
       if (e) {
         return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
       }
       res.send(html);
     });
+
+
   }
 
+
+})
+
+app.post('/seance-promotion', async (req, res) => {
+  try {
+
+    const req_promotion = await fetch(
+      `${process.env.SERV_HOST}${process.env.PORT}/api/seance-promotion`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body),
+      }
+    );
+
+    if (!req_promotion.ok) {
+      throw new Error('Ошибка запроса промоакций');
+    }
+
+    const promotions = await req_promotion.json();
+
+    if (!promotions.length) {
+      throw new Error('Нет подходящих скидок');
+    }
+
+    const promotion = promotions[0];
+    res.status(200).json({
+      promotion_count: promotion.promotion_count || 0,
+      promotion_discount: promotion.promotion_discount || 1,
+    });
+  } catch (err) {
+    console.error('Ошибка:', err.message);
+    res.status(400).json({ message: err.message });
+  }
 });
 
 
@@ -563,8 +628,6 @@ app.get('/cinema-panel', async (req, res) => {
     const tables_list = await request_tables_list.json();
     const tables = tables_list.length > 0 ? tables_list : false;
 
-    /* 
-     */
     res.render('worker-page', { worker_access: JSON.parse(req.cookies.worker_access), worker_name: worker_name[0], worker_login: req.cookies.worker_login, tables });
 
   } catch (error) {
@@ -578,7 +641,7 @@ app.get('/tables/:table', async (req, res) => {
     const table = req.params.table;
     const req_table_colums = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`);
     const table_colums = await req_table_colums.json();
-    const req_table_columns_for_query = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`, {method: 'PATCH'});
+    const req_table_columns_for_query = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`, { method: 'PATCH' });
     const table_columns_for_query = await req_table_columns_for_query.json();
     const req_table_dates = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/tables/${table}`, {
       method: 'POST',
@@ -586,8 +649,8 @@ app.get('/tables/:table', async (req, res) => {
       body: JSON.stringify(table_columns_for_query)
     });
     const table_dates = await req_table_dates.json();
-          // console.log(table_colums); 
-          // console.log(table_dates);  
+    // console.log(table_colums); 
+    // console.log(table_dates);  
     res.render('partials/tables/tables_container', { table_colums, table_dates, table_name: table }, (err, html) => {
       if (err) {
         return res.status(500).send('Ошибка рендеринга кнопки');
@@ -718,7 +781,7 @@ app.patch('/insert-to-table/:table', async (req, res) => {
 
   } catch (e) {
     console.error(e.message);
-    res.status(400).json({message: e.message});
+    res.status(400).json({ message: e.message });
   }
 })
 
@@ -734,7 +797,7 @@ app.delete('/insert-to-table/:table', async (req, res) => {
 
   } catch (e) {
     console.error(e.message);
-    res.status(400).json({message: e.message});
+    res.status(400).json({ message: e.message });
   }
 })
 
