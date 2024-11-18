@@ -1,4 +1,6 @@
 
+import {openBuyForm} from './buy_ticket.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
 const filter_films_container = document.querySelector('.filter_films_container');
 const filtered_films_container = document.querySelector('.filtered_films_container');
@@ -74,13 +76,20 @@ if (filtered_films_container) {
         </div><button class="btn_main_style btn_ordinary afisha_btn">Приобрести билет</button></div>`
         filtered_films_container.append(filtered_films);
         const filtered_films_resize_toSmall = filtered_films.querySelector('.filtered_films_resize_toSmall');
-        filtered_films_resize_toSmall.addEventListener('click', async () => {
-          const resize_films = filtered_films_container.querySelector('.filtered_films_full_screen');
-          const result = await fetch('/filtered-movie');
-          const new_content = await result.text();
-          filtered_films_container.removeChild(resize_films);
-          filtered_films_container.innerHTML = new_content;
-        }, { once: true });
+        if(filtered_films_resize_toSmall) {
+          filtered_films_resize_toSmall.addEventListener('click', async () => {
+            const resize_films = filtered_films_container.querySelector('.filtered_films_full_screen');
+            const result = await fetch('/filtered-movie');
+            const new_content = await result.text();
+            filtered_films_container.removeChild(resize_films);
+            filtered_films_container.innerHTML = new_content;
+          }, { once: true });
+        }
+        const afisha_btn = filtered_films.querySelector('.afisha_btn');
+        if(afisha_btn){
+          const name = afisha_btn.parentElement.querySelector('h4');
+          openBuyForm({movie_name: name});
+        }
       }
     }
   })

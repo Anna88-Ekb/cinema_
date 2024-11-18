@@ -28,13 +28,13 @@
                         <div><label for="buy_form_get_contacts_email">Введите адрес электронной
                                 почты<span>*</span></label>
                         </div>
-                        <div><input id="buy_form_get_contacts_email" class="email" type="text"></div>
+                        <div><input id="buy_form_get_contacts_email" class="email" type="text" required></div>
                     </div>
                     <div>
                         <div><label for="buy_form_get_contacts_phone">Введите номер мобильного
                                 телефона<span>*</span></label>
                         </div>
-                        <div><input id="buy_form_get_contacts_phone" class="phone" type="text"></div>
+                        <div><input id="buy_form_get_contacts_phone" class="phone" type="text" required></div>
                     </div>
                     {{/unless}}
                     {{#if login}}
@@ -68,7 +68,7 @@
             <div class="buy_form_get_place_checked">
             </div>
             <div class="total_price">К оплате: <span>0</span>руб.</div>
-            <button type="button" class="btn_main_style btn_accent buy_form_btn" tabindex="0">Купить</button>
+            <div class="buy_form_btn_container"><input type="submit" class="btn_main_style btn_accent buy_form_btn" tabindex="0" value="Купить"></div>
         </form>
     </div>
 </div>

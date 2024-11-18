@@ -84,7 +84,7 @@
   color: rgba(72, 64, 121, 0.8);
 }
 
-.buy_form button {
+.buy_form_btn {
   display: block;
   width: 50%;
   margin: 2rem 0 0 0;
