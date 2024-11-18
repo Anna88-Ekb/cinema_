@@ -1,6 +1,7 @@
 
 import {openBuyForm} from './buy_ticket.js';
 
+
 document.addEventListener('DOMContentLoaded', async () => {
 
 const premiere_slider = document.querySelector('.premiere_slider');
@@ -89,7 +90,7 @@ if(premiere_slider) {
   premiere_slider.addEventListener('click', async function(e) {
     if(e.target.classList.contains('premiere_slider_item_btn')) {
       const movie_name = e.target.parentElement.parentElement.querySelector('.premiere_slider_item_name');
-      openBuyForm({movie_name: movie_name})
+      openBuyForm({movie_name: movie_name});
     }
   });
 
