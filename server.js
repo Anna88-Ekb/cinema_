@@ -588,7 +588,7 @@ app.post('/seance-promotion', async (req, res) => {
 
 app.post('/buy-ticket-confirm', (req, res) => {
   try{
-
+    console.log(req_body);
   }catch(err) {
     
   }
