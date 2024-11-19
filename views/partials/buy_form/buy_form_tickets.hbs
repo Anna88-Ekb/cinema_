@@ -2,7 +2,7 @@
   <legend>Выберите место<span>*</span></legend>
   {{#if hall_place}}
   <div class="buy_form_about"><p>Цена <span class="price_value">{{hall_place.basic_price}}</span> руб.</p> <p>Формат <span>{{hall_place.graphics_name}}</span></p></div>
-  <table data-hall="{{request_params.hall_num}}" data-movie="{{request_params.movie_name}}"
+  <table data-seance="{{hall_place.session_id}}" data-hall="{{request_params.hall_num}}" data-movie="{{request_params.movie_name}}"
     data-day="{{request_params.movie_date}}" data-time="{{request_params.movie_time}}" data-price="{{hall_place.basic_price}}" data-type="{{hall_place.graphics_name}}">
     {{#if (eq hall_place.hall_id 1) }}
     <tbody class="buy_form_get_place_tbody">

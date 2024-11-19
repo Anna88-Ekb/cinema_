@@ -14,6 +14,7 @@ import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import { error } from 'console';
 import cors from 'cors';
+import { cache } from 'webpack';
 
 const date = new Date().toLocaleDateString('ru-RU', { timeZone: "Europe/Moscow" });
 const date_db_format = date.substring(6) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
@@ -573,7 +574,9 @@ app.post('/seance-promotion', async (req, res) => {
     }
 
     const promotion = promotions[0];
+
     res.status(200).json({
+      promotion_id: promotion.promotion_id || 0,
       promotion_count: promotion.promotion_count || 0,
       promotion_discount: promotion.promotion_discount || 1,
     });
@@ -583,6 +586,14 @@ app.post('/seance-promotion', async (req, res) => {
   }
 });
 
+app.post('/buy-ticket-confirm', (req, res) => {
+  try{
+
+  }catch(err) {
+    
+  }
+  console.log(req.body);
+});
 
 app.get('/cinema-panel-entrance', async (_, res) => {
   res.render('entrance_worker', { title: 'Синема/Форма входа', worker: true });
@@ -659,7 +670,7 @@ app.get('/tables/:table', async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send('Ошибка');
+    res.status(500).json({ message: e.message });
   }
 });
 

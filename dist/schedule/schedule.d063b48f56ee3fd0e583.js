@@ -815,6 +815,7 @@ async function countSumm() {
   }
 
   let sale = null;
+
   if (table) {
     try {
       const promotion_seans = await fetch(`${window.origin}/seance-promotion`, {
@@ -822,18 +823,21 @@ async function countSumm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           hall: table.dataset.hall,
-          movie: table.dataset.movie,
           day: table.dataset.day,
           time: table.dataset.time,
           price: table.dataset.price,
-          type: table.dataset.type
+          seance: table.dataset.seance
         })
       });
       sale = await promotion_seans.json();
+      if('promotion_id' in sale) {
+        table.dataset.promotion = sale['promotion_id'];
+      }
     } catch (error) {
       console.error('Ошибка при запросе промоакции:', error);
     }
   }
+ 
 
   if (buy_form_get_place && table) {
     buy_form_get_place.addEventListener('change', function (e) {
@@ -964,7 +968,7 @@ async function buyTicket(form, choice_filter){
   }
   
   if(buy_form_btn) {
-    buy_form_btn.addEventListener('click', function(e) {
+    buy_form_btn.addEventListener('click', async function(e) {
       const table = form.querySelector('.buy_form_get_place table');
       const buy_form_choiсe_error = form.querySelector('.buy_form_choiсe_error');
       const buy_form_get_place_checked = form.querySelector('.buy_form_get_place_checked');
@@ -990,8 +994,41 @@ async function buyTicket(form, choice_filter){
         }, 8000);
         return
       } else {
-        console.log(table);
-        console.log(document.cookie);
+        const req_params = {
+          movie_name: table.dataset.movie,
+          movie_hall: table.dataset.hall,
+          movie_day: table.dataset.day,
+          movie_time: table.dataset.time,
+          movie_price: table.dataset.price,
+          movie_type: table.dataset.type,
+          client_login: (() => {
+            const cookies = document.cookie.trim();
+            const match = cookies.match(/(?:^|;\s*)client_login=([^;]+)/);
+            return match ? match[1] : false;
+          })(),
+          user_phone: phone && phone.value ? getNumOfPhone(phone.value) : false,
+          user_email: email && email.value ? email.value : false,
+          tikects : [...(() => {
+            const checked = table.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(checked).map(checkbox => ({
+              row: checkbox.dataset.row,
+              place: checkbox.dataset.place
+            }));
+          })()], 
+          total_price: total_price.textContent,
+          total_price_promotion: table.dataset.promotion || false
+        }
+        try{
+          const req_confirm = await fetch(`${window.origin}/buy-ticket-confirm`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req_params) 
+          });
+          
+        } catch(err) {
+          console.error(err.message);
+        }
+        console.log(req_params);
       }
     })
 
@@ -999,6 +1036,8 @@ async function buyTicket(form, choice_filter){
   }
  }
 }
+
+
 ;// ./modules_js/cinema_session.js
 
 

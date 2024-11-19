@@ -10,7 +10,7 @@ class Databases {
     where
     c.relkind = 'r'  -- только обычные таблицы
     and n.nspname = 'public'  -- фильтрация по схеме
-    and c.relname not in ('worker_position', 'worker', 'worker_access', 'permission', 'unreg_user', 'client', 'current_position');`);
+    and c.relname not in ('worker_position', 'worker', 'worker_access', 'permission', 'unreg_user', 'client', 'current_position', 'transact');`);
     res.json(request_tables.rows);
   }
 
