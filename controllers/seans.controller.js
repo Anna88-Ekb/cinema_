@@ -45,7 +45,7 @@ async getMinPrice(req, res) {
   res.json(request_price.rows[0]);
 }
 
-async  getSeansSales(req, res) {
+async getSeansSales(req, res) {
   try {
     const query = `
     select * 
@@ -83,6 +83,16 @@ async  getSeansSales(req, res) {
   }
 }
 
+async getSeansBasicPrice(req, res) {
+  console.log(req.query.id);
+  const req_price = await db.query(`select session_basic_price from cinema_session 
+  where cinema_session_name = $1`, [req.query.id]);
+  res.json(req_price.rows[0]);
+} 
+
+async createTransactAndTicket(req, res) {
+  console.log(req.body);
+}
 
 }
 

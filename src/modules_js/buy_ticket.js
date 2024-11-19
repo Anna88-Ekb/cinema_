@@ -353,6 +353,7 @@ async function buyTicket(form, choice_filter){
           movie_time: table.dataset.time,
           movie_price: table.dataset.price,
           movie_type: table.dataset.type,
+          movie_seance: table.dataset.seance,
           client_login: (() => {
             const cookies = document.cookie.trim();
             const match = cookies.match(/(?:^|;\s*)client_login=([^;]+)/);
@@ -376,7 +377,7 @@ async function buyTicket(form, choice_filter){
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req_params) 
           });
-          
+
         } catch(err) {
           console.error(err.message);
         }

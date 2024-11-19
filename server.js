@@ -1,4 +1,4 @@
-import express, { json, response }/* , { urlencoded } */ from 'express';
+import express from 'express';
 import { engine } from 'express-handlebars';
 import path from 'path';
 import fs from 'fs/promises';
@@ -14,7 +14,6 @@ import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import { error } from 'console';
 import cors from 'cors';
-import { cache } from 'webpack';
 
 const date = new Date().toLocaleDateString('ru-RU', { timeZone: "Europe/Moscow" });
 const date_db_format = date.substring(6) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2);
@@ -51,10 +50,11 @@ app.use('/posters', express.static(path.join(__dirname, 'images/posters')));
 app.use('/icons', express.static(path.join(__dirname, 'images/icons')));
 app.use('/api', moviesRoutes);
 app.use('/api', moviesFilterRoutes);
-app.use('/api', seansHall);
+
 app.use('/server-api', cors({
   origin: `${process.env.SERV_HOST}:${process.env.DB_PORT}`
 }));
+app.use('/server-api', seansHall);
 app.use('/server-api', clientRoutes);
 app.use('/server-api', workerRoutes);
 app.use('/server-api', workerDBRotes);
@@ -193,7 +193,7 @@ app.get('/', async (_, res) => {
     const movies = await response_movies.json();
     const response_movies_today = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/movies-day/:${date_db_format}`);
     const halls = await response_movies_today.json();
-    const response_min_price = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/min-price`);
+    const response_min_price = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/min-price`);
     let min_price = await response_min_price.json();
 
     res.render('home', {
@@ -424,7 +424,7 @@ app.get('/buy-ticket', async (req, res) => {
     res.render('partials/buy_form/buy_form', { movie_name, client_preference: client_preference[0], months, days: false, hours: false });
   } else {
     const request_params = { ...req.query };
-    const request_hall_place = await fetch(process.env.SERV_HOST + process.env.PORT + `/api/hall-tickets`, {
+    const request_hall_place = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/hall-tickets`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request_params)
@@ -444,10 +444,10 @@ app.get('/buy-ticket-halls/:name/:year/:month/:day?/:time?/:hall?/', async (req,
     Object.entries(req.params).filter(([key, value]) => value !== undefined && value !== 'undefined')
   );
 
-  if(params.month && params.month.length ==1) {
+  if (params.month && params.month.length == 1) {
     params.month = `0${params.month}`;
   }
-  if(params.day && params.day.length ==1) {
+  if (params.day && params.day.length == 1) {
     params.day = `0${params.day}`;
   }
 
@@ -507,7 +507,7 @@ app.get('/buy-ticket-halls/:name/:year/:month/:day?/:time?/:hall?/', async (req,
         movie_time: params.time
       };
 
-      const request_hall_place = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/hall-tickets`, {
+      const request_hall_place = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/hall-tickets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(request_params)
@@ -531,13 +531,13 @@ app.get('/buy-ticket-halls/:name/:year/:month/:day?/:time?/:hall?/', async (req,
       movie_date: params.year + '-' + params.month + '-' + params.day,
       movie_time: params.time
     };
-    const request_hall_place = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/api/hall-tickets`, {
+    const request_hall_place = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/hall-tickets`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request_params)
     });
     const hall_place = await request_hall_place.json();
-    
+
     res.render('partials/buy_form/buy_form_tickets', { request_params, hall_place }, (e, html) => {
       if (e) {
         return res.status(500).send(`Ошибка рендеринга: ${e.message}`);
@@ -555,7 +555,7 @@ app.post('/seance-promotion', async (req, res) => {
   try {
 
     const req_promotion = await fetch(
-      `${process.env.SERV_HOST}${process.env.PORT}/api/seance-promotion`,
+      `${process.env.SERV_HOST}${process.env.PORT}/server-api/seance-promotion`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -586,13 +586,55 @@ app.post('/seance-promotion', async (req, res) => {
   }
 });
 
-app.post('/buy-ticket-confirm', (req, res) => {
-  try{
-    console.log(req_body);
-  }catch(err) {
-    
+app.post('/buy-ticket-confirm', async (req, res) => {
+  try {
+    if (req.body.total_price_promotion === 'false' && req.body.total_price_promotion === false) {
+      const req_basic_price = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/seance-basic-price/?id=${req.body.movie_seance}`);
+      const basic_price = await req_basic_price.json();
+      const check_summ = (() => {
+        if (req.body.tikects.length * basic_price.session_basic_price ==req.body.total_price) {
+          return true;
+        }
+        throw new Error("Ошибка оплаты");
+      })();
+    } else if(!req.body.total_price_promotion === 'false' && !req.body.total_price_promotion === false) {
+      const req_promotions_params = {
+        seance: req.body.movie_seance,
+        hall: req.body.movie_hall,
+        day: req.body.movie_day,
+        time: req.body.movie_time,
+        price: req.body.movie_price
+      };
+      const req_promotions = await fetch(
+        `${process.env.SERV_HOST}${process.env.PORT}/server-api/seance-promotion`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(req_promotions_params),
+        });
+      const promotions = await req_promotions.json();
+      const { promotion_count, promotion_discount, promotion_promotion_id, session_basic_price } = promotions[0];
+
+      const check_summ = (() => {
+        if (req.body.tikects.length < promotion_count && session_basic_price * req.body.tikects.length == req.body.total_price && promotion_promotion_id == req.body.total_price_promotion) {
+          return true;
+        }
+        if (req.body.tikects.length >= promotion_count && session_basic_price * req.body.tikects.length * promotion_discount == req.body.total_price && promotion_promotion_id == req.body.total_price_promotion) {
+          return true;
+        }
+        throw new Error("Ошибка оплаты");
+      })();
+    }
+  const req_create_tickets = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/buy-ticket-confirm`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    });
+
+  } catch (error) {
+    console.error(error.message);
   }
-  console.log(req.body);
 });
 
 app.get('/cinema-panel-entrance', async (_, res) => {
