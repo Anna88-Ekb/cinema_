@@ -34,7 +34,7 @@ try{
 }
 }
 async getWorkerPersonalFromLogin (req, res) { 
-const request_worker = await db.query(`  select worker_name, worker_family_name, worker_patronymic from worker
+const request_worker = await db.query(`select worker_name, worker_family_name, worker_patronymic from worker
 where worker_login = $1`, [req.query.login]);
 res.json(request_worker.rows);
 }

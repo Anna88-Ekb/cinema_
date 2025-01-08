@@ -7,7 +7,7 @@ footer {
   color: var(--light_violet);
 }
 
-.spider-man {
+/* .spider-man {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -15,12 +15,12 @@ footer {
   background-size: cover;
   width: 581px;
   height: 824px;
-}
+} */
 
 .footer_container {
   display: flex;
-  max-width: 65%;
-  margin: auto 0 auto auto;
+/*   max-width: 65%;
+  margin: auto 0 auto auto; */
   justify-content: space-between;
 }
 

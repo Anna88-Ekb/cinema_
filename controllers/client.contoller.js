@@ -3,6 +3,7 @@ import db from "../db_connect.js";
 class Client{
   async addNewClient(req, res) {
     const client = req.body;
+    console.log(req.body);
     try {
       const insertData = await db.query(
         `INSERT INTO client(
@@ -23,14 +24,14 @@ class Client{
           client.client_email,
           client.client_preference.client_preference_phone,
           client.client_preference.client_preference_email,
-          client.agrement.client_agreement_processing,
-          client.agrement.client_agreement_newsletter,
+          client.agreement.client_agreement_processing,
+          client.agreement.client_agreement_newsletter,
           client.client_preference.client_preference_account
         ]
       );
   
       const inserted = insertData.rows[0]?.client_id;
-  
+     
       if (inserted) {
         return res.status(201).json({ success: true });
       } else {
@@ -135,7 +136,6 @@ class Client{
   }
 
   
-
 };
 
 export const actionClient = new Client();

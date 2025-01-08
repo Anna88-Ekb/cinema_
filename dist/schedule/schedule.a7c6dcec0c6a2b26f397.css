@@ -181,6 +181,15 @@ section {
   letter-spacing: 2rem;
 }
 
+@media (max-width: 1220px)  {
+  .top_title {
+    font-size: 5rem;
+  }
+  section h2 {
+    font-size: 5rem;
+  }
+}
+
 .marked {
   background-color: var(--red);
   color: var(--grey_blue);
@@ -906,6 +915,10 @@ color: var(--green);
   justify-content: space-between;
 }
 
+.movie_img_container {
+  display: flex;
+}
+
 .ticket {
   display: flex;
   flex-direction: column;
@@ -929,7 +942,7 @@ color: var(--green);
   content: '';
   width: 4.8rem;
   height: 4.8rem;
- /*  background: url(images/icons/dot-arrow_violet.png) no-repeat center; */
+  background: url(..//images/dot-arrow_violet.png) no-repeat center;
   transform: rotate(180deg);
   background-size: cover;
   display: inline-block;
@@ -968,7 +981,7 @@ color: var(--green);
   margin: 0 auto;
   display: flex;
   width: 80%;
- /*  background: url(images/icons/ticket.svg) no-repeat right top; */
+  background: url(..//images/ticket.svg) no-repeat right top;
   background-size: contain;
   position: relative;
 }
@@ -981,7 +994,7 @@ color: var(--green);
   left: -1.5rem;
   height: 3rem;
   width: 3rem;
-/*   background: url(images/icons/scissor.png) no-repeat center; */
+  background: url(..//images/scissor.png) no-repeat center;
   transform: rotate(90deg);
   background-size: contain;
 }
@@ -1001,6 +1014,12 @@ color: var(--green);
 .ticket p {
   font-weight: bold;
   margin-top: 1rem;
+}
+
+@media (max-width: 850px) {
+section {
+  padding: 30px 0 10px 0!important;
+}
 }
 .logo img {
   width: 3rem;
@@ -1096,11 +1115,57 @@ nav {
   height: auto;
 }
 
+
 .menu_container {
   display: flex;
   width: inherit;
 }
 
+@media (max-width: 1200px) {
+
+
+  .menu_main_list {
+    font-size: 2rem;
+  }
+  .age_restrictions span {
+    font-size: 1.2rem;
+  }
+  .menu_container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .menu_info{
+    margin-top: 1rem;
+    flex: 0 1 40%;
+    order: 1;
+  }
+  .entrance_form_btn {
+    font-size: 1.6rem;
+    flex: 0 1 30%;
+    order: 2;
+    margin: auto 0 auto auto;
+  }
+  nav {
+    order: 3;
+  }
+
+
+}
+
+@media (max-width: 880px) {
+.entrance_form_btn {
+  flex: 0 1 auto;
+}
+}
+
+@media (max-width: 720px) {
+  .entrance_form_btn {
+    flex: 0 1 auto;
+  }
+  .menu {
+    position: static;
+  }
+}
 .btn_main_style {
   font-size: 2.4rem;
   text-transform: uppercase;
@@ -1142,7 +1207,6 @@ nav {
   height: max-content;
   font-size: 2.4rem;
   color: var(--red);
-  /* padding: 1rem 0 1rem 3.4rem; */
   padding: 0 0 0 3.4rem;
   cursor: pointer;
   position: relative;

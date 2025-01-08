@@ -1009,7 +1009,7 @@ async function buyTicket(form, choice_filter){
           })(),
           user_phone: phone && phone.value ? getNumOfPhone(phone.value) : false,
           user_email: email && email.value ? email.value : false,
-          tikects : [...(() => {
+          tickets: [...(() => {
             const checked = table.querySelectorAll('input[type="checkbox"]:checked');
             return Array.from(checked).map(checkbox => ({
               row: checkbox.dataset.row,
@@ -1025,11 +1025,22 @@ async function buyTicket(form, choice_filter){
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req_params) 
           });
-
+          const confirm = await  req_confirm.json();
+          const container = document.querySelector('.container');
+          if(confirm.html) {
+            container.remove();
+            document.body.insertAdjacentHTML('afterbegin', confirm.html); 
+          }
+          if(confirm.message) {
+            buy_form_choiсe_error.textContent = confirm.message;
+            setTimeout(() => {
+              buy_form_choiсe_error.textContent = '';
+            }, 8000);
+          }
+          console.log(container);
         } catch(err) {
           console.error(err.message);
         }
-        console.log(req_params);
       }
     })
 
@@ -1158,10 +1169,8 @@ today_buy_btn.addEventListener('click', function() {
 const halls = document.querySelectorAll('.hall');
 
 if(halls) {
-  for (let i = 1; i < halls.length; i++) {
-    let childs = Array.from(halls[i].children).some(el => el.tagName === 'TABLE');
-    if (childs) { addSortType(halls[i], 3)};
-  }
+  let childs = Array.from(halls[0].children).some(el => el.tagName === 'TABLE');
+  if (childs) { addSortType(halls[0], 3)};
 }
 
 

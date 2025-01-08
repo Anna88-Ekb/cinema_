@@ -12,10 +12,8 @@ today_buy_btn.addEventListener('click', function() {
 const halls = document.querySelectorAll('.hall');
 
 if(halls) {
-  for (let i = 1; i < halls.length; i++) {
-    let childs = Array.from(halls[i].children).some(el => el.tagName === 'TABLE');
-    if (childs) { addSortType(halls[i], 3)};
-  }
+  let childs = Array.from(halls[0].children).some(el => el.tagName === 'TABLE');
+  if (childs) { addSortType(halls[0], 3)};
 }
 
 

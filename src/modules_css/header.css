@@ -92,7 +92,54 @@ nav {
   height: auto;
 }
 
+
 .menu_container {
   display: flex;
   width: inherit;
+}
+
+@media (max-width: 1200px) {
+
+
+  .menu_main_list {
+    font-size: 2rem;
+  }
+  .age_restrictions span {
+    font-size: 1.2rem;
+  }
+  .menu_container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .menu_info{
+    margin-top: 1rem;
+    flex: 0 1 40%;
+    order: 1;
+  }
+  .entrance_form_btn {
+    font-size: 1.6rem;
+    flex: 0 1 30%;
+    order: 2;
+    margin: auto 0 auto auto;
+  }
+  nav {
+    order: 3;
+  }
+
+
+}
+
+@media (max-width: 880px) {
+.entrance_form_btn {
+  flex: 0 1 auto;
+}
+}
+
+@media (max-width: 720px) {
+  .entrance_form_btn {
+    flex: 0 1 auto;
+  }
+  .menu {
+    position: static;
+  }
 }

@@ -1,13 +1,9 @@
-.zal1 h4 {
-  position: relative;
-  display: inline-block;
-}
-
-.zal1 h4::before {
+/* .hall_2_3::before {
   content: '2D';
   position: absolute;
-  right: -3rem;
-  top: -3rem;
+  display: block;
+  right: 0;
+  bottom: -2.5rem;
   opacity: .5;
   font-family: var(--h2_font);
   color: var(--grey_blue);
@@ -19,6 +15,10 @@
   display: flex;
   justify-content: space-between;
   margin-top: 3.5rem;
+}
+
+.hall_2_3 {
+  position: relative;
 }
 
 .halls>div>img {
@@ -145,5 +145,4 @@
   border: 1px solid var(--dark_violet);
   outline-offset: 2px;
   outline-color: var(--dark_violet);
-}
-
+} */

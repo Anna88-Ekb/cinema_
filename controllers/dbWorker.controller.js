@@ -52,7 +52,7 @@ WHERE table_schema = 'public'
     AND tc.table_name = $1;
 `, [table]);
 
-    if (request_foreign.rows.length > 0 && table !== 'ticket') {
+    if (request_foreign.rows.length > 0 && table !== 'ticket' && table !== 'cinema_session') {
       const foreiqn = request_foreign.rows;
       let query = `SELECT ${columns.map(col => changeColumnName(col, table, foreiqn)).join(', ')} FROM ${table};`;
       const req_table = await db.query(`${query}`);
@@ -265,3 +265,14 @@ function createDelRow(table, el, obj) {
   const query = `UPDATE ${table} SET ${setPart} WHERE ${wherePart};`;
   return query;
 } */
+
+/* select c.column_name, c.udt_name, coalesce(c.character_maximum_length, c.numeric_precision) as max_length, 
+    (c.is_nullable = 'NO') as not_null, pgd.description as column_comment, tc.constraint_name as constraint_name, 
+    ccu.table_name as foreign_table_name, ccu.column_name as foreign_column_name from information_schema.columns as c
+    left join pg_catalog.pg_description as pgd on pgd.objsubid = c.ordinal_position 
+    and pgd.objoid = (select oid from pg_catalog.pg_class where relname = c.table_name and relnamespace = (select oid from pg_catalog.pg_namespace where nspname = c.table_schema)) 
+    left join information_schema.key_column_usage as kcu on c.column_name = kcu.column_name and c.table_name = kcu.table_name
+    left join information_schema.table_constraints as tc on kcu.constraint_name = tc.constraint_name and tc.constraint_type = 'FOREIGN KEY'
+    left join information_schema.constraint_column_usage as ccu on tc.constraint_name = ccu.constraint_name
+    where c.identity_generation is null and c.table_schema = 'public' and c.table_name = $1 
+    order by c.column_name;`; */

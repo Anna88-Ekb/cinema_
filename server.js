@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { json } from 'express';
 import { engine } from 'express-handlebars';
 import path from 'path';
 import fs from 'fs/promises';
@@ -51,9 +51,20 @@ app.use('/icons', express.static(path.join(__dirname, 'images/icons')));
 app.use('/api', moviesRoutes);
 app.use('/api', moviesFilterRoutes);
 
-app.use('/server-api', cors({
+/* app.use('/server-api', cors({
   origin: `${process.env.SERV_HOST}:${process.env.DB_PORT}`
 }));
+app.use(cors({
+  origin: ['http://localhost:3000'], // Список разрешенных источников
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Разрешенные методы
+  credentials: true // Если нужно разрешить куки
+})); */
+
+
+app.use(cors({
+  origin: '*' // Это разрешит запросы с любых доменов
+}));
+
 app.use('/server-api', seansHall);
 app.use('/server-api', clientRoutes);
 app.use('/server-api', workerRoutes);
@@ -122,7 +133,7 @@ app.engine('hbs', engine({
           return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" type="time" ${required}></input>`;
         }
         if (inp_type === 'bool') {
-          return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" min="0" max="1" type="range" ${required}></input>`;
+          return `<input id="${table_columns.column_name}" name="${table_columns.column_name}" type="radio" ${required}></input>`;
         }
 
       }
@@ -211,7 +222,7 @@ app.get('/', async (_, res) => {
 
     });
   } catch (error) {
-    console.error('Ошибка при запросе к API:', error);
+    console.error('Ошибка при запросе к API главной страницы:', error);
     res.status(500).send('Ошибка сервера');
   }
 });
@@ -274,6 +285,7 @@ app.get('/schedule-day/', async (req, res) => {
 });
 
 app.post('/new-client', async (req, res) => {
+/*   console.log(req.body); */
   try {
     const clientResponse = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/new-client/`, {
       method: 'POST',
@@ -564,7 +576,7 @@ app.post('/seance-promotion', async (req, res) => {
     );
 
     if (!req_promotion.ok) {
-      throw new Error('Ошибка запроса промоакций');
+      throw new Error('Промоакция не применяется');
     }
 
     const promotions = await req_promotion.json();
@@ -588,16 +600,17 @@ app.post('/seance-promotion', async (req, res) => {
 
 app.post('/buy-ticket-confirm', async (req, res) => {
   try {
-    if (req.body.total_price_promotion === 'false' && req.body.total_price_promotion === false) {
+    
+    if (req.body.total_price_promotion === 'false' || req.body.total_price_promotion === false) {
       const req_basic_price = await fetch(process.env.SERV_HOST + process.env.PORT + `/server-api/seance-basic-price/?id=${req.body.movie_seance}`);
       const basic_price = await req_basic_price.json();
       const check_summ = (() => {
-        if (req.body.tikects.length * basic_price.session_basic_price ==req.body.total_price) {
+        if (req.body.tickets.length * parseFloat(basic_price.session_basic_price) == parseFloat(req.body.total_price)) {
           return true;
         }
         throw new Error("Ошибка оплаты");
       })();
-    } else if(!req.body.total_price_promotion === 'false' && !req.body.total_price_promotion === false) {
+    } else if (req.body.total_price_promotion !== 'false' && req.body.total_price_promotion !== false) {
       const req_promotions_params = {
         seance: req.body.movie_seance,
         hall: req.body.movie_hall,
@@ -616,26 +629,43 @@ app.post('/buy-ticket-confirm', async (req, res) => {
       const { promotion_count, promotion_discount, promotion_promotion_id, session_basic_price } = promotions[0];
 
       const check_summ = (() => {
-        if (req.body.tikects.length < promotion_count && session_basic_price * req.body.tikects.length == req.body.total_price && promotion_promotion_id == req.body.total_price_promotion) {
+        if (req.body.tickets.length < +promotion_count && parseFloat(session_basic_price) * req.body.tickets.length == parseFloat(req.body.total_price) && promotion_promotion_id == req.body.total_price_promotion) {
           return true;
         }
-        if (req.body.tikects.length >= promotion_count && session_basic_price * req.body.tikects.length * promotion_discount == req.body.total_price && promotion_promotion_id == req.body.total_price_promotion) {
+        if (req.body.tickets.length >= promotion_count && parseFloat(session_basic_price) * req.body.tickets.length * parseFloat(promotion_discount) == parseFloat(req.body.total_price) && promotion_promotion_id == req.body.total_price_promotion) {
           return true;
         }
         throw new Error("Ошибка оплаты");
       })();
     }
-  const req_create_tickets = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/buy-ticket-confirm`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body),
-    });
+
+    const req_create_tickets = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/buy-ticket-confirm`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body),
+      });
+
+    const tickets = await req_create_tickets.json();
+    if (tickets && tickets.length > 0) {
+      res.render('tickets', { tickets }, (err, html) => {
+        if (err) {
+          console.error('Ошибка рендеринга страницы:', err.message);
+          return res.status(500).json({ message: 'Ошибка рендеринга страницы' });
+        }
+        return res.status(200).json({ html });
+      });
+    } else {
+      return res.status(400).json({ message: 'Ошибка при обработке билетов' });
+    }
+
 
   } catch (error) {
     console.error(error.message);
   }
 });
+
+
 
 app.get('/cinema-panel-entrance', async (_, res) => {
   res.render('entrance_worker', { title: 'Синема/Форма входа', worker: true });
@@ -823,6 +853,7 @@ app.post('/insert-to-table/:table', async (req, res) => {
 });
 
 app.patch('/insert-to-table/:table', async (req, res) => {
+  console.log(req.body);
   try {
     const req_change = await fetch(`${process.env.SERV_HOST}${process.env.PORT}/server-api/insert-to-table/${req.params.table}`, {
       method: 'PATCH',

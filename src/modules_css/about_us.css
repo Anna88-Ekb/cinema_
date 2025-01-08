@@ -49,7 +49,7 @@
   display: block;
   margin-top: 2rem;
   margin-bottom: 2rem;
-  font-size: 50%;
+  font-size: 3rem;
   color: var(--light_violet);
 }
 
@@ -70,4 +70,57 @@
   display: inline-block;
   color: initial;
   font-weight: normal;
+}
+
+@media (max-width: 1220px) {
+
+  .about_us .sale_discont{
+    font-size: 10rem;
+    right: 50%;
+  }
+
+  .about_us p, .about_us span {
+    line-height: 4.6rem;
+  }
+  .str_center {
+    font-size: 4rem!important;
+  }
+  .about_us h1  {
+    font-size: 6rem;
+  }
+
+  .about_us_info {
+    flex-direction: column;
+    align-items: center;
+  }
+  .about_us {
+    max-height: 100vh;
+    justify-content: center;
+  }
+  .sale  {
+    margin-top: 6rem;
+  }
+  .sale_discont {
+    left: 60%;
+    top: 15%;
+  }
+  
+
+}
+@media (max-width: 750px) {
+  .about_us h1 {
+    font-size: 5rem;
+  }
+
+  .about_us {
+    padding: 0!important;
+    line-height: 2rem;
+
+  }
+  .str_center {
+    font-size: 3rem!important;
+  }
+  .sale_discont {
+    font-size: 3rem;
+  }
 }

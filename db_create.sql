@@ -94,6 +94,8 @@ CREATE TABLE
     )
   );
 
+  
+
 CREATE TABLE
   promotion (
     promotion_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY
@@ -239,16 +241,17 @@ ALTER TABLE hall_graphics ADD CONSTRAINT hall_graphics_graphics_fk FOREIGN KEY (
 ALTER TABLE hall_graphics ADD CONSTRAINT hall_graphics_hall_fk FOREIGN KEY (hall_hall_id) REFERENCES hall (hall_id);
 
 CREATE UNIQUE INDEX ticket__idx ON ticket (
-  place_place_row ASC
-, place_place_col ASC
-, place_hall_hall_id ASC
+  place_place_row ASC,
+  place_place_col ASC,
+  place_hall_hall_id ASC,
+  cinema_session_session_name asc
 );
 
-ALTER TABLE cinema_session ADD CONSTRAINT cinema_session_cinema_fk FOREIGN KEY (cinema_cinema_id) REFERENCES cinema (cinema_id);
 
-ALTER TABLE cinema_session ADD CONSTRAINT cinema_session_hall_fk FOREIGN KEY (hall_hall_id) REFERENCES hall (hall_id);
 
-ALTER TABLE cinema_session ADD CONSTRAINT cinema_session_graphics_fk FOREIGN KEY (graphics_graphics_id) REFERENCES graphics (graphics_id);
+ALTER TABLE cinema_session ADD CONSTRAINT cinema_session_cinema_fk FOREIGN KEY (cinema_cinema_id, graphics_graphics_id) REFERENCES cinema_graphics (cinema_cinema_id,graphics_graphics_id);
+
+ALTER TABLE public.cinema_session ADD CONSTRAINT cinema_session_hall_graphics_fk FOREIGN KEY (hall_hall_id,graphics_graphics_id) REFERENCES public.hall_graphics(hall_hall_id,graphics_graphics_id);
 
 ALTER TABLE cinema ADD CONSTRAINT cinema_type_fk FOREIGN KEY (type_type_id) REFERENCES type (type_id);
 
@@ -310,3 +313,45 @@ and w.worker_password = 'cinema_pass'
 and (current_timestamp < cp.date_end or cp.date_end is null)
 and (current_timestamp < p.date_end or cp.date_end is null); */
 /* TRIM(REPLACE(full_name, ' ', '')) */
+
+
+CREATE TABLE orgform (
+    orgform_id   SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    orgform_name CHARACTER VARYING(50) NOT NULL
+);
+
+
+
+CREATE TABLE supplier (
+    supplier_id        BIGINT NOT NULL,
+    orgform_orgform_id SMALLINT NOT NULL,
+    supplier_phone     CHARACTER VARYING(18) NOT NULL,
+    supplier_mail      CHARACTER VARYING(50),
+    supplier_name      CHARACTER VARYING(200) NOT NULL,
+    supplier_address   CHARACTER VARYING(200) NOT NULL
+);
+
+ALTER TABLE supplier ADD CONSTRAINT supplier_pk PRIMARY KEY ( supplier_id );
+
+CREATE TABLE cinema_law (
+    supplier_supplier_id BIGINT NOT NULL,
+    cinema_cinema_id     INTEGER NOT NULL,
+    cinema_start_date DATE NOT NULL,
+    cinema_end_date DATE,
+    cinema_doc           bytea NOT NULL,
+    cinema_doc_num       CHARACTER VARYING(200) NOT NULL
+);
+
+ALTER TABLE cinema_law ADD CONSTRAINT cinema_law_pk PRIMARY KEY ( supplier_supplier_id,
+                                                                  cinema_cinema_id );
+ ALTER TABLE cinema_law
+    ADD CONSTRAINT cinema_law_cinema_fk FOREIGN KEY ( cinema_cinema_id )
+        REFERENCES cinema ( cinema_id );
+
+ALTER TABLE cinema_law
+    ADD CONSTRAINT cinema_law_supplier_fk FOREIGN KEY ( supplier_supplier_id )
+        REFERENCES supplier ( supplier_id );
+
+ALTER TABLE supplier
+    ADD CONSTRAINT supplier_orgform_fk FOREIGN KEY ( orgform_orgform_id )
+        REFERENCES orgform ( orgform_id );

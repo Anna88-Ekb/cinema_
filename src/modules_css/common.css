@@ -157,6 +157,15 @@ section {
   letter-spacing: 2rem;
 }
 
+@media (max-width: 1220px)  {
+  .top_title {
+    font-size: 5rem;
+  }
+  section h2 {
+    font-size: 5rem;
+  }
+}
+
 .marked {
   background-color: var(--red);
   color: var(--grey_blue);
@@ -882,6 +891,10 @@ color: var(--green);
   justify-content: space-between;
 }
 
+.movie_img_container {
+  display: flex;
+}
+
 .ticket {
   display: flex;
   flex-direction: column;
@@ -905,7 +918,7 @@ color: var(--green);
   content: '';
   width: 4.8rem;
   height: 4.8rem;
- /*  background: url(images/icons/dot-arrow_violet.png) no-repeat center; */
+  background: url(../images/icons/dot-arrow_violet.png) no-repeat center;
   transform: rotate(180deg);
   background-size: cover;
   display: inline-block;
@@ -944,7 +957,7 @@ color: var(--green);
   margin: 0 auto;
   display: flex;
   width: 80%;
- /*  background: url(images/icons/ticket.svg) no-repeat right top; */
+  background: url(../images/icons/ticket.svg) no-repeat right top;
   background-size: contain;
   position: relative;
 }
@@ -957,7 +970,7 @@ color: var(--green);
   left: -1.5rem;
   height: 3rem;
   width: 3rem;
-/*   background: url(images/icons/scissor.png) no-repeat center; */
+  background: url(../images/icons/scissor.png) no-repeat center;
   transform: rotate(90deg);
   background-size: contain;
 }
@@ -977,4 +990,10 @@ color: var(--green);
 .ticket p {
   font-weight: bold;
   margin-top: 1rem;
+}
+
+@media (max-width: 850px) {
+section {
+  padding: 30px 0 10px 0!important;
+}
 }
