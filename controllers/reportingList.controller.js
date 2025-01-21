@@ -448,110 +448,93 @@ class ReportingSales {
     try {
       const resultat = await db.query(`
       SELECT
-    -- Суммы аренды за текущий день
-    COALESCE(
-        (
-            SELECT TRUNC(SUM(r.rent_price), 2)
-            FROM rent r
-            JOIN application_worker aw
-              ON aw.application_worker_id = r.application_rent_application_rent_id
-            WHERE r.rent_date::date = CURRENT_DATE
-              AND aw.application_status_application_status_id NOT IN (4) -- Исключаем отмененные заявки
-        ), 
-        0
-    ) AS sum_today,
-
-    -- Суммы аренды за текущую неделю
-    COALESCE(
-        (
-            SELECT TRUNC(SUM(r.rent_price), 2)
-            FROM rent r
-            JOIN application_worker aw
-              ON aw.application_worker_id = r.application_rent_application_rent_id
-            WHERE r.rent_date::date BETWEEN DATE_TRUNC('week', CURRENT_DATE) AND CURRENT_DATE
-              AND aw.application_status_application_status_id NOT IN (4) -- Исключаем отмененные заявки
-        ), 
-        0
-    ) AS sum_week,
-
-    -- Суммы аренды за текущий месяц
-    COALESCE(
-        (
-            SELECT TRUNC(SUM(r.rent_price), 2)
-            FROM rent r
-            JOIN application_worker aw
-              ON aw.application_worker_id = r.application_rent_application_rent_id
-            WHERE r.rent_date::date BETWEEN DATE_TRUNC('month', CURRENT_DATE) AND CURRENT_DATE
-              AND aw.application_status_application_status_id NOT IN (4) -- Исключаем отмененные заявки
-        ), 
-        0
-    ) AS sum_month,
-
-    -- Суммы аренды за текущий год
-    COALESCE(
-        (
-            SELECT TRUNC(SUM(r.rent_price), 2)
-            FROM rent r
-            JOIN application_worker aw
-              ON aw.application_worker_id = r.application_rent_application_rent_id
-            WHERE r.rent_date::date BETWEEN DATE_TRUNC('year', CURRENT_DATE) AND CURRENT_DATE
-              AND aw.application_status_application_status_id NOT IN (4) -- Исключаем отмененные заявки
-        ), 
-        0
-    ) AS sum_year,
-
-    -- Средние суммы аренды за текущий день
-    COALESCE(
-        (
-            SELECT TRUNC(AVG(r.rent_price), 2)
-            FROM rent r
-            JOIN application_worker aw
-              ON aw.application_worker_id = r.application_rent_application_rent_id
-            WHERE r.rent_date::date = CURRENT_DATE
-              AND aw.application_status_application_status_id NOT IN (4) -- Исключаем отмененные заявки
-        ), 
-        0
-    ) AS avg_today,
-
-    -- Средние суммы аренды за текущую неделю
-    COALESCE(
-        (
-            SELECT TRUNC(AVG(r.rent_price), 2)
-            FROM rent r
-            JOIN application_worker aw
-              ON aw.application_worker_id = r.application_rent_application_rent_id
-            WHERE r.rent_date::date BETWEEN DATE_TRUNC('week', CURRENT_DATE) AND CURRENT_DATE
-              AND aw.application_status_application_status_id NOT IN (4) -- Исключаем отмененные заявки
-        ), 
-        0
-    ) AS avg_week,
-
-    -- Средние суммы аренды за текущий месяц
-    COALESCE(
-        (
-            SELECT TRUNC(AVG(r.rent_price), 2)
-            FROM rent r
-            JOIN application_worker aw
-              ON aw.application_worker_id = r.application_rent_application_rent_id
-            WHERE r.rent_date::date BETWEEN DATE_TRUNC('month', CURRENT_DATE) AND CURRENT_DATE
-              AND aw.application_status_application_status_id NOT IN (4) -- Исключаем отмененные заявки
-        ), 
-        0
-    ) AS avg_month,
-
-    -- Средние суммы аренды за текущий год
-    COALESCE(
-        (
-            SELECT TRUNC(AVG(r.rent_price), 2)
-            FROM rent r
-            JOIN application_worker aw
-              ON aw.application_worker_id = r.application_rent_application_rent_id
-            WHERE r.rent_date::date BETWEEN DATE_TRUNC('year', CURRENT_DATE) AND CURRENT_DATE
-              AND aw.application_status_application_status_id NOT IN (4) -- Исключаем отмененные заявки
-        ), 
-        0
-    ) AS avg_year;
-
+      -- Суммы аренды за текущий день
+      COALESCE(
+          (
+              SELECT TRUNC(SUM(r.rent_price), 2)
+              FROM rent r
+              where application_rent_application_rent_id not in(select application_rent_application_rent_id from application_worker where application_status_application_status_id = 4)
+              AND r.rent_date::date = CURRENT_DATE
+          ), 
+          0
+      ) AS sum_today,
+  
+      -- Суммы аренды за текущую неделю
+      COALESCE(
+          (
+              SELECT TRUNC(SUM(r.rent_price), 2)
+              FROM rent r
+        where application_rent_application_rent_id not in(select application_rent_application_rent_id from application_worker where application_status_application_status_id = 4)
+              and r.rent_date::date BETWEEN DATE_TRUNC('week', CURRENT_DATE) AND CURRENT_DATE
+          ), 
+          0
+      ) AS sum_week,
+  
+      -- Суммы аренды за текущий месяц
+      COALESCE(
+          (
+              SELECT TRUNC(SUM(r.rent_price), 2)
+              FROM rent r
+  where application_rent_application_rent_id not in(select application_rent_application_rent_id from application_worker where application_status_application_status_id = 4)
+              and r.rent_date::date BETWEEN DATE_TRUNC('month', CURRENT_DATE) AND CURRENT_DATE
+          ), 
+          0
+      ) AS sum_month,
+  
+      -- Суммы аренды за текущий год
+      COALESCE(
+          (
+              SELECT TRUNC(SUM(r.rent_price), 2)
+              FROM rent r
+        where application_rent_application_rent_id not in(select application_rent_application_rent_id from application_worker where application_status_application_status_id = 4)
+              and r.rent_date::date BETWEEN DATE_TRUNC('year', CURRENT_DATE) AND CURRENT_DATE
+          ), 
+          0
+      ) AS sum_year,
+  
+      -- Средние суммы аренды за текущий день
+      COALESCE(
+          (
+              SELECT TRUNC(AVG(r.rent_price), 2)
+              FROM rent r
+  where application_rent_application_rent_id not in(select application_rent_application_rent_id from application_worker where application_status_application_status_id = 4)
+              and r.rent_date::date = CURRENT_DATE
+          ), 
+          0
+      ) AS avg_today,
+  
+      -- Средние суммы аренды за текущую неделю
+      COALESCE(
+          (
+              SELECT TRUNC(AVG(r.rent_price), 2)
+              FROM rent r
+        where application_rent_application_rent_id not in(select application_rent_application_rent_id from application_worker where application_status_application_status_id = 4)
+              and r.rent_date::date BETWEEN DATE_TRUNC('week', CURRENT_DATE) AND CURRENT_DATE
+          ), 
+          0
+      ) AS avg_week,
+  
+      -- Средние суммы аренды за текущий месяц
+      COALESCE(
+          (
+              SELECT TRUNC(AVG(r.rent_price), 2)
+              FROM rent r
+        where application_rent_application_rent_id not in(select application_rent_application_rent_id from application_worker where application_status_application_status_id = 4)
+              and r.rent_date::date BETWEEN DATE_TRUNC('month', CURRENT_DATE) AND CURRENT_DATE
+          ), 
+          0
+      ) AS avg_month,
+  
+      -- Средние суммы аренды за текущий год
+      COALESCE(
+          (
+              SELECT TRUNC(AVG(r.rent_price), 2)
+              FROM rent r
+        where application_rent_application_rent_id not in(select application_rent_application_rent_id from application_worker where application_status_application_status_id = 4)
+             and r.rent_date::date BETWEEN DATE_TRUNC('year', CURRENT_DATE) AND CURRENT_DATE
+          ), 
+          0
+      ) AS avg_year;
       `);
       res.json(resultat.rows[0]);
     }catch(e) {

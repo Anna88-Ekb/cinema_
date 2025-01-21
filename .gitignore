@@ -2,3 +2,5 @@ node_modules
 db
 db_create.sql
 .env 
+db2.sql
+db_connect.sql
