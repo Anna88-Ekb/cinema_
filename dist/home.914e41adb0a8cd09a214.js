@@ -290,6 +290,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 const menu_main_list = document.querySelector('.menu_main_list');
 const entrance_form_btn = document.querySelector('.entrance_form_btn');
 const contacts = document.querySelector('.contacts');
+const arenda = document.querySelector('.arenda');
+
+if(arenda) {
+  arenda.addEventListener('click', openArendaHallForm);
+}
+
 
 Array.from(menu_main_list.children).forEach(el => {
   let li_child = el.querySelector('ul');
@@ -360,6 +366,7 @@ async function openEntranceForm() {
               entrance_form_btn.parentElement.removeChild(entrance_form_btn);
             }
             document.body.children[0].removeChild(entrance_form_big_container);
+            openClientPage();
           }
 
         } catch (error) {
@@ -625,7 +632,7 @@ function installInputType() {
   formFunc(`.${this.parentElement.className}`);
 }
 
-function createMessage(parent, className, message, close) {
+/* function createMessage(parent, className, message, close) {
   const div = document.createElement('div');
   div.className = className;
   div.insertAdjacentText('afterbegin', `${message}`);
@@ -642,9 +649,116 @@ function createMessage(parent, className, message, close) {
       document.body.children[0].removeChild(entrance_form_big_container);
     }, 5000);
   }
+} */
+
+const account_form_btn = document.querySelector('.account_form_btn');
+if (account_form_btn) {
+  account_form_btn.addEventListener('click', openClientPage);
 }
 
 });
+
+async function openClientPage() {
+  window.location.href = `${window.origin}/open-client-page`;
+  
+}
+
+async function openArendaHallForm() {
+  try {
+    // Получение и вставка формы
+    const entranceFormResponse = await fetch(`${window.origin}/open-arenda-form`);
+    const formContainer = await entranceFormResponse.text();
+    document.body.children[0].insertAdjacentHTML('afterbegin', formContainer);
+
+    // Закрытие формы
+    const formCloseButton = document.querySelector('.entrance_form_close');
+    formCloseButton?.addEventListener('click', () => {
+      const bigContainer = document.querySelector('.entrance_form_big_container');
+      if (bigContainer) {
+        document.body.children[0].removeChild(bigContainer);
+      }
+    }, { once: true });
+  } catch (error) {
+    console.error('Ошибка при открытии формы аренды:', error);
+    return;
+  }
+
+  // Работа с формой
+  const hallArendaForm = document.querySelector('.hall_arenda_form');
+  if (!hallArendaForm) {
+    console.error('Форма аренды не найдена!');
+    return;
+  }
+
+  hallArendaForm.addEventListener('click', async function (event) {
+    // Проверяем, что нажата кнопка "Отправить"
+    if (!event.target.classList.contains('btn_arenda_hall')) return;
+
+    // Формируем объект для отправки
+    const form = event.currentTarget;
+    const obj = {
+      app_rent_date: form.querySelector('.registration_form_data')?.value || null,
+      hall_hall_id: form.querySelector('#hall_arenda_form_type_hall')?.value || null,
+      app_rent_start_time: form.querySelector('.registration_form_timestart')?.value || null,
+      app_rent_end_time: form.querySelector('.registration_form_timeend')?.value || null,
+      app_rent_phone: form.querySelector('#hall_arenda_form_phone')?.value || null,
+      app_rent_details: form.querySelector('#hall_arenda_form_description')?.value || null,
+      type_client_type_client_id: form.querySelector('#hall_arenda_form_type_client')?.value || null,
+    };
+
+    // Проверка обязательных полей
+    if (!obj.app_rent_date || !obj.app_rent_start_time || !obj.app_rent_end_time || !obj.app_rent_phone) {
+      createMessage('.hall_arenda_form', 'entrance_form_container_error', 'Заполните все обязательные поля!', false);
+      return;
+    }
+
+    // Отправка данных на сервер
+    try {
+      const response = await fetch(`${window.origin}/create-arenda-application`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(obj),
+      });
+
+      const answer = await response.json();
+
+      if (answer.message) {
+        createMessage('.hall_arenda_form', 'entrance_form_container_error', answer.message, false);
+      } else if (answer.success === true) {
+        createMessage('.hall_arenda_form', 'entrance_form_container_success', 'Заявка подана', true);
+      }
+    } catch (error) {
+      console.error('Ошибка при отправке формы:', error);
+      createMessage('.hall_arenda_form', 'entrance_form_container_error', 'Произошла ошибка. Попробуйте позже.', false);
+    }
+  });
+}
+
+function createMessage(parentSelector, className, message, close) {
+  const parentElement = document.querySelector(parentSelector);
+  if (!parentElement) return;
+
+  const messageDiv = document.createElement('div');
+  messageDiv.className = className;
+  messageDiv.textContent = message;
+
+  // Сброс формы
+  parentElement.reset?.();
+
+  // Добавление сообщения перед формой
+  parentElement.before(messageDiv);
+
+  // Удаление сообщения
+  setTimeout(() => {
+    messageDiv.remove();
+    if (close) {
+      const bigContainer = document.querySelector('.entrance_form_big_container');
+      if (bigContainer) {
+        document.body.children[0].removeChild(bigContainer);
+      }
+    }
+  }, 5000);
+}
 ;// ./modules_js/buy_ticket.js
 
 
@@ -1054,7 +1168,7 @@ async function buyTicket(form, choice_filter){
 
 
 
-
+/* 
 document.addEventListener('DOMContentLoaded', async () => {
 
 const premiere_slider = document.querySelector('.premiere_slider');
@@ -1153,7 +1267,234 @@ if(premiere_slider) {
 });
 
 
+ */
 
+document.addEventListener('DOMContentLoaded', async () => {
+
+  const premiere_slider = document.querySelector('.premiere_slider');
+  if (premiere_slider) getSliderVisible(premiere_slider.children);
+
+  function getSliderVisible(obj) {
+    const premiere_slider_prev = premiere_slider.nextElementSibling.querySelector('.premiere_slider_prev');
+    const premiere_slider_next = premiere_slider.nextElementSibling.querySelector('.premiere_slider_next');
+    let i = 0;
+    let j = null;
+    let pauseSlider = false;
+
+    if (window.innerWidth > 360) {
+      function installPauseOnSlider() {
+        if (!pauseSlider) {
+          pauseSlider = true;
+          const elems = document.querySelectorAll('.centered');
+          elems.forEach((el) => el.classList.remove('centered'));
+          this.classList.add('centered');
+        }
+      }
+  
+      function unInstallPauseOnSlider() {
+        if (pauseSlider) {
+          this.classList.remove('centered');
+          pauseSlider = false;
+          showSlides();
+        }
+      }
+  
+      function showSlides() {
+        if (j !== null) obj[j].classList.remove('centered');
+        let arr = Array.from(obj).slice(i, i + 3);
+        arr.forEach(el => {
+          el.classList.remove("unblock");
+          el.addEventListener('mouseenter', installPauseOnSlider);
+          el.addEventListener('mouseleave', unInstallPauseOnSlider);
+        });
+        let centerIndex = Math.floor(arr.length / 2);
+        arr[centerIndex].classList.add('centered');
+      }
+  
+      function hideSlides(arr, next_el_visible = true) {
+        arr.forEach(el => {
+          el.classList.add("unblock");
+          el.removeEventListener('mouseenter', installPauseOnSlider);
+          el.removeEventListener('mouseleave', unInstallPauseOnSlider);
+        });
+        j = i + 1;
+        if (next_el_visible) {
+          ((i + 1) % (obj.length - 1) <= obj.length - 3) ? (i = (i + 1) % (obj.length - 1)) : (i = 0);
+        } else {
+          if (i > 0) { i-- }
+          else { i = obj.length - 3; }
+        }
+        showSlides();
+      }
+  
+      setInterval(function () {
+        if (!pauseSlider) hideSlides(Array.from(obj).slice(i, i + 3));
+      }, 8000);
+      showSlides();
+  
+      function getNextSlider() {
+        pauseSlider = true;
+        hideSlides(Array.from(obj).slice(i, i + 3));
+      }
+  
+      function getPrevSlider() {
+        pauseSlider = true;
+        if (i > 0) {
+          i--;
+          let view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+          view.forEach((el) => el.classList.remove('centered'));
+          view[0].previousElementSibling.classList.remove('unblock');
+          view[2].classList.add('unblock');
+          view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+          view[1].classList.add('centered');
+        }
+        hideSlides(Array.from(obj).slice(i, i + 3), false);
+      }
+      premiere_slider_next.addEventListener('click', getNextSlider);
+      premiere_slider_prev.addEventListener('click', getPrevSlider);
+    }
+
+    if (window.innerWidth <= 360) {
+      function installPauseOnSlider() {
+        if (!pauseSlider) {
+          pauseSlider = true;
+          const elems = document.querySelectorAll('.centered');
+          elems.forEach((el) => el.classList.remove('centered'));
+          this.classList.add('centered');
+        }
+      }
+  
+      function unInstallPauseOnSlider() {
+        if (pauseSlider) {
+          this.classList.remove('centered');
+          pauseSlider = false;
+          showSlides();
+        }
+      }
+  
+      function showSlides() {
+        if (j !== null) obj[j].classList.remove('centered');
+        let arr = Array.from(obj).slice(i, i + 1);
+        arr[0].classList.remove("unblock");
+        arr[0].classList.add('centered');
+        arr[0].addEventListener('mouseenter', installPauseOnSlider);
+        arr[0].addEventListener('mouseleave', unInstallPauseOnSlider);
+      }
+  
+      function hideSlides(arr, this_el_visible = true) {
+        arr.forEach(el => {
+          el.classList.add("unblock");
+          el.removeEventListener('mouseenter', installPauseOnSlider);
+          el.removeEventListener('mouseleave', unInstallPauseOnSlider);
+        });
+        j = i;
+        i+=1;
+        showSlides();
+      }
+  
+      setInterval(function () {
+        if (!pauseSlider) hideSlides(Array.from(obj).slice(i, i + 1));
+      }, 8000);
+      showSlides();
+  
+      function getNextSlider() {
+        pauseSlider = true;
+        hideSlides(Array.from(obj).slice(i, i + 1));
+      }
+  
+      function getPrevSlider() {
+        pauseSlider = true;
+        if (i > 0) {
+          i--;
+          let view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+          view.forEach((el) => el.classList.remove('centered'));
+          view[0].previousElementSibling.classList.remove('unblock');
+      /*     view[2].classList.add('unblock'); */
+          view = document.querySelectorAll('.premiere_slider_item:not(.unblock)');
+          view[0].previousElementSibling.classList.add('centered');
+        }
+        hideSlides(Array.from(obj).slice(i, i + 1), false);
+      }
+      premiere_slider_next.addEventListener('click', getNextSlider);
+      premiere_slider_prev.addEventListener('click', getPrevSlider);
+    }
+
+
+  }
+
+  if (premiere_slider) {
+    premiere_slider.addEventListener('click', async function (e) {
+      if (e.target.classList.contains('premiere_slider_item_btn')) {
+        const movie_name = e.target.parentElement.parentElement.querySelector('.premiere_slider_item_name');
+        openBuyForm({ movie_name: movie_name });
+      }
+    });
+  }
+
+});
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+/*   // Медиазапрос для разрешения экрана 360px
+  if (window.innerWidth <= 360) {
+    // Прокручиваем только один слайд
+    const premiere_slider_items = premiere_slider.querySelectorAll('.premiere_slider_item');
+    
+    premiere_slider_items.forEach((item, index) => {
+      if (index > 0) {
+        item.style.display = 'none'; // скрываем все элементы, кроме первого
+        item.classList.remove('centered'); // убираем класс centered с остальных слайдов
+      } else {
+        item.classList.add('centered'); // добавляем класс centered на первый слайд
+      }
+    });
+  
+    // Обработчики для кнопок слайдера (если они существуют)
+    const premiere_slider_next = premiere_slider.nextElementSibling.querySelector('.premiere_slider_next');
+    const premiere_slider_prev = premiere_slider.nextElementSibling.querySelector('.premiere_slider_prev');
+  
+    if (premiere_slider_next && premiere_slider_prev) {
+      premiere_slider_next.addEventListener('click', function () {
+        // Переключаем только один слайд
+        premiere_slider_items.forEach((item, index) => {
+          if (index === 0) {
+            item.style.display = 'none'; // скрываем первый слайд
+            item.classList.remove('centered'); // убираем класс centered с первого слайда
+          }
+          if (index === 1) {
+            item.style.display = 'block'; // показываем следующий слайд
+            item.classList.add('centered'); // добавляем класс centered на следующий слайд
+          }
+        });
+      });
+  
+      premiere_slider_prev.addEventListener('click', function () {
+        // Переключаем только один слайд в обратную сторону
+        premiere_slider_items.forEach((item, index) => {
+          if (index === 0) {
+            item.style.display = 'block'; // показываем первый слайд
+            item.classList.add('centered'); // добавляем класс centered на первый слайд
+          }
+          if (index === 1) {
+            item.style.display = 'none'; // скрываем следующий слайд
+            item.classList.remove('centered'); // убираем класс centered с этого слайда
+          }
+        });
+      });
+    }
+  } */
 ;// ./modules_js/today.js
 
 

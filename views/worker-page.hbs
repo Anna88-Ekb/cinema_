@@ -30,22 +30,35 @@
         <div class="menu-left">
           <div class="menu-left__items">
             <ul>
+              <li class="start_page"><a href="#">Главная</a></li>
               {{#if worker_access}}
               {{#each worker_access}}
               {{#if (eq this 1)}}
-              {{#if ../tables}}
-
-              <li class="manager_tables">Таблицы<span class="arrow"></span>
+              {{#each ../tables_obj}}
+              <li class="manager_tables">{{this.category}}<span class="arrow"></span>
                 <ul class="unblock">
-                  {{#each ../tables}}
+                  {{#each this.tables}}
+   
                   <li><a href="#" data-table-name="{{this.table_name}}">{{this.table_comment}}</a></li>
+          
+                  {{#if (eq this.table_name 'cinema')}}
+                 <li><a class="open_posters" href="#">Постеры</a></li>
+                  {{/if}}
+                  {{#if (eq this.table_name 'rent')}}
+                 <li><a class="open_my_application" href="#">Мои заявки</a></li>
+                 <li><a class="open_application" href="#">Необработанные заявки</a></li>
+                  {{/if}}
                   {{/each}}
                 </ul>
               </li>
-              <li><a class="open_posters" href="#">Постеры</a></li>
+              {{/each}}
+              <li class="manager_reporting">Аналитика и отчетность<span class="arrow"></span>
+                <ul>
+                <li><a href="#" class='sales_report'>Продаж</a></li>
+                <li><a href="#" class='attendance_report'>Посещаемости</a></li>
+                </ul>
+              </li>
               {{/if}}
-              {{/if}} 
-
               {{/each}}
               {{/if}}
             </ul>
@@ -56,8 +69,9 @@
     </div>
   </div>
   {{/if}}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{{cinemaPanelJsFile}}"></script>
+
 </body>
 
- </html>
-
+</html>

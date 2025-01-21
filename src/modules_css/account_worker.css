@@ -195,6 +195,7 @@
 
 .account-view h1 {
   color: var(--dark_violet);
+  font-size: 4.8rem;
 }
 
 .nopadding {
@@ -434,4 +435,235 @@ margin-top: 3rem;
 }
 .confirmation_form .btn_form_accent {
   border-color: var(--light_violet);
+}
+
+.top_menu_search {
+  display: flex;
+}
+
+.top_menu_search button {
+  margin-left: 2rem;
+  font-size: 1.6rem;
+  width: 4rem;
+  height: 4rem;
+  border: 1px solid var(--grey_violet);
+}
+
+
+.menu-left__items>ul>li>ul>li a {
+  
+  color: aqua;
+}
+
+.manager_tables {
+  text-transform: uppercase;
+}
+
+.manager_reporting {
+  text-transform: uppercase;
+}
+
+.sales_summary_today {
+  display: flex;
+  justify-content: space-between;
+}
+.sales_summary_week {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sales_summary_month {
+display: flex;
+justify-content: space-between;
+}
+
+.sales_summary {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.sales_summary_month span, .sales_summary_week span, .sales_summary_today span {
+  font-weight: bold;
+  background-color: var(--dark_violet);
+}
+
+.sales_summary_container h3 {
+  font-size: 3.6rem;
+}
+.sales_summary_container, .attendance_page_report {
+ background-color: rgba(72, 64, 121, .1);
+ padding: 2rem;
+ border-radius: 1rem;
+ border:1px solid var(--dark_violet);
+}
+
+.sales_halls>div p, .sales_cinema>div p {
+  margin: 1rem;
+  display: flex;
+  justify-content: space-between;
+  width: 20rem;
+}
+.sales_halls>div span, .sales_cinema>div span{
+  font-weight: bold;
+ /*  background-color: var(--dark_violet); */
+}
+.sales_halls>div>div, .sales_cinema>div>div {
+  display: flex;
+  justify-content: space-between;
+}
+.text_violet {
+color: var(--dark_violet);
+}
+
+.sales_choice_container {
+  display: flex;
+}
+
+.filter_sales {
+  margin-top: 1rem;
+}
+/* .filter_sales {
+  width: 20rem;
+} */
+.download_reporting,
+.add_reporting_period {
+  padding: .5rem 1rem;
+}
+
+.sales_choice_container select, input {
+  padding: .5rem 1rem;
+}
+.sales_choice_container {
+  display: flex;
+  justify-content: space-between;
+}
+.period_type {
+  position: relative;
+}
+
+.form_sales .svg_save {
+  padding: .5rem 1rem;
+}
+
+
+.sales_choice {
+  position: relative;
+}
+.radio-container {
+  position: absolute;
+  left: 27%;
+  bottom: -2rem;
+}
+.sales_choice_period {
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+}
+.mini_title {
+  font-size: 36px;
+  margin-top: 2rem;
+}
+
+.getforwork:hover, .cancelforwork:hover,
+.designforwork:hover{
+  background-color: var(--red);
+  color: var(--yellow);
+}
+
+.getforwork, .cancelforwork, .designforwork {
+  font-size: 1.6rem;
+  width: 11rem;
+  padding: .5rem 1rem;
+}
+
+.getforwork {
+  width: 14rem;
+}
+
+
+.next_report table th {
+  padding: 0.75rem 3rem 0.75rem 0.75rem;
+
+  background-color: var(--dark_violet);
+  color: var(--light_violet);
+}
+.next_report table th, .next_report table td {
+  border: 1px dotted var(--grey_violet);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.charts {
+  display: flex;
+  justify-content: space-between;
+}
+.super_mini {
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.attendance_page .mini_title {
+  margin-bottom: 1rem;
+}
+
+.getforwork {
+  font-size: 1.6rem;
+}
+
+.getforwork_parent{
+/*   background-color: aqua; */
+  border: none;
+}
+
+/* .search_hall_form_container {
+  background-color: #484079;
+} */
+
+.search_hall_form>div:first-child {
+  padding: 3rem 1rem 2rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  background-color: #484079;
+}
+
+.btn_search_hall_form {
+  border: 1px solid var(--light_violet);
+}
+
+.search_form_close {
+  right: -15px !important;
+  top: -15px;
+}
+.radio-container {
+  display: flex;
+  justify-content: space-between;
+  width: 30rem;
+  position: absolute;
+  left: 25rem;
+}
+.sales_choice_period {
+  position: relative;
+}
+
+
+
+.searched_halls {
+  padding: 2rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.searched_halls h3 {
+  font-size: 24px;
+}
+
+.red {
+  color: var(--red);
+  font-weight: bold;
+}
+
+.btn_return {
+  padding: .5rem 1rem;
 }

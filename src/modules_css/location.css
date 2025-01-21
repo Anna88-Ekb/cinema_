@@ -1,4 +1,4 @@
-/* .location {
+.location {
   background-color: var(--black-blue);
   display: flex;
   flex-direction: column;
@@ -22,4 +22,23 @@
   font-weight: 700;
   color: var(--light_violet);
   align-self: center;
-} */
+}
+
+@media (max-width: 360px) {
+  .location_content img {
+    width: 300px;
+    margin:  0 auto;
+  }
+  .location_content {
+    flex-direction: column;
+  }
+  
+  .about_us_text {
+    text-align: center;
+  }
+.location {
+  min-height: 60rem;
+ justify-content: space-between;
+}
+
+}

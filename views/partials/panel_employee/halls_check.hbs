@@ -1,0 +1,13 @@
+
+{{#each halls}}
+<div><h3>{{this.hall_name}}</h3>
+<p>Статус: 
+  <span class="{{#if (eq this.hall_status 'Занят')}}red{{/if}}">
+    {{this.hall_status}}
+  </span>
+</p>  
+
+</div>
+{{/each}}
+
+

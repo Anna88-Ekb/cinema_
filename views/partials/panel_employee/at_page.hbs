@@ -1,0 +1,141 @@
+<div class="attendance_page">
+ <h1>Заполняемость залов</h1>
+ <div class="attendance_page_conrainer">
+  <div class="attendance_page_left">
+   <div class="attendance_page_report">
+    <h3>Сводка</h3>
+    <div class="sales_cinema">
+     <h3>Киносеансы:</h3>
+     <div class="database_view_table">
+      <div class="session_summary_today">
+       {{#if actual}}
+       <div class="session_summary_today_table">
+        <h3>Текущий период</h3>
+       <table>
+        <thead><th>Период</th><th>Все доступные места</th><th>Выкупленные билеты</th><th>Процент запоняемости</th></thead>
+        <tbody>
+         <tr>
+         <td>Сегодня</td><td>{{actual.all_place_day}}</td><td>{{actual.all_ticket_day}}</td><td>{{actual.percent_day}}</td>
+        </tr>
+        <tr>
+         <td>Неделя</td><td>{{actual.all_place_week}}</td><td>{{actual.all_ticket_week}}</td><td>{{actual.percent_week}}</td>
+        </tr>
+        <tr>
+         <td>Месяц</td><td>{{actual.all_place_month}}</td><td>{{actual.all_ticket_month}}</td><td>{{actual.percent_month}}</td>
+        </tr>
+        <tr>
+         <td>Год</td><td>{{actual.all_place_year}}</td><td>{{actual.all_ticket_year}}</td><td>{{actual.percent_year}}</td>
+        </tr>
+        
+        </tbody>
+       </table>
+       </div>
+       {{/if}}
+      </div>
+      <div class="session_summary_lastday">
+       {{#if last}}
+       <div class="session_summary_lastday_table">
+        <h3>Прошедший период</h3>
+       <table>
+        <thead><th>Период</th><th>Все доступные места</th><th>Выкупленные билеты</th><th>Процент запоняемости</th></thead>
+        <tbody>
+         <tr>
+         <td>Вчера</td><td>{{last.all_place_yesterday}}</td><td>{{last.all_ticket_yesterday}}</td><td>{{last.percent_yesterday}}</td>
+        </tr>
+        <tr>
+         <td>Прошлая неделя</td><td>{{last.all_place_last_week}}</td><td>{{last.all_ticket_last_week}}</td><td>{{last.percent_last_week}}</td>
+        </tr>
+        <tr>
+         <td>Прошлый месяц</td><td>{{last.all_place_last_month}}</td><td>{{last.all_ticket_last_month}}</td><td>{{last.percent_last_month}}</td>
+        </tr>
+        <tr>
+         <td>Прошлый год</td><td>{{last.all_place_last_year}}</td><td>{{last.all_ticket_last_year}}</td><td>{{last.percent_last_year}}</td>
+        </tr>
+        
+        </tbody>
+       </table>
+       </div>
+       {{/if}}
+      </div>
+     </div>
+    </div>
+   </div>
+ {{#if movies}}
+ <div class="session_summary_reporting">
+    <div>
+      <h3 class="mini_title">Выбрать по продукту</h3>
+      <form action="#" class="form_sales">
+        <div class="sales_choice_container">
+          <!-- Блок выбора -->
+          <select name="attendance_page_list">
+            {{#each movies}}
+           <option value="{{this.cinema_id}}">{{this.cinema_name}}</option>
+            {{/each}}
+            </select>
+
+          <!-- Блок для указания периода -->
+          <div class="attendance_page_period">
+            <input type="date" max="{{date}}" class="date-input">
+            <input type="date" max="{{date}}" class="date-input">
+            <div class="attendance_page_radio_block">
+                <div>
+    <input type="radio" id="day" name="period" value="day">
+    <label for="day">День</label>
+  </div>
+  
+  <div>
+    <input type="radio" id="week" name="period" value="week">
+    <label for="week">Неделя</label>
+  </div>
+
+    <div>
+    <input type="radio" id="month" name="period" value="month">
+    <label for="month">Месяц</label>
+  </div>
+
+  <div>
+    <input type="radio" id="year" name="period" value="year">
+    <label for="year">Год</label>
+  </div>
+</div>
+
+          </div>
+          <div class="session_summary">
+            <button type="button" class="btn_form download_reporting">ЗАГРУЗИТЬ</button>
+           {{!--  <button type="button" class="btn_form add_reporting_period">УКАЗАТЬ ПЕРИОД</button> --}}
+          </div>
+<button class="svg_save btn_form ">CSV</button>
+
+        </div>
+      </form>
+
+    </div>
+  </div> <!-- Закрывающий тег для sales_summary_reporting -->
+ {{/if}}
+  <div class="next_report created_table database_view_table" ></div>
+  </div>
+  <div class="attendance_page_right">   <div>
+    <h3 class="mini_title">Заполняемость залов</h3>
+    <div class="charts">
+         <div>
+          <h4 class="super_mini">% Заполняемости</h4>
+<canvas id="myChart1" width="200" height="200"></canvas>
+</div>
+     <div>
+      <h4 class="super_mini">Выкупленные билеты</h4>
+<canvas id="myChart2" width="200" height="200"></canvas>
+</div>
+     <div>
+      <h4 class="super_mini">Доступные места</h4>
+<canvas id="myChart3" width="200" height="200"></canvas>
+</div>
+    </div>
+    <h3 class="mini_title">% Заполняемости за период</h3>
+     <div class="diagrams">
+<canvas id="myChart4" width="600" height="400"></canvas>
+</div>
+ </div>
+
+  </div></div>
+ </div>
+</div>

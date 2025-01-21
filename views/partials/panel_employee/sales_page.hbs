@@ -1,0 +1,133 @@
+<div class="sales_page">
+  <h1>Продажи</h1>
+
+<div class="sales__container">
+<div>
+  <!-- Первый раздел: Сводка -->
+  <div class="sales_summary_container">
+    <h3 class="text_violet">Сводка</h3>
+    <div class="sales_summary">
+      <div class="sales_cinema">
+        <h3>Киносеансы:</h3>
+        <div>
+          {{#if sales_ticket}}
+          <div class="session_summary_today">
+            <p>Сегодня: <span>{{sales_ticket.sum_today}}</span></p>
+            <p>Средний чек: <span>{{sales_ticket.avg_today}}</span></p>
+          </div>
+          <div class="session_summary_week">
+            <p>За неделю: <span>{{sales_ticket.sum_week}}</span></p>
+            <p>Средний чек: <span>{{sales_ticket.avg_week}}</span></p>
+          </div>
+          <div class="session_summary_month">
+            <p>За месяц: <span>{{sales_ticket.sum_month}}</span></p>
+            <p>Средний чек: <span>{{sales_ticket.avg_month}}</span></p>
+          </div>
+           <div class="session_summary_year">
+            <p>За год: <span>{{sales_ticket.sum_year}}</span></p>
+            <p>Средний чек: <span>{{sales_ticket.avg_year}}</span></p>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="sales_halls">
+        <h3>Аренда залов:</h3>
+        <div>
+           {{#if sales_halls}}
+          <div class="halls_summary_today">
+            <p>Сегодня: <span>{{sales_halls.sum_today}}</span></p>
+            <p>Средний чек: <span>{{sales_halls.avg_today}}</span></p>
+          </div>
+          <div class="halls_summary_week">
+            <p>За неделю: <span>{{sales_halls.sum_week}}</span></p>
+            <p>Средний чек: <span>{{sales_halls.avg_week}}</span></p>
+          </div>
+          <div class="halls_summary_month">
+            <p>За месяц: <span>{{sales_halls.sum_month}}</span></p>
+            <p>Средний чек: <span>{{sales_halls.avg_month}}</span></p>
+          </div>
+           <div class="halls_summary_year">
+            <p>За год: <span>{{sales_halls.sum_year}}</span></p>
+            <p>Средний чек: <span>{{sales_halls.avg_year}}</span></p>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div> <!-- Закрывающий тег для sales_summary_container -->
+
+  <!-- Второй раздел: Отчетность -->
+  <div class="sales_summary_reporting">
+    <div>
+      <h3 class="mini_title">Отчетность</h3>
+      <form action="#" class="form_sales">
+        <div class="sales_choice_container">
+          <!-- Блок выбора -->
+          <div class="sales_choice">
+            <select name="service_type" id="service_type" class="select-choice">
+              <option value="" default>Выберите тип услуги</option>
+              <option value="ticket_sale">Продажа билетов</option>
+              <option value="hall_rent">Аренда залов</option>
+            </select>
+
+            <!-- Радио-кнопка для выбора текущего периода -->
+            <div class="radio-container">
+                <div>
+    <input type="radio" id="day" name="period" value="day">
+    <label for="day">День</label>
+  </div>
+  
+  <div>
+    <input type="radio" id="week" name="period" value="week">
+    <label for="week">Неделя</label>
+  </div>
+
+    <div>
+    <input type="radio" id="month" name="period" value="month">
+    <label for="month">Месяц</label>
+  </div>
+
+  <div>
+    <input type="radio" id="year" name="period" value="year">
+    <label for="year">Год</label>
+  </div>
+</div>
+        
+     
+          </div>
+          <!-- Блок для указания периода -->
+          <div class="sales_choice_period">
+            <input type="date" max="{{date}}" class="date-input">
+            <input type="date" max="{{date}}" class="date-input">
+          </div>
+                 <button type="button" class="btn_form download_reporting">ЗАГРУЗИТЬ</button>
+                 <button class="svg_save btn_form ">CSV</button>
+        </div>
+            
+      </form>
+
+{{!--       <div class="filter_sales">
+        <h4>Тип учета</h4>
+        <ul class="vertical checkbox_style">
+          <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="age" value="0+"><span></span></span><label>Транзакции</label></li>
+          <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="age" value="6+"><span></span></span><label>Билеты</label></li>
+        </ul>
+      </div> --}}
+    </div>
+  </div> <!-- Закрывающий тег для sales_summary_reporting -->
+
+  <!-- Третий раздел: Диаграмма -->
+  <div>
+    <h3 class="mini_title">Диаграмма</h3>
+    <div>
+<canvas id="myChart" width="400" height="200"></canvas>
+</div>
+ 
+  </div>
+</div>
+
+ <div class="next_report database_view_table" ></div>
+</div>
+
+</div> <!-- Закрывающий тег для sales_page -->

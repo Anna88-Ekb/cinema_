@@ -1,4 +1,4 @@
-/* .hall_2_3::before {
+.hall_2_3::before {
   content: '2D';
   position: absolute;
   display: block;
@@ -145,4 +145,49 @@
   border: 1px solid var(--dark_violet);
   outline-offset: 2px;
   outline-color: var(--dark_violet);
-} */
+}
+
+@media (max-width: 360px)  {
+  .halls {
+    flex-direction: column;
+    text-align: center;
+  }
+  .halls>div>img, .halls div:nth-child(4) img{
+    width: 30rem;
+    margin: 1rem auto;
+  }
+  .halls>div:nth-child(2) {
+    align-self:auto;
+  }
+  .halls p, .halls span {
+    font-size: 16px;
+  }
+  .today_buy>div span, .today_start_price, .today_start_price span{
+  font-size: 25px!important;
+  } 
+  .today_buy {
+    flex-direction: column;
+    margin-top: 2rem;
+  }
+  .halls div:first-child {
+    order: 1;
+  }
+  .halls div:last-child {
+    order: 2;
+  }
+
+  .halls div:nth-child(2) {
+    order: 3;
+  }
+  .halls div:nth-child(3) {
+    order: 4;
+  }
+  .halls h4 {
+    margin: 1rem;
+  }
+
+  .today_buy>div>span+span {
+    text-align: right;
+  }
+
+}

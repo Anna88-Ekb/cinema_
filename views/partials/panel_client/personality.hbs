@@ -1,0 +1,32 @@
+<div class="personality">
+  <h1>Смена данных</h1>
+  <form class="change_personality_data" action="#">
+    <div class="personality_phone">
+      <p>Сменить телефон? <span>{{phoneMask pers.client_phone}}</span></p>
+      <div class="unblock"><input type="text" name="client_phone"></div><button class="change_confirm">Да</button>
+    </div>
+    <div class="personality_pass">
+      <p>Сменить пароль?</p> 
+      <div class="unblock"><input type="text" placeholder="Введите старый пароль" name="old_pass" class="old_pass">    <input type="text" placeholder="Введите новый пароль" name="new_pass" class="new_pass"></div><button class="change_confirm">Да</button>
+    </div>
+    <div class="personality_email">
+      <p>Сменить адрес электронной почты? <span>{{pers.client_email}}</span></p> 
+      <div class="unblock"><input type="text" name="client_email"></div> <button class="change_confirm">Да</button>
+    </div>
+    <div>
+      <ul class="vertical checkbox_style">
+        <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="client_preference_phone"
+              value=""><span></span></span><label> Получать ссылку на телефон</label>
+        </li>
+        <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="client_preference_email"
+              value=""><span></span></span><label> Получать ссылку на электронную почту</label>
+        </li>
+        <li><span><input title="Нажмите для применения фильтра" type="checkbox" name="client_agreement_newsletter"
+              value=""><span></span></span> <label>Оповещение об акциях</label> 
+        </li>
+      </ul>
+    </div>
+ 
+ <input type="button" value="Отправить" class="cursor_pointer btn_main_style btn_ordinary form_btn_change">
+  </form>
+</div>

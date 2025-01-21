@@ -32,7 +32,9 @@
   box-shadow: inset -200px -4px 115px -84px #4895a7;
 }
 
-.entrance_form_btn, .account_form_btn, .exit_btn {
+.entrance_form_btn,
+.account_form_btn,
+.exit_btn {
   border: 0;
   background-color: var(--dark_violet);
   align-self: center;
@@ -44,19 +46,27 @@
   position: relative;
 }
 
-.entrance_form_btn:hover, .account_form_btn:hover, .exit_btn:hover {
+.entrance_form_btn:hover,
+.account_form_btn:hover,
+.exit_btn:hover {
   color: var(--light_violet);
 }
 
-.entrance_form_btn:hover .entrance_form_img path , .account_form_btn:hover .account_form_img path, .exit_btn:hover .exit_btn_img path{
+.entrance_form_btn:hover .entrance_form_img path,
+.account_form_btn:hover .account_form_img path,
+.exit_btn:hover .exit_btn_img path {
   fill: var(--light_violet);
 }
 
-.entrance_form_img path, .account_form_img path, .exit_btn_img path {
+.entrance_form_img path,
+.account_form_img path,
+.exit_btn_img path {
   fill: var(--red);
 }
 
-.entrance_form_img, .account_form_img, .exit_btn_img {
+.entrance_form_img,
+.account_form_img,
+.exit_btn_img {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -107,19 +117,40 @@
   color: var(--light_violet);
   cursor: pointer;
 }
-.btn_form_accent:hover{
+
+.btn_form_accent:hover {
   background-color: rgba(225, 66, 52, .8);
 }
 
-.btn_form:hover, .cancellation:hover {
+.btn_form:hover,
+.cancellation:hover {
   background-color: rgba(72, 64, 121, 0.8);
 }
+
 .insert_form button {
   text-align: left;
 }
 
-/* .registration_form input[type="button"] {
-  display: block;
-  width: 50%;
-  margin: 2rem auto 0 auto;
-  padding: 1rem;} */
+
+@media (max-width: 360px) {
+  .btn_main_style {
+    font-size: 20px;
+  }
+  .today_buy_btn {
+    width: 80%;
+    align-self: unset !important; /* Отменяет align-self */
+    height: auto !important;     /* Отменяет max-content */
+    margin-right: auto !important; /* Отменяет margin-right */
+    transform: none !important;  /* Отменяет translateX */
+    margin: 2rem auto;              /* Выравнивание по центру */
+    display: block;              /* Делаем блочным, чтобы сработал auto */
+  }
+}
+
+
+.chech_halls {
+  cursor: pointer;
+  background-color: var(--grey_violet);
+  color: var(--light_violet);
+  padding: 1rem;
+}

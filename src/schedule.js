@@ -4,7 +4,7 @@ import './modules_css/header.css';
 import './modules_css/buttons.css';
 import './modules_css/afisha.css';
 import './modules_css/cinema_session.css';
-import './modules_css/footer_other.css';
+import './modules_css/footer.css';
 
 
 

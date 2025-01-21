@@ -33,7 +33,8 @@
 
 .menu_main_list>li {
   position: relative;
-  width: 25rem;
+  width: 20rem;
+  align-self: flex-end;
 }
 
 .menu_main_list>li:last-child {
@@ -113,12 +114,12 @@ nav {
   }
   .menu_info{
     margin-top: 1rem;
-    flex: 0 1 40%;
+    flex: 0 1 45%;
     order: 1;
   }
   .entrance_form_btn {
     font-size: 1.6rem;
-    flex: 0 1 30%;
+    flex: 0 1 45%;
     order: 2;
     margin: auto 0 auto auto;
   }
@@ -135,11 +136,31 @@ nav {
 }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 750px) {
   .entrance_form_btn {
     flex: 0 1 auto;
+    font-size: 1.6rem!important;
   }
+
+  .menu_main_list {
+    flex-direction: column;
+    font-size: 1.6rem;
+  }
+
+  nav {
+    margin: 0;
+  }
+
   .menu {
     position: static;
   }
+
+}
+
+@media (max-width: 360px) {
+ .menu_main_list>li>ul {
+  right: -70%;
+  top: 0;
+  background-color: rgba(210, 226, 249, .1);
+}
 }

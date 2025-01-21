@@ -3,7 +3,6 @@ import {workerDb}  from '../controllers/dbWorker.controller.js';
 const router = Router(); 
 router.get('/db-list', workerDb.getTablesListForWorker);
 router.get('/tables/:table', workerDb.getTableColumnName);
-router.get('/tables/:table', workerDb.getTableColumnName);
 router.patch('/tables/:table', workerDb.getTableColumnNameForQuery);
 router.post('/tables/:table', workerDb.getTableByColumnName);
 router.get('/insert-to-table/:table/:besides?/', workerDb.getTableParametrsForCreate);
@@ -11,7 +10,14 @@ router.get('/movie-all-promotion', workerDb.getALLPromotion);
 router.post('/insert-to-table/:table', workerDb.inserRowToTable);
 router.delete('/insert-to-table/:table', workerDb.deleteRowsFromTable);
 router.patch('/insert-to-table/:table', workerDb.changeRowsInTable);
-
+router.get('/get-all-client-type', workerDb.getAllClientType);
+router.get('/get-all-application-status', workerDb.getAllApplicationStatus);
+router.get('/get-all-application-type', workerDb.getAllApplicationType);
+router.get('/get-all-application-rent', workerDb.getAllApplicationRent);
+router.post('/nobody-application/:table/:worker?/', workerDb.getTableApplication);
+router.post('/take-application-hall', workerDb.takeApplication);
+router.post('/close-application-hall', workerDb.closeApplication);
+router.post('/check-hall-availability', workerDb.checkHallAvailability);
+router.post('/get-application-hall', workerDb.rentApplicationForm);
 export default router;
-
 

@@ -66,6 +66,7 @@ class movieSelection {
       return el;
     });
 
+    console.log(new_calendar);
     res.json(new_calendar);
   }
 

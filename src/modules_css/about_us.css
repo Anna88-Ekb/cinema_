@@ -124,3 +124,35 @@
     font-size: 3rem;
   }
 }
+
+@media (max-width: 360px) {
+  .about_us h1 {
+    font-size: 3rem;
+    letter-spacing: 1.5rem;
+  }
+  .about_us p, .about_us span {
+    line-height: 3rem;
+  }
+  .about_us{
+    height: auto;
+    min-height: 70rem;
+    background-position: right;
+  }
+  .about_us div:first-child {
+    margin: 0;
+  }
+  .sale_wrapper p {
+    font-size: 2rem !important;
+    line-height: 2rem;
+  }
+
+  .sale_discont {
+    font-size: 4.8rem !important;
+  }
+  .sale_wrapper p span + span {
+    margin: 1rem 0;
+    line-height: 2rem;
+  }
+ 
+
+}

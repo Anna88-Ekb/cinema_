@@ -1,5 +1,5 @@
 footer {
-  min-height: 18rem;
+  min-height: 15rem;
   height: auto;
   padding: 1rem;
   position: relative;
@@ -9,7 +9,7 @@ footer {
 
 .footer_container {
   display: flex;
-  max-width: 65%;
+  max-width: 90%;
   margin: 0 auto;
   justify-content: space-between;
 }
@@ -36,7 +36,7 @@ footer {
   text-transform: uppercase;
 }
 
-.footer_container ul:first-child a:hover {
+.footer_container ul:first-child a:hover, .return_tickets {
   color: var(--red);
 }
 
@@ -44,6 +44,31 @@ footer ul>li~li {
   margin-top: 1rem;
 }
 
+.return_tickets {
+  font-size: 2rem;
+}
 .footer_container ul:first-child a {
   transition: 0.3s;
+}
+
+.footer_container ul+ul>ul {
+  margin-top: 2rem;
+}
+
+@media (max-width: 360px) {
+  .footer_container {
+    flex-direction: column;
+    
+  }
+  .footer_container ul>li, .footer_container ul>li a, .footer_container ul>li span {
+    font-size: 12px;
+    text-align: center;
+  }
+  .footer_container ul {
+    margin-bottom: 1rem;
+  }
+  .return_tickets {
+    padding: 10px;
+    border: 1px solid var(--red);
+  }
 }

@@ -1,6 +1,7 @@
 <div class="container">
     <div class="ticket">
       <h2>Поздравляем с покупкой!</h2>
+       <button onclick="window.print()" class="btn_accent btn_print">Печать</button>
        {{#each tickets}}
       <div class="ticket_info">
         <div class="movie_img_container">
@@ -8,8 +9,14 @@
           <div><img src="/posters/{{this.cinema_path}}" alt="{{this.cinema_name}}" ></div>
           <div>
           <ul>
-            <li>Адрес: <span>г. Москва ул. Какая-то д. 111</span></li>
-            <li>Название: <span>{{this.cinema_name}}</span></li>
+            <li>Демонстратор: <span>ООО "Синема"</span></li>
+             <li>ОГРН: <span>1246629123456</span></li>
+            <li>Адрес: <span>г. Москва ул. Труда д. 111</span></li>
+            <li>№ Билета: <span>{{this.ticket_description}}</span></li>
+            <li>Цена: <span>{{this.session_basic_price}}</span></li>
+             <li>Название: <span>{{this.cinema_name}}</span></li>
+             <li>Тип показа:<span>{{this.graphics_name}}</span></li>
+             <li>Возрастный ограниченя:<span>{{this.age_name}}</span></li>
             <li>Дата: <span>{{this.session_date}}</span></li>
             <li>Время: <span>{{this.session_time}}</span></li>
             <li>Зал:<span>{{this.hall}}</span></li>

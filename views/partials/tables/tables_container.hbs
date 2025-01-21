@@ -4,7 +4,7 @@
       <li><a href="#" title="Прокрутить вверх" class="scroll-up"><img src="/images/icons/up-arrow-svgrepo-com.svg"
             alt="Скрол"></a></li>
       <li><a href="#" title="Обновить страницу" class="update"><img src="/images/icons/update-alt-svgrepo-com.svg"
-            alt="Оюновить"></a></li>
+            alt="Обновить"></a></li>
       <li><a href="#" title="Добавить запись" class="add"><img src="/images/icons/add-row-svgrepo-com.svg"
             alt="Добавить"></a></li>
       <li><a href="#" title="Изменить запись" class="change"><img src="/images/icons/change-svgrepo-com.svg"
@@ -18,18 +18,19 @@
     </ul>
   </div>
   <div class="database_view">
-    <div class="database_view_toolbar">
+    <div class="top_menu_search">    <div class="database_view_toolbar">
       <div><input type="search" role="search" class="search_text"><img src="/images/icons/search-alt-2-svgrepo-com.svg"
           alt="Поиск"></div>
       <div><input type="button" class="btn_form search_text_btn" value="Найти"></div>
-    </div>
+    </div> <div><button class="svg_save btn_form ">CSV</button></div></div>
     <div class="database_view_table">
       <table id="{{table_name}}">
         <thead>
           <tr>
             {{#each table_colums}}
-            <th id="{{this.column_name}}" class="down">{{this.column_name}}</th>
-            {{/each}}
+            <th id="{{this.column_name}}" class="down">{{this.column_comment}}</th>
+            {{/each}} 
+            {{#if (and (eq btn_cancel true) (eq btn_design true))}}<th colspan="2"><button class="chech_halls">Проверить доступность залов</button></th> {{/if}}
           </tr>
         </thead>
         <tbody>
@@ -37,7 +38,11 @@
           <tr>
             {{#each this}}
             <td data-row="{{@key}}" data-value="{{.}}">{{.}}</td>
-            {{/each }}
+            {{/each}}  
+            {{#if ../btn_take}}<td class="getforwork_parent"><button class="btn_form getforwork">Взять в работу</button></td>{{/if}}
+            {{#if ../btn_cancel}}<td class="getforwork_parent"><button class="btn_form cancelforwork">Отменить</button></td>{{/if}}
+            {{#if ../btn_design}}<td class="getforwork_parent"><button class="btn_form designforwork">Оформить</button></td>{{/if}}
+           {{#if (eq ../table_name "rent")}}<td><button class="btn_form btn_return">Возврат</button></td>{{/if}}
           </tr>
           {{/each}}
         </tbody>
@@ -45,3 +50,4 @@
     </div>
   </div>
 </div>
+

@@ -5,6 +5,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 const menu_main_list = document.querySelector('.menu_main_list');
 const entrance_form_btn = document.querySelector('.entrance_form_btn');
 const contacts = document.querySelector('.contacts');
+const arenda = document.querySelector('.arenda');
+
+if(arenda) {
+  arenda.addEventListener('click', openArendaHallForm);
+}
+
 
 Array.from(menu_main_list.children).forEach(el => {
   let li_child = el.querySelector('ul');
@@ -75,6 +81,7 @@ async function openEntranceForm() {
               entrance_form_btn.parentElement.removeChild(entrance_form_btn);
             }
             document.body.children[0].removeChild(entrance_form_big_container);
+            openClientPage();
           }
 
         } catch (error) {
@@ -340,7 +347,7 @@ function installInputType() {
   formFunc(`.${this.parentElement.className}`);
 }
 
-function createMessage(parent, className, message, close) {
+/* function createMessage(parent, className, message, close) {
   const div = document.createElement('div');
   div.className = className;
   div.insertAdjacentText('afterbegin', `${message}`);
@@ -357,6 +364,113 @@ function createMessage(parent, className, message, close) {
       document.body.children[0].removeChild(entrance_form_big_container);
     }, 5000);
   }
+} */
+
+const account_form_btn = document.querySelector('.account_form_btn');
+if (account_form_btn) {
+  account_form_btn.addEventListener('click', openClientPage);
 }
 
 });
+
+async function openClientPage() {
+  window.location.href = `${window.origin}/open-client-page`;
+  
+}
+
+async function openArendaHallForm() {
+  try {
+    // Получение и вставка формы
+    const entranceFormResponse = await fetch(`${window.origin}/open-arenda-form`);
+    const formContainer = await entranceFormResponse.text();
+    document.body.children[0].insertAdjacentHTML('afterbegin', formContainer);
+
+    // Закрытие формы
+    const formCloseButton = document.querySelector('.entrance_form_close');
+    formCloseButton?.addEventListener('click', () => {
+      const bigContainer = document.querySelector('.entrance_form_big_container');
+      if (bigContainer) {
+        document.body.children[0].removeChild(bigContainer);
+      }
+    }, { once: true });
+  } catch (error) {
+    console.error('Ошибка при открытии формы аренды:', error);
+    return;
+  }
+
+  // Работа с формой
+  const hallArendaForm = document.querySelector('.hall_arenda_form');
+  if (!hallArendaForm) {
+    console.error('Форма аренды не найдена!');
+    return;
+  }
+
+  hallArendaForm.addEventListener('click', async function (event) {
+    // Проверяем, что нажата кнопка "Отправить"
+    if (!event.target.classList.contains('btn_arenda_hall')) return;
+
+    // Формируем объект для отправки
+    const form = event.currentTarget;
+    const obj = {
+      app_rent_date: form.querySelector('.registration_form_data')?.value || null,
+      hall_hall_id: form.querySelector('#hall_arenda_form_type_hall')?.value || null,
+      app_rent_start_time: form.querySelector('.registration_form_timestart')?.value || null,
+      app_rent_end_time: form.querySelector('.registration_form_timeend')?.value || null,
+      app_rent_phone: form.querySelector('#hall_arenda_form_phone')?.value || null,
+      app_rent_details: form.querySelector('#hall_arenda_form_description')?.value || null,
+      type_client_type_client_id: form.querySelector('#hall_arenda_form_type_client')?.value || null,
+    };
+
+    // Проверка обязательных полей
+    if (!obj.app_rent_date || !obj.app_rent_start_time || !obj.app_rent_end_time || !obj.app_rent_phone) {
+      createMessage('.hall_arenda_form', 'entrance_form_container_error', 'Заполните все обязательные поля!', false);
+      return;
+    }
+
+    // Отправка данных на сервер
+    try {
+      const response = await fetch(`${window.origin}/create-arenda-application`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(obj),
+      });
+
+      const answer = await response.json();
+
+      if (answer.message) {
+        createMessage('.hall_arenda_form', 'entrance_form_container_error', answer.message, false);
+      } else if (answer.success === true) {
+        createMessage('.hall_arenda_form', 'entrance_form_container_success', 'Заявка подана', true);
+      }
+    } catch (error) {
+      console.error('Ошибка при отправке формы:', error);
+      createMessage('.hall_arenda_form', 'entrance_form_container_error', 'Произошла ошибка. Попробуйте позже.', false);
+    }
+  });
+}
+
+function createMessage(parentSelector, className, message, close) {
+  const parentElement = document.querySelector(parentSelector);
+  if (!parentElement) return;
+
+  const messageDiv = document.createElement('div');
+  messageDiv.className = className;
+  messageDiv.textContent = message;
+
+  // Сброс формы
+  parentElement.reset?.();
+
+  // Добавление сообщения перед формой
+  parentElement.before(messageDiv);
+
+  // Удаление сообщения
+  setTimeout(() => {
+    messageDiv.remove();
+    if (close) {
+      const bigContainer = document.querySelector('.entrance_form_big_container');
+      if (bigContainer) {
+        document.body.children[0].removeChild(bigContainer);
+      }
+    }
+  }, 5000);
+}

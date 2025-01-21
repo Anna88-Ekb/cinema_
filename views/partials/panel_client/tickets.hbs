@@ -1,0 +1,41 @@
+<div class="tickets_page">
+  <h1>История покупок</h1>
+  {{#if cur_sess}}
+  <div>
+    <h2>Предстоящие сеансы</h2>
+    <div class="actual_session">
+      {{#each cur_sess}}
+      <div class="ticket_poster" style="background-image: linear-gradient(to right, rgba(160, 160, 170, 0.85) 0%, rgba(200, 200, 210, 0.6) 100%), url(/posters/{{cinema_path}});">
+      <div>      <h4>{{cinema_name}}</h4>
+      <p>№ Билета: <span>{{ticket_id}}</span></p>
+      <p>{{hall_name}}</p>
+      <p>Дата сеанса: <span>{{dateFormatRU session_date}}</span></p>
+      <p>Начало сеанса: <span>{{session_time}}</span></p>
+      <p>Окончание сеанса: <span>{{cinema_end}}</span></p>
+      <p>{{hall_name}}</p></div>
+{{!--       <button class="cursor_pointer cancel_buy btn_accent" >Отменить покупку</button> --}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+  
+  {{#if old_sess}}
+  <div>
+    <h2>Прошедшие сеансы</h2>
+    <div class="last_session">
+      {{#each old_sess}}
+      <div class="ticket_poster"  style="background-image: linear-gradient(to right, rgba(160, 160, 170, 0.85) 0%, rgba(200, 200, 210, 0.6) 100%), url(/posters/{{cinema_path}});">
+      <h4>{{cinema_name}}</h4>
+       <p>№ Билета: <span>{{ticket_id}}</span></p>
+       <p>{{hall_name}}</p>
+       <div class="t_place"><p>Ряд: <span>{{place_place_row}}</span></p> <p>Место: <span>{{place_place_col}}</span></p></div>
+      <p>Дата сеанса: <span>{{dateFormatRU session_date}}</span></p>
+      <p>Начало сеанса: <span>{{truncTime session_time}}</span></p>
+      <p>Окончание сеанса: <span>{{cinema_end}}</span></p>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+</div>

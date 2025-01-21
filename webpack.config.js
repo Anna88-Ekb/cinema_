@@ -11,7 +11,8 @@ export default {
   entry: {
     home: './index.js',  // Точка входа для index.js
     schedule: './schedule.js',  // Точка входа для schedule.js
-    cinema_panel: './cinema-panel.js'
+    cinema_panel: './cinema-panel.js',
+    client_panel: './client-panel.js'
   },
 
   // Настройки для выходных файлов
@@ -22,6 +23,8 @@ export default {
         return 'schedule/[name].[contenthash].js'; // Все файлы schedule будут в папке dist/schedule
       } else if(pathData.chunk && pathData.chunk.name === 'cinema_panel') {
         return 'cinema-panel/[name].[contenthash].js';
+      } else if(pathData.chunk && pathData.chunk.name === 'client_panel') {
+        return 'client_panel/[name].[contenthash].js';
       } else {
         return '[name].[contenthash].js'; // Для остальных файлов стандартная структура
       }
@@ -32,7 +35,9 @@ export default {
         return '/schedule/';
       } else if(pathData.chunk && pathData.chunk.name === 'cinema_panel') {
         return '/cinema-panel/';
-      } else {
+      } else if(pathData.chunk && pathData.chunk.name === 'client_panel') {
+        return '/client_panel/';
+      }  else {
         return '/';
       }
     },
@@ -53,7 +58,9 @@ export default {
           return 'schedule/[name].[contenthash].css';
         } else if (pathData.chunk && pathData.chunk.name === 'cinema_panel') {
           return 'cinema-panel/[name].[contenthash].css';
-        } else {
+        } else if (pathData.chunk && pathData.chunk.name === 'client_panel') {
+          return 'client_panel/[name].[contenthash].css';
+        }else {
           return '[name].[contenthash].css';
         }
       },
@@ -91,7 +98,9 @@ export default {
               if(pathData.module.resource.includes('schedule')) {
                 return 'schedule/font/[name][ext]';  // Шрифты для schedule.js в dist/schedule/font
               } else if (pathData.module.resource.includes('cinema_panel')) {
-                return 'cinema-panel/font/[name][ext]';
+                return 'cinema_panel/font/[name][ext]';
+              } else if (pathData.module.resource.includes('client_panel')) {
+                return 'client_panel/font/[name][ext]';
               }
             }
             return 'font/[name][ext]'; // Резервный вариант
@@ -109,6 +118,8 @@ export default {
                 return 'schedule/images/[name][ext]'; // Изображения для schedule.js в dist/schedule/images
               } else if(pathData.module.resource.includes('cinema_panel')) {
                 return 'cinema-panel/images/[name][ext]';
+              }else if(pathData.module.resource.includes('client_panel')) {
+                return 'client_panel/images/[name][ext]';
               }
             }
             return 'images/[name][ext]'; // Резервный вариант

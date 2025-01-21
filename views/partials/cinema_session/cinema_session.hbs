@@ -1,7 +1,6 @@
 <section class="cinema_sessions" id="cinema_sessions">
   <h2>Расписание</h2>
   <div class="cinema_sessions_container">
-    <div class="cinema_sessions_filters">
       <div class="cinema_sessions_filter gradient">
         <div class="cinema_sessions_filter_container">
           <div class="cinema_sessions_filter_error"><button class="cinema_sessions_filter_error_btn"
@@ -19,9 +18,8 @@
           <li>{{{this.cinema_name}}}</li>
           {{/each}}
         </ul>
-      </div>
-      <div class="cinema_sessions_halls"></div>
     </div>
+    <div class="cinema_sessions_halls"></div>
     {{> cinema_session/cinema_session_calendar}}
   </div>
 </section>

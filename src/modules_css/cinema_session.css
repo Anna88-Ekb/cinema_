@@ -156,17 +156,16 @@
   -webkit-text-stroke-color: var(--dark_violet);
 }
 
-.cinema_sessions_filters {
-  width: 60%;
-  display: flex;
+.cinema_sessions_filter {
+  width: 20%!important;
 }
 
 .cinema_sessions_halls {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 60%;
-  padding: 0 1rem;
+  width: 40%;
+  padding-left: 1rem;
 }
 
 .cinema_sessions_hall table tbody td:first-child {
@@ -298,3 +297,49 @@
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5%;
   border-bottom-right-radius: 5%; }
+
+
+@media (max-width: 360px) {
+
+.cinema_sessions_container {
+  flex-direction: column;
+  max-width: 100%;
+  align-items: stretch;
+}
+.cinema_sessions_calendar_slider {
+  order: 2;
+  width: 100%!important;
+  height: 30rem!important;
+}
+.cinema_sessions_halls {
+  order: 3;
+}
+.cinema_sessions_filter {
+  order: 1;
+  width: 100%!important;     
+  visibility: hidden;
+  height: 6rem;
+}
+
+.cinema_sessions_filter_container {
+  visibility: visible;
+}
+.cinema_sessions_calendar_slider_container table caption {
+  font-size: 1.6rem;
+}
+.cinema_sessions_calendar_prev, .cinema_sessions_calendar_next {
+  width: 2rem;
+  height: 2rem;
+}
+.search_list_container, .cinema_sessions_filter_container input, .cinema_sessions_filter_container button, .cinema_sessions_filter_container  {
+  height: 3rem;
+}
+
+.cinema_sessions_calendar_slider_container table tbody td span {
+  font-size: 1.6rem;
+}
+.cinema_sessions_calendar_slider_container table tbody td {
+  height: 3rem;
+}
+}
+  

@@ -1,0 +1,51 @@
+<div class="entrance_form_big_container">
+  <div class="entrance_form_container">
+    <button class="entrance_form_close btn_main_style" title="Закрыть"></button>
+    <form action="#" class="registration_form hall_arenda_form ">
+  <div>
+    <fieldset>
+      <legend>Отправьте заявку и с Вами свяжутся!</legend>
+      <div>
+        <label for="registration_form_data">Укажите дату мероприятия<span>*</span></label>
+        <div><input id="registration_form_data" class="registration_form_data" type="date" required></div>
+      </div>
+      <div>
+        <label for="registration_form_timestart">Время начала<span>*</span></label>
+        <div><input id="registration_form_timestart" class="registration_form_timestart" type="time" required></div>
+      </div>
+      <div>
+        <label for="registration_form_timeend">Время окончания<span>*</span></label>
+        <div><input id="registration_form_timeend" class="registration_form_timeend" type="time" required></div>
+      </div>
+      <div class="hall_arenda_form_phone">
+        <label for="hall_arenda_form_phone">Введите номер мобильного телефона<span>*</span></label>
+        <div><input id="hall_arenda_form_phone" class="phone" type="text" required></div>
+      </div>
+      
+      <div class="m-t">
+        <label for="hall_arenda_form_type_client">Вы обращаетесь как<span>*</span></label>
+        <div><select name="hall_arenda_form_type_client" id="hall_arenda_form_type_client">
+          <option value="1">Физическое лицо</option>
+          <option value="2">Юридическое лицо</option>
+        </select></div>
+      </div>
+            <div class="m-t">
+        <label for="hall_arenda_form_type_hall">Укажите интересуемый зал<span></span></label>
+        <div><select name="hall_arenda_form_type_hall" id="hall_arenda_form_type_hall">
+          <option value="0">Нет предпочтений</option>
+          <option value="1">Зал №1</option>
+          <option value="2">Зал №2</option>
+          <option value="3">Зал №3</option>
+        </select></div>
+      </div>
+              <div>
+          <label for="hall_arenda_form_description">Описание мероприятия<span></span></label>
+          <div><textarea id="hall_arenda_form_description" maxlength="200"></textarea></div>
+          </div>
+    </fieldset>
+
+    <input type="button" value="ОТПРАВИТЬ" class="btn_arenda_hall btn_main_style btn_form">
+  </div>
+</form>
+  </div>
+</div>
